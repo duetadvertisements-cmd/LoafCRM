@@ -66,13 +66,13 @@ async function login() {
             sessionStorage.setItem ("role", await (getRole (sessionStorage.getItem ("username"))));
             const role = sessionStorage.getItem ("role");
             if (role == "ADMIN") {
-                window.location.href = "AdminDashboard.html";
+                window.location.href = "Dashboards/AdminDashboard.html";
             }
             if (role == "WORKER") {
-                window.location.href = "WorkerDashboard.html";
+                window.location.href = "Dashboards/WorkerDashboard.html";
             }
             if (role == "CLIENT") {
-                window.location.href = "dashboard.html";
+                window.location.href = "Dashboards/dashboard.html";
             }
             else {
                 console.log ("An error occured, couldn't redirect line 78")
