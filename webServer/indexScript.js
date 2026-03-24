@@ -66,10 +66,10 @@ async function login() {
             sessionStorage.setItem ("role", await (getRole (sessionStorage.getItem ("username"))));
             const role = sessionStorage.getItem ("role");
             if (role == "ADMIN") {
-                window.location.href = "Admindashboard.html";
+                window.location.href = "AdminDashboard.html";
             }
             if (role == "WORKER") {
-                window.location.href = "Workerdashboard.html";
+                window.location.href = "WorkerDashboard.html";
             }
             if (role == "CLIENT") {
                 window.location.href = "dashboard.html";
