@@ -63,7 +63,21 @@ async function login() {
 
             // optional: redirect
             sessionStorage.setItem("username", username);
-            window.location.href = "dashboard.html";
+            sessionStorage.setItem ("role", await (getRole (sessionStorage.getItem ("username"))));
+            const role = sessionStorage.getItem ("role");
+            if (role == "ADMIN") {
+                window.location.href = "Admindashboard.html";
+            }
+            if (role == "WORKER") {
+                window.location.href = "Workerdashboard.html";
+            }
+            if (role == "CLIENT") {
+                window.location.href = "dashboard.html";
+            }
+            else {
+                console.log ("An error occured, couldn't redirect line 78")
+            }
+            
 
         } else if (responseText === "WRONG_PASSWORD") {
             alert("Wrong password");
@@ -89,4 +103,27 @@ function showLogin() {
 function showSignUp() {
     document.getElementById("loginPage").classList.remove("active");
     document.getElementById("signUpPage").classList.add("active");
+}
+
+async function getRole(username) {
+
+    const formData = `username=${encodeURIComponent(username)}`;
+
+    try {
+        const res = await fetch("http://localhost:8080/getRole", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: formData
+        });
+
+        const role = await res.text();
+
+        console.log("User role:", role);
+
+        return role;
+
+    } catch (error) {
+        console.error("Error getting role:", error);
+        return null;
+    }
 }
