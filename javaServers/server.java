@@ -18,6 +18,7 @@ public class server {
         server.createContext("/login", new LoginHandler());
         server.createContext("/signup", new SignUpHandler());
         server.createContext("/getRole", new roleHandler());
+        server.createContext("/addTicket", new addTicketHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -256,5 +257,71 @@ public class server {
             }
         }
     }
+
+    //=================
+    //  Add Tciket
+    //=================
+
+    static class addTicketHandler implements HttpHandler {
+
+        public void handle(HttpExchange exchange) throws IOException {
+
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String title = formData.get("title");
+                    String data = formData.get("data");
+                    String creator = formData.get("creator");
+
+                   
+
+                System.out.println ("Recieved:");
+                System.out.println ("Title: "+title);
+                System.out.println ("Data: "+data);
+                System.out.println ("Creator: "+creator);
+                
+                 Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO TICKETS (TITLE, DATA, CREATOR) VALUES (?, ?, ?)"
+                    );
+
+                    statement.setString(1, title);
+                    statement.setString(2, data);
+                    statement.setString(3, creator);
+
+                    statement.executeUpdate ();
+
+                    String response;
+                    response = "SUCCESS";
+
+                    server.sendResponse(exchange, 200, response);
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println (e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
 }
+
+    
 
