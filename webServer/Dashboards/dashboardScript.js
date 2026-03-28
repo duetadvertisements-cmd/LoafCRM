@@ -6,7 +6,7 @@ setWelcomeTitle ();
 async function addTicket () {
     const title = document.getElementById ("titleInput").value;
     const data = document.getElementById ("dataInput").value;
-    const creator = document.getElementById ("creatorInput").value;
+    const creator = sessionStorage.getItem ("username");
 
     const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}`;    
 
