@@ -4,6 +4,7 @@ import com.sun.net.httpserver.*;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.sql.*;
+import java.text.NumberFormat.Style;
 import java.util.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +21,7 @@ public class server {
         server.createContext("/getRole", new roleHandler());
         server.createContext("/addTicket", new addTicketHandler());
         server.createContext("/getTickets", new getTicketsHandler());
+        server.createContext("/addComment", new addCommentHandler ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -295,7 +297,7 @@ public class server {
                     );
 
                     PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO TICKETS (TITLE, DATA, CREATOR) VALUES (?, ?, ?)"
+                        "INSERT INTO LOAF_TICKETS (TITLE, DATA, CREATOR) VALUES (?, ?, ?)"
                     );
 
                     statement.setString(1, title);
@@ -350,7 +352,7 @@ public class server {
                     );
 
                     PreparedStatement statement = connection.prepareStatement(
-                        "SELECT * FROM TICKETS WHERE CREATOR = ?"
+                        "SELECT * FROM LOAF_TICKETS WHERE CREATOR = ?"
                     );
 
                     statement.setString(1, username);
@@ -390,7 +392,75 @@ public class server {
             }
         }
     }
+
+    // =========================
+    // 📝 ADD COMMENT HANDLER
+    // =========================    
+
+    static class addCommentHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
+
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String title = formData.get("title");
+                    String data = formData.get("data");
+                    String creator = formData.get("creator");
+                    String ticket = formData.get("ticket");
+
+                   
+
+                System.out.println ("Recieved:");
+                System.out.println ("Title: "+title);
+                System.out.println ("Data: "+data);
+                System.out.println ("Creator: "+creator);
+                System.out.println ("ticket: "+ticket);
+                
+                 Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID) VALUES (?, ?, ?, ?)"
+                    );  
+
+                    statement.setString(1, title);
+                    statement.setString(2, data);
+                    statement.setString(3, creator);
+                    statement.setString(4, ticket);
+
+                    statement.executeUpdate ();
+
+                    String response;
+                    response = "SUCCESS";
+
+                    server.sendResponse(exchange, 200, response);
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println (e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
 }
 
+    
     
 

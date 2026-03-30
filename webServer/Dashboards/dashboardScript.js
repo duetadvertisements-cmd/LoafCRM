@@ -4,7 +4,7 @@ function setWelcomeTitle () {
 setWelcomeTitle ();
 
 // Navigation functions
-function showSection(sectionName) {
+function showSection(sectionName, event) {
     // Hide all sections
     const sections = document.querySelectorAll('.content-section');
     sections.forEach(section => section.classList.remove('active'));
@@ -19,8 +19,11 @@ function showSection(sectionName) {
         targetSection.classList.add('active');
     }
 
-    // Add active class to clicked nav item
-    event.target.closest('.nav-item').classList.add('active');
+    // Add active class to clicked nav item, if event exists
+    if (event && event.target) {
+        const clickedNav = event.target.closest('.nav-item');
+        if (clickedNav) clickedNav.classList.add('active');
+    }
 
     // Load data for specific sections
     if (sectionName === 'dashboard') {
@@ -43,8 +46,13 @@ function toggleMobileMenu() {
 }
 
 function ticketClicked(ticket) {
-    alert("Button pressed");
-    console.log("Ticket clicked:", ticket);
+    sessionStorage.setItem ("currentTicket", JSON.stringify ({
+        title: ticket.title,
+        data: ticket.data,
+        creator: ticket.creator,
+        id: ticket.id
+    }));
+    window.location.href = "../ticketPage.html";
 }
 
 // Close mobile menu when clicking outside or on a nav item
@@ -56,7 +64,6 @@ document.addEventListener('click', function(event) {
     if (!sidebar.contains(event.target) &&
         !mobileToggle.contains(event.target) &&
         sidebar.classList.contains('open')) {
-        closeMobileMenu();
     }
 });
 
@@ -86,6 +93,8 @@ async function addTicket () {
         else {
             alert ("Failed");
         }
+
+        history.go ();
 
     } catch (error) {
         console.error ("YOU FORGOT TO TURN THE SERVER ON");
@@ -146,6 +155,42 @@ function displayTickets(tickets) {
         `;
         container.appendChild(ticketDiv);
     });
+}
+
+async function loadDashboardStats() {
+    const username = sessionStorage.getItem("username");
+    if (!username) {
+        console.warn("No username in session, skipping dashboard stats.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:8080/getTickets", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(username)}`
+        });
+
+        const text = await response.text();
+        const tickets = JSON.parse(text || "[]");
+
+        const totalTickets = tickets.length;
+        const completedTasks = tickets.filter(ticket => {
+            const status = ticket.status || "";
+            return status.toString().toLowerCase().includes("complete") || status.toString().toLowerCase().includes("done");
+        }).length;
+
+        const totalTicketsEl = document.getElementById('totalTickets');
+        const activeUsersEl = document.getElementById('activeUsers');
+        const completedTasksEl = document.getElementById('completedTasks');
+
+        if (totalTicketsEl) totalTicketsEl.textContent = totalTickets;
+        if (activeUsersEl) activeUsersEl.textContent = Math.max(1, totalTickets > 0 ? 1 : 0).toString();
+        if (completedTasksEl) completedTasksEl.textContent = completedTasks;
+
+    } catch (error) {
+        console.error('Failed to load dashboard stats:', error);
+    }
 }
 
 getTickets ();
