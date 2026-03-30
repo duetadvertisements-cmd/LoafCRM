@@ -47,8 +47,10 @@ async function addComment () {
 
         const responseText = await serverResponse.text();
 
-        console.log("Server response:");
+        console.log ("------------------------------------------------------");
+        console.log("Server response to addComment ():");
         console.log(responseText);
+        console.log ("------------------------------------------------------");
 
         if (responseText == "SUCCESS") {
             alert ("Success");
@@ -61,8 +63,61 @@ async function addComment () {
         history.go ();
 
     } catch (error) {
+        console.error ("-------------------------ERROR TO ADDCOMMENT ()-----------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.error ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
+    }
+}
+
+async function getComments () {
+    const ticketID = JSON.parse(sessionStorage.getItem("currentTicket")).id;
+    const ticket = `ticketID=${encodeURIComponent(ticketID)}`;
+
+    try {
+        const serverResponse = await fetch("http://localhost:8080/getComments", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getComments ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        console.log ("----------------------------GETCOMMENTS ()--------------------------");
+        const comments = JSON.parse (responseText);
+        console.log (comments);
+        console.log ("------------------------------------------------------");
+        displayComments (comments);
+    }
+    catch (error) {
+        console.error ("--------------------------ERROR TO GETCOMMENTS ()----------------------------");
         console.error ("YOU FORGOT TO TURN THE SERVER ON");
         console.log ("\n");
         console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
     }
+}
+getComments ();
+
+function displayComments(commentsArray) {
+    const container = document.getElementById("commentsContainer");
+    container.innerHTML = "";
+
+    commentsArray.forEach(c => {
+        const div = document.createElement("div");
+        div.classList.add("commentBox");
+
+        div.innerHTML = `
+            <h4>${c.commentTitle}</h4>
+            <p>${c.comment}</p>
+            <small>By ${c.username} • ${c.madeOn}</small>
+        `;
+
+        container.appendChild(div);
+    });
 }

@@ -1,4 +1,6 @@
-/* Reset and Base Styles */
+/* ---------------------------- */
+/* GLOBAL RESET + BASE STYLE    */
+/* ---------------------------- */
 * {
     margin: 0;
     padding: 0;
@@ -6,196 +8,221 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Background */
 body {
     min-height: 100vh;
     background: linear-gradient(135deg, #667eea, #49BC9B);
     padding: 20px;
 }
 
-/* Container */
+/* ---------------------------- */
+/* MAIN PAGE CONTAINER          */
+/* ---------------------------- */
 .container {
     max-width: 800px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
 }
 
-/* Ticket Wrapper */
+/* ---------------------------- */
+/* TICKET CARD                  */
+/* ---------------------------- */
 .ticket-wrapper {
     width: 100%;
-    max-width: 600px;
+    max-width: 650px;
 }
 
-/* Ticket Card */
 .ticket-card {
-    background: white;
+    background: #fff;
     border-radius: 16px;
     padding: 30px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-    border-left: 5px solid #49BC9B;
+    border-left: 6px solid #49BC9B;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.18);
     position: relative;
-    overflow: hidden;
 }
 
 .ticket-card::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 4px;
     background: linear-gradient(90deg, #667eea, #49BC9B);
 }
 
-/* Ticket Header */
+/* Header */
 .ticket-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 25px;
     gap: 15px;
+    margin-bottom: 25px;
 }
 
 .ticket-title {
     font-size: 28px;
-    font-weight: bold;
+    font-weight: 700;
     color: #333;
     flex: 1;
     line-height: 1.2;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
 }
 
 .ticket-id {
     background: linear-gradient(135deg, #667eea, #49BC9B);
-    color: white;
     padding: 8px 16px;
-    border-radius: 25px;
+    color: #fff;
     font-size: 14px;
     font-weight: bold;
+    border-radius: 20px;
     white-space: nowrap;
-    flex-shrink: 0;
 }
 
 /* Ticket Content */
-.ticket-content {
-    margin-bottom: 25px;
-}
-
 .ticket-content h3 {
     font-size: 18px;
     color: #667eea;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     font-weight: 600;
 }
 
 .ticket-content p {
-    color: #555;
-    line-height: 1.6;
     font-size: 16px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    word-break: break-word;
+    color: #444;
+    line-height: 1.6;
 }
 
-/* Separator */
 .ticket-card hr {
-    border: none;
-    border-top: 2px solid #f0f0f0;
     margin: 25px 0;
+    border: none;
+    border-top: 2px solid #eee;
 }
 
-/* Ticket Meta */
+/* Meta Info */
 .ticket-meta {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .meta-item {
+    color: #555;
     font-size: 14px;
-    color: #666;
 }
 
 .meta-item strong {
-    color: #333;
-    font-weight: 600;
+    color: #222;
 }
 
-/* Actions */
+/* ---------------------------- */
+/* ACTION BUTTONS               */
+/* ---------------------------- */
 .actions {
     width: 100%;
-    max-width: 600px;
     text-align: center;
 }
 
-.back-btn, #addCommentButton {
+button {
+    cursor: pointer;
+}
+
+#addCommentButton, .back-btn {
+    padding: 12px 24px;
     background: #667eea;
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: .25s ease;
+    box-shadow: 0 4px 12px rgba(102,126,234,.3);
 }
 
-.back-btn:hover {
-    background: #5a67d8;
+#addCommentButton:hover, .back-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    background: #5a67d8;
 }
 
-.back-btn:active {
+#addCommentButton:active, .back-btn:active {
     transform: translateY(0);
 }
 
-/* Responsive Design */
+/* ---------------------------- */
+/* COMMENTS SECTION             */
+/* ---------------------------- */
+
+/* Entire comment section is wider than ticket */
+#commentsContainer {
+    width: 95%;        /* WIDER than the ticket card */
+    max-width: 1000px; /* Adjustable */
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Comment box */
+.commentBox {
+    background: #fff;
+    padding: 20px 24px;
+    border-radius: 14px;
+    border-left: 6px solid #6366f1;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+
+    /* WORD WRAPPING FIX */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    width: 100%;
+}
+
+/* Comment Title */
+.commentBox h4 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #6366f1;
+}
+
+/* Comment body */
+.commentBox p {
+    font-size: 16px;
+    color: #374151;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+/* Timestamp + Username */
+.commentBox small {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* ---------------------------- */
+/* RESPONSIVE DESIGN            */
+/* ---------------------------- */
 @media (max-width: 768px) {
     body {
-        padding: 15px;
-    }
-
-    .container {
-        gap: 15px;
+        padding: 10px;
     }
 
     .ticket-card {
         padding: 20px;
-        border-radius: 12px;
     }
 
-    .ticket-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+    #commentsContainer {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .commentBox {
+        padding: 18px;
     }
 
     .ticket-title {
-        font-size: 24px;
-    }
-
-    .ticket-id {
-        align-self: flex-start;
-    }
-
-    .ticket-content h3 {
-        font-size: 16px;
-    }
-
-    .ticket-content p {
-        font-size: 15px;
-    }
-
-    .back-btn {
-        width: 100%;
-        padding: 14px;
-        font-size: 16px;
+        font-size: 22px;
     }
 }
 
@@ -204,19 +231,25 @@ body {
         padding: 15px;
     }
 
-    .ticket-title {
-        font-size: 20px;
+    .commentBox {
+        padding: 16px;
     }
 
-    .ticket-content h3 {
-        font-size: 15px;
+    .commentBox h4 {
+        font-size: 18px;
     }
+}
 
-    .ticket-content p {
-        font-size: 14px;
-    }
+.ticket-content p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;   /* <— THIS FIXES YOUR PROBLEM */
+}  
 
-    .meta-item {
-        font-size: 13px;
-    }
+.ticket-card, .ticket-content p {
+    max-width: 100%;
+}
+
+body {
+    overflow-x: hidden;
 }

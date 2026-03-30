@@ -22,6 +22,7 @@ public class server {
         server.createContext("/addTicket", new addTicketHandler());
         server.createContext("/getTickets", new getTicketsHandler());
         server.createContext("/addComment", new addCommentHandler ());
+        server.createContext("/getComments", new getCommentHandler ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -451,6 +452,68 @@ public class server {
 
                 } catch (Exception e) {
                     System.err.println (e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
+
+    static class getCommentHandler implements HttpHandler {
+        public void handle (HttpExchange exchange) throws IOException {
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String TICKET_ID = formData.get("ticketID");
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "SELECT * FROM LOAF_COMMENTS WHERE TICKET_ID = ?"
+                    );
+
+                    statement.setString(1, TICKET_ID);
+
+                    ResultSet result = statement.executeQuery();
+
+                    StringBuilder responseBuilder = new StringBuilder();
+                    responseBuilder.append("[");
+
+                    while (result.next()) {
+                        responseBuilder.append("{");
+                        responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
+                        responseBuilder.append("\"comment\":\"").append(result.getString("COMMENT")).append("\",");
+                        responseBuilder.append("\"commentTitle\":\"").append(result.getString("COMMENT_TITLE")).append("\",");
+                        responseBuilder.append("\"madyOn\":\"").append(result.getString("CREATED_AT")).append("\"");
+                        responseBuilder.append("},");
+                    }
+
+                    if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
+                        responseBuilder.deleteCharAt(responseBuilder.length() - 1);
+                    }
+
+                    responseBuilder.append("]");
+
+                    server.sendResponse(exchange, 200, responseBuilder.toString());
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
                     server.sendResponse(exchange, 500, "ERROR");
                 }
 

@@ -83,8 +83,10 @@ async function addTicket () {
 
         const responseText = await serverResponse.text();
 
-        console.log("Server response:");
+        console.log ("------------------------------------------------------");
+        console.log("Server response to addTicket:");
         console.log(responseText);
+        console.log ("------------------------------------------------------");
 
         if (responseText == "SUCCESS") {
             alert ("Success");
@@ -97,9 +99,11 @@ async function addTicket () {
         history.go ();
 
     } catch (error) {
+        console.log ("---------------------error to addtickets ()---------------------------------");
         console.error ("YOU FORGOT TO TURN THE SERVER ON");
         console.log ("\n");
         console.error("Request failed:", error);
+        console.log ("------------------------------------------------------");
     }
 }
 
@@ -115,20 +119,24 @@ async function getTickets () {
         });
         const responseText = await serverResponse.text();
 
-        console.log("Server response:");
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getTickets ():");
         console.log(responseText);
+        console.log ("------------------------------------------------------");
 
-        console.log ("Parsing JSON...");
         const tickets = JSON.parse (responseText);
-        console.log ("Parsed JSON:");
+        console.log ("-----------------------GETTICKETS ()-------------------------------");
         console.log (tickets);
+        console.log ("------------------------------------------------------");
 
         displayTickets(tickets);
     }
     catch (error) {
+        console.error ("----------------------error to get tickets--------------------------------");
         console.error ("YOU FORGOT TO TURN THE SERVER ON");
         console.log ("\n");
         console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
     }
 }
 
