@@ -68,7 +68,7 @@ async function login() {
             if (role == "ADMIN") {
                 window.location.href = "Dashboards/AdminDashboard.html";
             }
-            if (role == "WORKER") {
+            if (role == "EMPLOYEE") {
                 window.location.href = "Dashboards/WorkerDashboard.html";
             }
             if (role == "CLIENT") {
