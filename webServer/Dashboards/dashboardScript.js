@@ -203,3 +203,106 @@ async function loadDashboardStats() {
 }
 
 getTickets ();
+
+const themes = {
+    basic: {
+        dshbackground1: "#667eea",
+        dshbackground2: "#49BC9B",
+        dshbackground3: "white",
+        dshnav1: "#666",
+        dshhead1: "#333",
+        dshhead2: "#5a67d8",
+        dshhead3: "#ddd",
+        dshticket1: "#eee" ,
+        dshticket2: "#999"
+    },
+    sunsetPro: {
+        dshbackground1: "#ff6a3d",
+        dshbackground2: "#ff9a3d",
+        dshbackground3: "#fff7f3",
+        dshnav1: "#6b3b2f",
+        dshhead1: "#3c1f15",
+        dshhead2: "#ff7a55",
+        dshhead3: "#f2d5c8",
+        dshticket1: "#f7e3d8",
+        tickettitle: "white",
+        tickettext: "white",
+        dshticket2: "#a77d6e"
+    },
+    aquaBreeze: {
+        dshbackground1: "#009ffd",
+        dshbackground2: "#2a2a72",
+        dshbackground3: "#ffffff",
+        dshnav1: "#4d5d7a",
+        dshhead1: "#212b40",
+        dshhead2: "#2678ff",
+        dshhead3: "#d0d8e8",
+        dshticket1: "#e8f1ff",
+        dshticket2: "#7e8cab",
+        tickettitle: "white",
+        tickettext: "white",
+    },
+    emeraldMist: {
+        dshbackground1: "#0bab64",
+        dshbackground2: "#3bb78f",
+        dshbackground3: "#f6fffa",
+        dshnav1: "#3b5c52",
+        dshhead1: "#233c34",
+        dshhead2: "#0abf74",
+        dshhead3: "#cfe8dd",
+        dshticket1: "#e4f7ef",
+        dshticket2: "#84a797",
+        tickettitle: "white",
+        tickettext: "white",
+    },
+    royalLuxe: {
+        dshbackground1: "#4e54c8",
+        dshbackground2: "#8f94fb",
+        dshbackground3: "#fafaff",
+        dshnav1: "#4a4e89",
+        dshhead1: "#2e3160",
+        dshhead2: "#6a6efb",
+        dshhead3: "#d7d9ff",
+        dshticket1: "#ecebff",
+        dshticket2: "#9d9ccc",
+        tickettitle: "white",
+        tickettext: "white",
+    },
+    cyberNight2: {
+        dshbackground1: "#1f2b3a",   // gradient start (soft navy)
+        dshbackground2: "#354a62",   // gradient end (lighter navy)
+        dshbackground3: "#f5f7fa",   // MAIN CONTENT background (light!)
+        
+        dshnav1: "#4e5f77",          // sidebar text
+        dshhead1: "#1c2533",         // main titles
+        dshhead2: "#3ca3ff",         // button hover + highlight
+        dshhead3: "#c7d2e5",         // input borders
+        
+        dshticket1: "#e3e9f2",       // ticket border lines
+        dshticket2: "#6e7f99",        // ticket small text
+        tickettitle: "white",
+        tickettext: "white",
+    },
+    darkModeUltra: {
+        dshbackground1: "#1a1c23",   // gradient start (soft obsidian)
+        dshbackground2: "#23262f",   // gradient end (slate black)
+
+        dshbackground3: "#1f2128",   // CARDS, SIDEBAR, HEADER (true dark)
+
+        dshnav1: "#b5bac6",          // sidebar nav text (soft gray)
+        dshhead1: "#e5e7eb",         // main headings (light gray, not pure white)
+        dshhead2: "#4d8dff",         // highlight blue (buttons, hover)
+        dshhead3: "#2b2e36",         // input borders (darkened)
+
+        dshticket1: "#2a2d35",       // ticket separators / borders
+        dshticket2: "#8f96a4",        // ticket details text
+    }
+}
+
+function applyTheme(name) {
+  const theme = themes[name];
+  for (let key in theme) {
+    document.documentElement.style.setProperty(`--${key}`, theme[key]);
+  }
+}
+applyTheme ("darkModeUltra");

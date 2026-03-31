@@ -9,7 +9,7 @@
 
 body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea, #49BC9B);
+    background: linear-gradient(135deg, var(--dshbackground1), var(--dshbackground2));
     display: flex;
     overflow-x: hidden;
 }
@@ -18,7 +18,7 @@ body {
 .sidebar {
     width: 100%;
     max-width: 250px;
-    background: white;
+    background: var(--dshbackground3);
     min-height: 100vh;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -30,9 +30,9 @@ body {
 
 .sidebar-header {
     padding: 20px;
-    border-bottom: 1px solid #eee;
-    background: linear-gradient(135deg, #667eea, #49BC9B);
-    color: white;
+    border-bottom: 1px solid var(--dshticket1);
+    background: linear-gradient(135deg, var(--dshbackground1), var(--dshbackground2));
+    color: var(--dshbackground3);
     text-align: center;
 }
 
@@ -44,22 +44,22 @@ body {
     display: flex;
     align-items: center;
     padding: 15px 20px;
-    color: #666;
+    color: var(--dshnav1);
     text-decoration: none;
     transition: all 0.2s;
     border-left: 4px solid transparent;
 }
 
 .nav-item:hover {
-    background-color: #f8f9fa;
-    color: #667eea;
-    border-left-color: #667eea;
+    background-color: var(--dshbackground3);
+    color: var(--dshbackground1);
+    border-left-color: var(--dshbackground1);
 }
 
 .nav-item.active {
     background-color: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    border-left-color: #667eea;
+    color: var(--dshbackground1);
+    border-left-color: var(--dshbackground1);
     font-weight: bold;
 }
 
@@ -87,7 +87,7 @@ body {
 
 /* --- 4. Header & Forms --- */
 .header {
-    background: white;
+    background: var(--dshbackground3);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -97,13 +97,13 @@ body {
 .header h1 {
     text-align: center;
     margin-bottom: 20px;
-    color: #333;
+    color: var(--dshhead1);
 }
 
 .header input {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--dshhead3);
     border-radius: 8px;
     margin-bottom: 10px;
     font-size: 14px;
@@ -112,17 +112,17 @@ body {
 .header button {
     width: 100%;
     padding: 12px;
-    background: #667eea;
+    background: var(--dshbackground1);
     border: none;
     border-radius: 8px;
-    color: white;
+    color: var(--dshbackground3);
     cursor: pointer;
     font-size: 16px;
     transition: background 0.3s;
 }
 
 .header button:hover {
-    background: #5a67d8;
+    background: var(--dshhead2);
 }
 
 /* --- 5. Ticket Cards & Wrapping Logic --- */
@@ -133,11 +133,11 @@ body {
 }
 
 .ticket {
-    background: white;
+    background: var(--dshbackground3);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-left: 5px solid #49BC9B;
+    border-left: 5px solid var(--background2);
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
@@ -160,7 +160,7 @@ body {
 
 .ticket-title {
     margin: 0;
-    color: #333;
+    color: var(--dshhead1);
     font-size: 18px;
     font-weight: bold;
     
@@ -173,8 +173,8 @@ body {
 }
 
 .ticket-id {
-    background: linear-gradient(135deg, #667eea, #49BC9B);
-    color: white;
+    background: linear-gradient(135deg, var(--dshbackground1), var(--dshbackground2));
+    color: var(--dshbackground3);
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 11px;
@@ -184,7 +184,7 @@ body {
 }
 
 .ticket-data {
-    color: #666;
+    color: var(--dshnav1);
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 15px;
@@ -193,11 +193,11 @@ body {
 }
 
 .ticket-creator {
-    color: #999;
+    color: var(--dshticket2);
     font-size: 11px;
     margin-top: auto;
     padding-top: 12px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--dshticket1);
     text-align: right;
 }
 
@@ -209,7 +209,7 @@ body {
 }
 
 .stat-card {
-    background: white;
+    background: var(--dshbackground3);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -219,7 +219,7 @@ body {
 .stat-number {
     font-size: 32px;
     font-weight: bold;
-    color: #667eea;
+    color: var(--dshbackground1);
 }
 
 /* --- 7. Mobile Controls --- */
@@ -247,12 +247,32 @@ body {
         top: 15px;
         right: 15px;
         z-index: 1002;
-        background: #667eea;
-        color: white;
+        background: var(--dshbackground1);
+        color: var(--dshbackground3);
         border: none;
         padding: 10px 15px;
         border-radius: 8px;
         cursor: pointer;
     }
     .ticket-container { grid-template-columns: 1fr; }
+}
+
+/* ====== FORCE DARK MODE FOR TICKET CONTENT ====== */
+
+.ticket-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--tickettitle) !important;
+    line-height: 1.3;
+    flex: 1;
+    word-wrap: break-word;
+}
+
+.ticket-data {
+    color: var(--tickettext) !important;
+    line-height: 1.55;
+    margin: 16px 0;
+    font-size: 15px;
+    word-wrap: break-word;
+    white-space: normal;
 }
