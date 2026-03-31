@@ -8,12 +8,15 @@ import java.text.NumberFormat.Style;
 import java.util.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+
 import javaServers.models.passwordHasher;
+import javaServers.models.multiFormParser;
+
 
 public class server {
 
     public static void main(String[] args) throws Exception {
-
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         //SERVER CONTEXT
         server.createContext("/login", new LoginHandler());
@@ -24,6 +27,7 @@ public class server {
         server.createContext("/addComment", new addCommentHandler ());
         server.createContext("/getComments", new getCommentHandler ());
         server.createContext("/getTicketsEmployee", new getTicketsEmployeeHandler ());
+        server.createContext("/uploads", new FileServerHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -411,14 +415,29 @@ public class server {
             }
 
             if ("POST".equals(exchange.getRequestMethod())) {
-
+                
+                
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+                    multiFormParser parser = new multiFormParser (exchange);
+                    String title = parser.getField("title");
+                    String data = parser.getField("data");
+                    String creator = parser.getField("creator");
+                    String ticket = parser.getField("ticket");
+                    String filePath = null;
 
-                    String title = formData.get("title");
-                    String data = formData.get("data");
-                    String creator = formData.get("creator");
-                    String ticket = formData.get("ticket");
+                    if (parser.hasFile()) {
+                        String fileName = System.currentTimeMillis() + "_" + parser.getFileName();
+                        File saveDir = new File("uploads");
+                        if (!saveDir.exists()) saveDir.mkdirs();
+
+                        File savedFile = new File(saveDir, fileName);
+
+                        FileOutputStream fos = new FileOutputStream(savedFile);
+                        fos.write(parser.getFileData());
+                        fos.close();
+
+                        filePath = "uploads/" + fileName;
+                    }
 
                    
 
@@ -433,13 +452,14 @@ public class server {
                     );
 
                     PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID) VALUES (?, ?, ?, ?)"
+                        "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH) VALUES (?, ?, ?, ?, ?)"
                     );  
 
                     statement.setString(1, title);
                     statement.setString(2, data);
                     statement.setString(3, creator);
                     statement.setString(4, ticket);
+                    statement.setString (5, filePath);
 
                     statement.executeUpdate ();
 
@@ -498,7 +518,8 @@ public class server {
                         responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
                         responseBuilder.append("\"comment\":\"").append(result.getString("COMMENT")).append("\",");
                         responseBuilder.append("\"commentTitle\":\"").append(result.getString("COMMENT_TITLE")).append("\",");
-                        responseBuilder.append("\"madeOn\":\"").append(result.getString("CREATED_AT")).append("\"");
+                        responseBuilder.append("\"madeOn\":\"").append(result.getString("CREATED_AT")).append("\",");
+                        responseBuilder.append("\"filepath\":\"").append(result.getString("FILE_PATH")).append("\"");
                         responseBuilder.append("},");
                     }
 
@@ -586,6 +607,34 @@ public class server {
             } else {
                 exchange.sendResponseHeaders(405, -1);  
             }
+        }
+    }
+    static class FileServerHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
+            server.addCORS(exchange);
+
+            String path = exchange.getRequestURI().getPath();  // /uploads/xxx.png
+            File file = new File(path.substring(1));
+
+            if (!file.exists()) {
+                exchange.sendResponseHeaders(404, -1);
+                return;
+            }
+
+            byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
+            exchange.getResponseHeaders().add("Content-Type", getMimeType(file.getName()));
+
+            exchange.sendResponseHeaders(200, bytes.length);
+            exchange.getResponseBody().write(bytes);
+            exchange.getResponseBody().close();
+        }
+
+        private String getMimeType(String name) {
+            if (name.endsWith(".png")) return "image/png";
+            if (name.endsWith(".jpg") || name.endsWith(".jpeg")) return "image/jpeg";
+            if (name.endsWith(".gif")) return "image/gif";
+            return "application/octet-stream";
         }
     }
 }

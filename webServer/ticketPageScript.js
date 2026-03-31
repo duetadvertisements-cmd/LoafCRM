@@ -114,12 +114,53 @@ function displayComments(commentsArray) {
         const div = document.createElement("div");
         div.classList.add("commentBox");
 
+        let attachmentHTML = "";
+        
+        if (c.filepath && c.filepath !== "null") {
+            const fullUrl = `http://192.168.1.34:8080/${c.filepath}`;
+            const fileName = c.filepath.split('/').pop(); 
+            const extension = fileName.split('.').pop().toLowerCase();
+
+            // Category mapping
+            const images = ["jpg", "jpeg", "png", "gif", "webp"];
+            const code = ["java", "cpp", "py", "js", "html", "css", "jar"];
+            const docs = ["pdf", "txt", "doc", "docx"];
+
+            if (images.includes(extension)) {
+                // Show Image Preview
+                attachmentHTML = `
+                    <div class="file-preview">
+                        <img src="${fullUrl}" style="max-width:200px; border-radius:8px; border:1px solid #ddd;">
+                        <br><a href="${fullUrl}" target="_blank">View Full Image</a>
+                    </div>`;
+            } else {
+                // Determine Icon
+                let icon = "📁";
+                if (extension === "pdf") icon = "📕";
+                if (extension === "txt") icon = "📄";
+                if (extension === "jar") icon = "☕";
+                if (extension === "zip" || extension === "rar") icon = "📦";
+
+                // Show Download Card
+                attachmentHTML = `
+                    <div class="file-card" style="display:flex; align-items:center; gap:10px; padding:12px; background:#f8f9fa; border:1px solid #e0e0e0; border-radius:8px; margin-top:10px;">
+                        <span style="font-size:24px;">${icon}</span>
+                        <div style="flex-grow:1;">
+                            <div style="font-weight:bold; font-size:14px; word-break:break-all;">${fileName}</div>
+                            <small style="color:#666;">${extension.toUpperCase()} File</small>
+                        </div>
+                        <a href="${fullUrl}" download="${fileName}" style="padding:5px 15px; background:#007bff; color:white; border-radius:5px; text-decoration:none; font-size:13px;">Download</a>
+                    </div>`;
+            }
+        }
+
         div.innerHTML = `
             <h4>${c.commentTitle}</h4>
             <p>${c.comment}</p>
-            <small>By ${c.username} • ${c.madeOn}</small>
+            ${attachmentHTML}
+            <small style="display:block; margin-top:15px; color:#888;">By ${c.username} • ${c.madeOn}</small>
         `;
-
+        
         container.appendChild(div);
     });
 }
