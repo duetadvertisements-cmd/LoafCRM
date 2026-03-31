@@ -25,7 +25,8 @@ function setMainTicket() {
 }
 
 function goBack() {
-    window.location.href = 'Dashboards/dashboard.html';
+    const goBackLocation = sessionStorage.getItem ("dashboardHref");
+    window.location.href = goBackLocation;
 }
 
 setMainTicket();
@@ -39,7 +40,7 @@ async function addComment () {
     const comment = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}&ticket=${encodeURIComponent (ticket)}`;    
 
     try {
-        const serverResponse = await fetch("http://localhost:8080/addComment", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/addComment", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: comment
@@ -76,7 +77,7 @@ async function getComments () {
     const ticket = `ticketID=${encodeURIComponent(ticketID)}`;
 
     try {
-        const serverResponse = await fetch("http://localhost:8080/getComments", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getComments", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket

@@ -52,6 +52,7 @@ function ticketClicked(ticket) {
         creator: ticket.creator,
         id: ticket.id
     }));
+    sessionStorage.setItem ("dashboardHref", "webSerer/dashboard.html")
     window.location.href = "../ticketPage.html";
 }
 
@@ -75,7 +76,7 @@ async function addTicket () {
     const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}`;    
 
     try {
-        const serverResponse = await fetch("http://localhost:8080/addTicket", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -112,7 +113,7 @@ async function getTickets () {
     const username = sessionStorage.getItem ("username");
     const ticket = `username=${encodeURIComponent(username)}`;
     try {
-        const serverResponse = await fetch("http://localhost:8080/getTickets", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -172,8 +173,8 @@ async function loadDashboardStats() {
         return;
     }
 
-    try {
-        const response = await fetch("http://localhost:8080/getTickets", {
+    try {   
+        const response = await fetch("http://192.168.1.34:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`

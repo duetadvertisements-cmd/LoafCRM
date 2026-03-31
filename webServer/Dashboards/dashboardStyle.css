@@ -16,7 +16,8 @@ body {
 
 /* --- 2. Sidebar Navigation --- */
 .sidebar {
-    width: 250px;
+    width: 100%;
+    max-width: 250px;
     background: white;
     min-height: 100vh;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -73,7 +74,7 @@ body {
     margin-left: 250px;
     padding: 30px;
     min-height: 100vh;
-    width: calc(100% - 250px);
+    width: 100%;
 }
 
 .content-section {

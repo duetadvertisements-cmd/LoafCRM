@@ -3,7 +3,7 @@ async function getTickets () {
     const username = sessionStorage.getItem ("username");
     const ticket = `username=${encodeURIComponent(username)}`;
     try {
-        const serverResponse = await fetch("http://localhost:8080/getTicketsEmployee", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getTicketsEmployee", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -65,6 +65,7 @@ function ticketClicked(ticket) {
         creator: ticket.creator,
         id: ticket.id
     }));
+    sessionStorage.setItem ("dashboardHref", "webServer/WorkerDashboard.html")
     window.location.href = "../ticketPage.html";
 }
 
