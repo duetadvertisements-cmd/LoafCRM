@@ -52,7 +52,7 @@ function ticketClicked(ticket) {
         creator: ticket.creator,
         id: ticket.id
     }));
-    sessionStorage.setItem ("dashboardHref", "webSerer/dashboard.html")
+    sessionStorage.setItem ("dashboardHref", "dashboards/dashboard.html")
     window.location.href = "../ticketPage.html";
 }
 

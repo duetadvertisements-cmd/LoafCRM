@@ -19,5 +19,24 @@
                 <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
             </div>
         </div>
+        <div id="commentModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Add Comment</h2>
+
+                <label>Title:</label>
+                <input type="text" id="commentTitle">
+
+                <label>Comment:</label>
+                <textarea id="commentText"></textarea>
+
+                <label>Attachment (optional):</label>
+                <input type="file" id="commentFile">
+
+                <div class="modal-actions">
+                    <button onclick="submitComment()">Submit</button>
+                    <button onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
     </BODY>
 </HTML>

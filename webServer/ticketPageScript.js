@@ -31,44 +31,45 @@ function goBack() {
 
 setMainTicket();
 
-async function addComment () {
-    const title = prompt ();
-    const data = prompt ();
-    const creator = sessionStorage.getItem ("username");
+function addComment() {
+    document.getElementById("commentModal").classList.remove("hidden");
+}
+
+function closeModal() {
+    document.getElementById("commentModal").classList.add("hidden");
+}
+
+async function submitComment() {
+    const title = document.getElementById("commentTitle").value;
+    const text = document.getElementById("commentText").value;
+    const file = document.getElementById("commentFile").files[0];
+
+    const creator = sessionStorage.getItem("username");
     const ticket = JSON.parse(sessionStorage.getItem("currentTicket")).id;
 
-    const comment = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}&ticket=${encodeURIComponent (ticket)}`;    
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("data", text);
+    formData.append("creator", creator);
+    formData.append("ticket", ticket);
+    if (file) formData.append("file", file);
 
     try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/addComment", {
+        const response = await fetch("http://192.168.1.34:8080/addComment", {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: comment
+            body: formData
         });
 
-        const responseText = await serverResponse.text();
-
-        console.log ("------------------------------------------------------");
-        console.log("Server response to addComment ():");
-        console.log(responseText);
-        console.log ("------------------------------------------------------");
-
-        if (responseText == "SUCCESS") {
-            alert ("Success");
+        const result = await response.text();
+        if (result === "SUCCESS") {
+            closeModal();
+            history.go();
+        } else {
+            alert("Failed: " + result);
         }
-
-        else {
-            alert ("Failed");
-        }
-
-        history.go ();
-
-    } catch (error) {
-        console.error ("-------------------------ERROR TO ADDCOMMENT ()-----------------------------");
-        console.error ("YOU FORGOT TO TURN THE SERVER ON");
-        console.error ("\n");
-        console.error("Request failed:", error);
-        console.error ("------------------------------------------------------");
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
     }
 }
 

@@ -65,7 +65,7 @@ function ticketClicked(ticket) {
         creator: ticket.creator,
         id: ticket.id
     }));
-    sessionStorage.setItem ("dashboardHref", "webServer/WorkerDashboard.html")
+    sessionStorage.setItem ("dashboardHref", "dashboards/WorkerDashboard.html")
     window.location.href = "../ticketPage.html";
 }
 
