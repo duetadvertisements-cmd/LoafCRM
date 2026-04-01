@@ -1,3 +1,50 @@
+/* -------------------------------------- */
+/* GLOBAL CSS VARIABLES (Theme Controlled) */
+/* -------------------------------------- */
+
+:root {
+    /* BACKGROUND */
+    --bg1: #667eea;            /* gradient start */
+    --bg2: #49BC9B;            /* gradient end */
+
+    /* CARD / TICKET */
+    --card-bg: #ffffff;
+    --card-border: #49BC9B;
+    --card-top-strip: #667eea;
+
+    /* TICKET TEXT */
+    --ticket-title: #333;
+    --ticket-text: #444;
+    --ticket-id-bg1: #667eea;
+    --ticket-id-bg2: #49BC9B;
+
+    /* META */
+    --meta-strong: #222;
+    --meta-text: #555;
+
+    /* COMMENTS */
+    --comment-bg: #ffffff;
+    --comment-border: #6366f1;
+    --comment-title: #1f2937;
+    --comment-text: #374151;
+    --comment-small: #6b7280;
+
+    /* BUTTONS */
+    --button-bg: #667eea;
+    --button-hover: #5a67d8;
+    --button-text: #ffffff;
+
+    /* INPUTS */
+    --input-bg: #f7f9fc;
+    --input-border: #d1d5db;
+    --input-focus: rgba(102,126,234,0.25);
+
+    /* MODAL */
+    --modal-bg: #ffffff;
+    --modal-border: #49BC9B;
+    --modal-strip: #667eea;
+}
+
 /* ---------------------------- */
 /* GLOBAL RESET + BASE STYLE    */
 /* ---------------------------- */
@@ -10,8 +57,9 @@
 
 body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea, #49BC9B);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
     padding: 20px;
+    overflow-x: hidden;
 }
 
 /* ---------------------------- */
@@ -35,10 +83,10 @@ body {
 }
 
 .ticket-card {
-    background: #fff;
+    background: var(--card-bg);
     border-radius: 16px;
     padding: 30px;
-    border-left: 6px solid #49BC9B;
+    border-left: 6px solid var(--card-border);
     box-shadow: 0 15px 35px rgba(0,0,0,0.18);
     position: relative;
 }
@@ -48,7 +96,7 @@ body {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #667eea, #49BC9B);
+    background: linear-gradient(90deg, var(--card-top-strip), var(--card-border));
 }
 
 /* Header */
@@ -62,15 +110,15 @@ body {
 .ticket-title {
     font-size: 28px;
     font-weight: 700;
-    color: #333;
+    color: var(--ticket-title);
     flex: 1;
     line-height: 1.2;
 }
 
 .ticket-id {
-    background: linear-gradient(135deg, #667eea, #49BC9B);
+    background: linear-gradient(135deg, var(--ticket-id-bg1), var(--ticket-id-bg2));
     padding: 8px 16px;
-    color: #fff;
+    color: white;
     font-size: 14px;
     font-weight: bold;
     border-radius: 20px;
@@ -80,21 +128,25 @@ body {
 /* Ticket Content */
 .ticket-content h3 {
     font-size: 18px;
-    color: #667eea;
+    color: var(--card-top-strip);
     margin-bottom: 8px;
     font-weight: 600;
 }
 
 .ticket-content p {
     font-size: 16px;
-    color: #444;
+    color: var(--ticket-text);
     line-height: 1.6;
+
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 .ticket-card hr {
     margin: 25px 0;
     border: none;
-    border-top: 2px solid #eee;
+    border-top: 2px solid var(--input-border);
 }
 
 /* Meta Info */
@@ -105,12 +157,12 @@ body {
 }
 
 .meta-item {
-    color: #555;
+    color: var(--meta-text);
     font-size: 14px;
 }
 
 .meta-item strong {
-    color: #222;
+    color: var(--meta-strong);
 }
 
 /* ---------------------------- */
@@ -125,10 +177,11 @@ button {
     cursor: pointer;
 }
 
-#addCommentButton, .back-btn {
+#addCommentButton,
+.back-btn {
     padding: 12px 24px;
-    background: #667eea;
-    color: white;
+    background: var(--button-bg);
+    color: var(--button-text);
     border: none;
     border-radius: 10px;
     font-size: 16px;
@@ -137,12 +190,14 @@ button {
     box-shadow: 0 4px 12px rgba(102,126,234,.3);
 }
 
-#addCommentButton:hover, .back-btn:hover {
+#addCommentButton:hover,
+.back-btn:hover {
     transform: translateY(-2px);
-    background: #5a67d8;
+    background: var(--button-hover);
 }
 
-#addCommentButton:active, .back-btn:active {
+#addCommentButton:active,
+.back-btn:active {
     transform: translateY(0);
 }
 
@@ -150,163 +205,65 @@ button {
 /* COMMENTS SECTION             */
 /* ---------------------------- */
 
-/* Entire comment section is wider than ticket */
 #commentsContainer {
-    width: 95%;        /* WIDER than the ticket card */
-    max-width: 1000px; /* Adjustable */
+    width: 95%;
+    max-width: 1000px;
     margin: 20px auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* Comment box */
 .commentBox {
-    background: #fff;
+    background: var(--comment-bg);
     padding: 20px 24px;
     border-radius: 14px;
-    border-left: 6px solid #6366f1;
+    border-left: 6px solid var(--comment-border);
     box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 
-    /* WORD WRAPPING FIX */
     word-wrap: break-word;
     overflow-wrap: break-word;
     word-break: break-word;
-
-    width: 100%;
 }
 
 /* Comment Title */
 .commentBox h4 {
     font-size: 22px;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--comment-title);
     margin-bottom: 8px;
     padding-bottom: 6px;
-    border-bottom: 2px solid #6366f1;
+    border-bottom: 2px solid var(--comment-border);
 }
 
 /* Comment body */
 .commentBox p {
     font-size: 16px;
-    color: #374151;
+    color: var(--comment-text);
     margin-bottom: 8px;
     line-height: 1.5;
 }
 
-/* Timestamp + Username */
+/* Timestamp */
 .commentBox small {
     font-size: 13px;
-    color: #6b7280;
+    color: var(--comment-small);
 }
 
 /* ---------------------------- */
-/* RESPONSIVE DESIGN            */
+/* MODAL                        */
 /* ---------------------------- */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .ticket-card {
-        padding: 20px;
-    }
-
-    #commentsContainer {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .commentBox {
-        padding: 18px;
-    }
-
-    .ticket-title {
-        font-size: 22px;
-    }
-}
-
-@media (max-width: 480px) {
-    .ticket-card {
-        padding: 15px;
-    }
-
-    .commentBox {
-        padding: 16px;
-    }
-
-    .commentBox h4 {
-        font-size: 18px;
-    }
-}
-
-.ticket-content p {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    word-break: break-all;   /* <— THIS FIXES YOUR PROBLEM */
-}  
-
-.ticket-card, .ticket-content p {
-    max-width: 100%;
-}
-
-body {
-    overflow-x: hidden;
-}
 
 .modal {
     position: fixed;
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    background: #00000066;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.hidden {
-    display: none;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.modal-content input, 
-.modal-content textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: space-between;
-}
-
-/* ---------------------------------- */
-/* BEAUTIFUL LOAF CRM THEMED MODAL    */
-/* ---------------------------------- */
-
-.modal {
-    position: fixed;
-    top: 0; 
-    left: 0;
-    width: 100%;
-    height: 100%;
     background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(4px);
     display: flex;
     justify-content: center;
     align-items: center;
-    backdrop-filter: blur(4px);     /* Smooth blur behind modal */
     z-index: 999;
 }
 
@@ -315,51 +272,46 @@ body {
 }
 
 .modal-content {
-    background: #ffffff;
+    background: var(--modal-bg);
     width: 90%;
     max-width: 420px;
     padding: 25px 28px;
     border-radius: 18px;
-    
-    /* Premium shadow like ticket card */
+    border-left: 6px solid var(--modal-border);
     box-shadow: 0 15px 35px rgba(0,0,0,0.20);
-
-    border-left: 6px solid #49BC9B; /* matches ticket border */
     position: relative;
-
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* Top gradient strip like ticket */
 .modal-content::before {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 4px;
     border-radius: 18px 18px 0 0;
-    background: linear-gradient(90deg, #667eea, #49BC9B);
+    background: var(--modal-strip);
 }
 
 /* Header */
 .modal-content h2 {
     font-size: 24px;
-    color: #1f2937;
+    color: var(--comment-title);
     font-weight: 700;
     margin-bottom: 8px;
     padding-bottom: 6px;
-    border-bottom: 2px solid #667eea;
+    border-bottom: 2px solid var(--modal-strip);
 }
 
-/* Inputs + Textareas */
+/* Inputs */
 .modal-content input,
 .modal-content textarea {
     width: 100%;
     padding: 10px 12px;
     border-radius: 10px;
-    background: #f7f9fc;
-    border: 1px solid #d1d5db;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
     font-size: 15px;
     outline: none;
     transition: 0.2s ease;
@@ -370,11 +322,10 @@ body {
     resize: vertical;
 }
 
-/* Focus style matches theme */
 .modal-content input:focus,
 .modal-content textarea:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102,126,234,0.25);
+    border-color: var(--card-top-strip);
+    box-shadow: 0 0 0 3px var(--input-focus);
 }
 
 /* Buttons */
@@ -384,11 +335,10 @@ body {
     margin-top: 10px;
 }
 
-/* Submit & Cancel match your button style */
 .modal-actions button {
     padding: 12px 20px;
-    background: #667eea;
-    color: white;
+    background: var(--button-bg);
+    color: var(--button-text);
     border: none;
     border-radius: 10px;
     font-size: 16px;
@@ -400,14 +350,9 @@ body {
 
 .modal-actions button:hover {
     transform: translateY(-2px);
-    background: #5a67d8;
+    background: var(--button-hover);
 }
 
-.modal-actions button:active {
-    transform: translateY(0);
-}
-
-/* Cancel button (muted) */
 .modal-actions button:last-child {
     background: #9ca3af;
     box-shadow: 0 4px 12px rgba(156,163,175,0.3);
@@ -415,4 +360,25 @@ body {
 
 .modal-actions button:last-child:hover {
     background: #7d828b;
+}
+
+/* ---------------------------- */
+/* RESPONSIVE                   */
+/* ---------------------------- */
+@media (max-width: 768px) {
+    .ticket-card {
+        padding: 20px;
+    }
+    #commentsContainer {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .ticket-card {
+        padding: 15px;
+    }
+    .commentBox {
+        padding: 16px;
+    }
 }

@@ -1,3 +1,20 @@
+:root {
+    --bg1: #667eea;
+    --bg2: #49BC9B;
+    --main-bg: white;
+
+    --nav-text: #666;
+    --heading-main: #333;
+    --heading-accent: #5a67d8;
+    --heading-border: #ddd;
+
+    --ticket-bg: #ffffff;
+    --ticket-border: #49BC9B;
+    --ticket-title: #333;
+    --ticket-text: #555;
+    --ticket-smalltext: #777;
+}
+
 /* Reset */
 * {
     margin: 0;
@@ -9,10 +26,11 @@
 /* Page Layout */
 body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea, #49BC9B);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
     padding: 40px 20px;
     display: flex;
     justify-content: center;
+    background-color: var(--main-bg);
 }
 
 /* Ticket Container */
@@ -27,10 +45,10 @@ body {
 
 /* Ticket Card */
 .ticket {
-    background: white;
+    background: var(--ticket-bg);
     border-radius: 14px;
     padding: 22px;
-    border-left: 5px solid #49BC9B;
+    border-left: 5px solid var(--ticket-border);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
     transition: 0.25s ease;
     cursor: pointer;
@@ -52,14 +70,14 @@ body {
 .ticket-title {
     font-size: 18px;
     font-weight: 600;
-    color: #333;
+    color: var(--ticket-title) !important;
     line-height: 1.3;
     flex: 1;
     word-wrap: break-word;
 }
 
 .ticket-id {
-    background: linear-gradient(135deg, #667eea, #49BC9B);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
     color: white;
     padding: 6px 12px;
     border-radius: 12px;
@@ -70,7 +88,7 @@ body {
 
 /* Ticket Content Text */
 .ticket-data {
-    color: #555;
+    color: var(--ticket-text) !important;
     line-height: 1.55;
     margin: 16px 0;
     font-size: 15px;
@@ -81,8 +99,8 @@ body {
 /* Creator Footer */
 .ticket-creator {
     font-size: 13px;
-    color: #777;
-    border-top: 1px solid #eee;
+    color: var(--ticket-smalltext);
+    border-top: 1px solid var(--heading-border);
     padding-top: 12px;
     text-align: right;
 }

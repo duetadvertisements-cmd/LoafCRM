@@ -76,7 +76,7 @@ async function addTicket () {
     const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}`;    
 
     try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {
+        const serverResponse = await fetch("http://192.168.1.33:8080/addTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -113,7 +113,7 @@ async function getTickets () {
     const username = sessionStorage.getItem ("username");
     const ticket = `username=${encodeURIComponent(username)}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
+        const serverResponse = await fetch("http://192.168.1.33:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -174,7 +174,7 @@ async function loadDashboardStats() {
     }
 
     try {   
-        const response = await fetch("http://192.168.1.34:8080/getTickets", {
+        const response = await fetch("http://192.168.1.33:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
@@ -225,8 +225,8 @@ const themes = {
         dshhead2: "#ff7a55",
         dshhead3: "#f2d5c8",
         dshticket1: "#f7e3d8",
-        tickettitle: "white",
-        tickettext: "white",
+        tickettitle: "black",
+        tickettext: "black",
         dshticket2: "#a77d6e"
     },
     aquaBreeze: {
@@ -239,10 +239,10 @@ const themes = {
         dshhead3: "#d0d8e8",
         dshticket1: "#e8f1ff",
         dshticket2: "#7e8cab",
-        tickettitle: "white",
-        tickettext: "white",
+        tickettitle: "black",
+        tickettext: "black",
     },
-    emeraldMist: {
+    emeraldMist: { 
         dshbackground1: "#0bab64",
         dshbackground2: "#3bb78f",
         dshbackground3: "#f6fffa",
@@ -252,8 +252,8 @@ const themes = {
         dshhead3: "#cfe8dd",
         dshticket1: "#e4f7ef",
         dshticket2: "#84a797",
-        tickettitle: "white",
-        tickettext: "white",
+        tickettitle: "black",
+        tickettext: "black",
     },
     royalLuxe: {
         dshbackground1: "#4e54c8",
@@ -265,8 +265,8 @@ const themes = {
         dshhead3: "#d7d9ff",
         dshticket1: "#ecebff",
         dshticket2: "#9d9ccc",
-        tickettitle: "white",
-        tickettext: "white",
+        tickettitle: "black",
+        tickettext: "black",
     },
     cyberNight2: {
         dshbackground1: "#1f2b3a",   // gradient start (soft navy)
@@ -280,23 +280,9 @@ const themes = {
         
         dshticket1: "#e3e9f2",       // ticket border lines
         dshticket2: "#6e7f99",        // ticket small text
-        tickettitle: "white",
-        tickettext: "white",
+        tickettitle: "black",
+        tickettext: "black",
     },
-    darkModeUltra: {
-        dshbackground1: "#1a1c23",   // gradient start (soft obsidian)
-        dshbackground2: "#23262f",   // gradient end (slate black)
-
-        dshbackground3: "#1f2128",   // CARDS, SIDEBAR, HEADER (true dark)
-
-        dshnav1: "#b5bac6",          // sidebar nav text (soft gray)
-        dshhead1: "#e5e7eb",         // main headings (light gray, not pure white)
-        dshhead2: "#4d8dff",         // highlight blue (buttons, hover)
-        dshhead3: "#2b2e36",         // input borders (darkened)
-
-        dshticket1: "#2a2d35",       // ticket separators / borders
-        dshticket2: "#8f96a4",        // ticket details text
-    }
 }
 
 function applyTheme(name) {
@@ -305,4 +291,4 @@ function applyTheme(name) {
     document.documentElement.style.setProperty(`--${key}`, theme[key]);
   }
 }
-applyTheme ("darkModeUltra");
+applyTheme ("cyberNight2");
