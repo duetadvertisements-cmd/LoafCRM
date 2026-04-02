@@ -30,6 +30,7 @@ public class server {
         server.createContext("/uploads", new FileServerHandler());
         server.createContext("/getEmployees", new getEmployeesHandler());
         server.createContext("/getUsers", new getUsersHandler());
+        server.createContext("/promoteUserToWorker", new promoteUserToWorkerHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -783,6 +784,10 @@ public class server {
 
                 try {
 
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String id = formData.get("id");
+
                     Connection connection = DriverManager.getConnection(
                         "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                     );
@@ -792,28 +797,15 @@ public class server {
                     );
 
                     statement.setString(1, "EMPLOYEE");
-                    statement.setString(2, "EMPLOYEE");
+                    statement.setString(2, id);
 
-                    ResultSet result = statement.executeQuery();
+                    statement.executeUpdate();
 
-                    StringBuilder responseBuilder = new StringBuilder();
-                    responseBuilder.append("[");
 
-                    while (result.next()) {
-                        responseBuilder.append("{");
-                        responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
-                        responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
-                        responseBuilder.append("\"email\":\"").append(result.getString("EMAIL")).append("\"");
-                        responseBuilder.append("},");
-                    }
 
-                    if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
-                        responseBuilder.deleteCharAt(responseBuilder.length() - 1);
-                    }
+                    String response = "SUCCESS";
 
-                    responseBuilder.append("]");
-
-                    server.sendResponse(exchange, 200, responseBuilder.toString());
+                    server.sendResponse(exchange, 200, response);
 
                     statement.close();
                     connection.close();

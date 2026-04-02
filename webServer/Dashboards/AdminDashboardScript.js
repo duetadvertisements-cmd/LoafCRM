@@ -423,4 +423,6 @@ async function promoteUserToWorker (id) {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `id=${encodeURIComponent(id)}`
     });
+    console.log ("Promoted User To Worker")
+    console.log (response.text);
 }
