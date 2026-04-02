@@ -28,6 +28,8 @@ public class server {
         server.createContext("/getComments", new getCommentHandler ());
         server.createContext("/getTicketsEmployee", new getTicketsEmployeeHandler ());
         server.createContext("/uploads", new FileServerHandler());
+        server.createContext("/getEmployees", new getEmployeesHandler());
+        server.createContext("/getUsers", new getUsersHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -357,11 +359,21 @@ public class server {
                         "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                     );
 
-                    PreparedStatement statement = connection.prepareStatement(
-                        "SELECT * FROM LOAF_TICKETS WHERE CREATOR = ?"
-                    );
+                    PreparedStatement statement;
 
-                    statement.setString(1, username);
+                    if (username.equals("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")) {
+                        statement = connection.prepareStatement(
+                            "SELECT * FROM LOAF_TICKETS"
+                        );
+                    }
+                    else {
+                        statement = connection.prepareStatement(
+                            "SELECT * FROM LOAF_TICKETS WHERE CREATOR = ?"
+                        );
+
+                        statement.setString(1, username);
+                    }
+                    
 
                     ResultSet result = statement.executeQuery();
 
@@ -637,6 +649,186 @@ public class server {
             return "application/octet-stream";
         }
     }
+
+    static class getEmployeesHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
+
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "SELECT * FROM LOAF_USERS WHERE ROLES = ? "
+                    );
+
+                    statement.setString(1, "EMPLOYEE");
+
+                    ResultSet result = statement.executeQuery();
+
+                    StringBuilder responseBuilder = new StringBuilder();
+                    responseBuilder.append("[");
+
+                    while (result.next()) {
+                        responseBuilder.append("{");
+                        responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
+                        responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
+                        responseBuilder.append("\"sucessfullyClosed\":\"").append(result.getString("SUCCESSFULLY_CLOSED")).append("\",");
+                        responseBuilder.append("\"email\":\"").append(result.getString("EMAIL")).append("\"");
+                        responseBuilder.append("},");
+                    }
+
+                    if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
+                        responseBuilder.deleteCharAt(responseBuilder.length() - 1);
+                    }
+
+                    responseBuilder.append("]");
+
+                    server.sendResponse(exchange, 200, responseBuilder.toString());
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
+    static class getUsersHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
+
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "SELECT * FROM LOAF_USERS"
+                    );
+
+                    ResultSet result = statement.executeQuery();
+
+                    StringBuilder responseBuilder = new StringBuilder();
+                    responseBuilder.append("[");
+
+                    while (result.next()) {
+                        responseBuilder.append("{");
+                        responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
+                        responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
+                        responseBuilder.append("\"email\":\"").append(result.getString("EMAIL")).append("\"");
+                        responseBuilder.append("},");
+                    }
+
+                    if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
+                        responseBuilder.deleteCharAt(responseBuilder.length() - 1);
+                    }
+
+                    responseBuilder.append("]");
+
+                    server.sendResponse(exchange, 200, responseBuilder.toString());
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
+
+    static class promoteUserToWorkerHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
+
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "UPDATE LOAF_USERS SET ROLES = ? WHERE ID = ?"
+                    );
+
+                    statement.setString(1, "EMPLOYEE");
+                    statement.setString(2, "EMPLOYEE");
+
+                    ResultSet result = statement.executeQuery();
+
+                    StringBuilder responseBuilder = new StringBuilder();
+                    responseBuilder.append("[");
+
+                    while (result.next()) {
+                        responseBuilder.append("{");
+                        responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
+                        responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
+                        responseBuilder.append("\"email\":\"").append(result.getString("EMAIL")).append("\"");
+                        responseBuilder.append("},");
+                    }
+
+                    if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
+                        responseBuilder.deleteCharAt(responseBuilder.length() - 1);
+                    }
+
+                    responseBuilder.append("]");
+
+                    server.sendResponse(exchange, 200, responseBuilder.toString());
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
+
 }
 
     

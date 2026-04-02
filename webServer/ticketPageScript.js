@@ -313,7 +313,8 @@ const themes = {
 
         "--input-bg": "#0d142b",
         "--input-border": "#1e2b55",
-        "--input-focus": "#00eaff"
+        "--input-focus": "#00eaff",
+        "--ticket-meta-1": "white"
     }
 };
 
@@ -323,4 +324,4 @@ function applyTheme(name) {
         document.documentElement.style.setProperty(key, value);
     });
 }
-applyTheme ("cyberNight2");
+applyTheme ("royalLuxe");

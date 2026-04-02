@@ -154,6 +154,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    color: var(--ticket-meta-1);
 }
 
 .meta-item {

@@ -1,3 +1,76 @@
 <HTML>
-    <script src = "AdminDashboardScript.js" defer></script>
+    <HEAD>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src = "AdminDashboardScript.js" defer></script>
+        <link rel = "Stylesheet" href = "AdmindashboardStyle.css">
+    </HEAD>
+    <BODY>
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        <div class="sidebar-overlay" onclick=""></div>
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Loaf CRM</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="showSection('tickets');">
+                    <span class="nav-icon">📋</span>
+                    Tickets
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('Users');">
+                    <span class="nav-icon">👤</span>
+                    Users
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('Employees');">
+                    <span class="nav-icon">👤</span>
+                    Employees
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('settings');">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    Logout
+                </a>
+            </nav>
+        </div>
+
+        <div class="main-content">
+            <div id="tickets-section" class="content-section active">
+                <div class="header">
+                    <h1 id = "welcomeTitle"></h1>
+                    <button onclick = "addTicket ()">Add Ticket</button> <br><br>
+                    <input type = "text" id = "titleInput" placeholder="Ticket Title"> <br>
+                    <input type = "text" id = "dataInput" placeholder="Ticket Description">   <br>
+                </div>
+
+                <div id="ticketContainer" class="ticket-container"></div>
+            </div>
+            <div id="Users-section" class="content-section">
+
+                <div id="usersContainer" class="users-container"></div>
+            </div>
+            <div id="Employees-section" class="content-section">
+
+                <div id="employeesContainer" class="employee-container"></div>
+            </div>
+            <div id="Employees-section" class="content-section">
+
+                <div id="employeesContainer" class="employee-container"></div>
+            </div>
+
+            <div id="settings-section" class="content-section">
+                <div class="header">
+                    <h1>Settings</h1>
+                    <p>Configure your account and application settings.</p>
+                </div>
+                <div class="coming-soon">
+                    <h2>⚙️ Settings</h2>
+                    <p>Settings panel will be available soon.</p>
+                </div>
+            </div>
+        </div>
+    </BODY>
 </HTML>
