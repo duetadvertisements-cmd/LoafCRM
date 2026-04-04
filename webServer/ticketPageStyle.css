@@ -179,7 +179,9 @@ button {
 }
 
 #addCommentButton,
-.back-btn {
+.back-btn,
+#changeStatusButton     
+{
     padding: 12px 24px;
     background: var(--button-bg);
     color: var(--button-text);
@@ -192,7 +194,9 @@ button {
 }
 
 #addCommentButton:hover,
-.back-btn:hover {
+.back-btn:hover,
+#changeStatusButton:hover
+{
     transform: translateY(-2px);
     background: var(--button-hover);
 }

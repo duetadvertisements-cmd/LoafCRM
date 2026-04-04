@@ -277,7 +277,7 @@ body {
     word-wrap: break-word;
 }
 
-button {
+.userPromotionButton {
     width: 100%;
     padding: 10px;
     background: #667eea;
@@ -287,6 +287,6 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.userPromotionButton:hover {
     background: #5a67d8;
 }

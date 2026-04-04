@@ -9,7 +9,6 @@ import java.util.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-
 import javaServers.models.passwordHasher;
 import javaServers.models.multiFormParser;
 
@@ -31,6 +30,7 @@ public class server {
         server.createContext("/getEmployees", new getEmployeesHandler());
         server.createContext("/getUsers", new getUsersHandler());
         server.createContext("/promoteUserToWorker", new promoteUserToWorkerHandler());
+        server.createContext("/changeStatus", new changeStatusHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -386,6 +386,7 @@ public class server {
                         responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
                         responseBuilder.append("\"title\":\"").append(result.getString("TITLE")).append("\",");
                         responseBuilder.append("\"data\":\"").append(result.getString("DATA")).append("\",");
+                        responseBuilder.append("\"status\":\"").append(result.getString("STATUS")).append("\",");
                         responseBuilder.append("\"creator\":\"").append(result.getString("CREATOR")).append("\"");
                         responseBuilder.append("},");
                     }
@@ -597,6 +598,7 @@ public class server {
                         responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
                         responseBuilder.append("\"title\":\"").append(result.getString("TITLE")).append("\",");
                         responseBuilder.append("\"data\":\"").append(result.getString("DATA")).append("\",");
+                        responseBuilder.append("\"status\":\"").append(result.getString("STATUS")).append("\",");
                         responseBuilder.append("\"creator\":\"").append(result.getString("CREATOR")).append("\"");
                         responseBuilder.append("},");
                     }
@@ -820,7 +822,58 @@ public class server {
             }
         }
     }
+    static class changeStatusHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
 
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String id = formData.get("ticketID");
+                    String toStatus = formData.get ("toStatus");
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "UPDATE LOAF_TICKETS SET STATUS = ? WHERE ID = ?"
+                    );
+
+                    statement.setString(1, toStatus);
+                    statement.setString(2, id);
+
+                    statement.executeUpdate();
+
+
+
+                    String response = "SUCCESS";
+
+                    server.sendResponse(exchange, 200, response);
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
 }
 
     

@@ -1,5 +1,11 @@
 function setMainTicket() {
     const ticket = JSON.parse(sessionStorage.getItem("currentTicket"));
+    if (ticket.status == "1") {
+        ticket.status = "Open";
+    }
+    else {
+        ticket.status = "Closed"
+    }
     document.getElementById("mainTicket").innerHTML = `
         <div class="ticket-header">
             <h1 class="ticket-title">${ticket.title}</h1>
@@ -18,10 +24,17 @@ function setMainTicket() {
                 <strong>Created by:</strong> ${ticket.creator}
             </div>
             <div class="meta-item">
-                <strong>Ticket ID:</strong> #${ticket.id}
+                <strong>Ticket ID:</strong> #${ticket.id} <br>
+                <strong id = "statusDisplay">Ticket Status:</strong> ${ticket.status}
             </div>
         </div>
     `;
+    if (ticket.status == "Open") {
+        ticket.status = 1;
+    }
+    else {
+        ticket.status = 2;
+    }
 }
 
 function goBack() {
@@ -325,3 +338,39 @@ function applyTheme(name) {
     });
 }
 applyTheme ("royalLuxe");
+
+function setCorrectStatusButton () {
+     const ticket = JSON.parse(sessionStorage.getItem("currentTicket"));
+    if (ticket.status == 1) {
+        document.getElementById ("changeStatusButton").innerText = "Close Ticket";
+        console.log ("Ticket Is Currently Open");
+    }
+    else {
+        document.getElementById ("changeStatusButton").innerText = "Open Ticket";
+        console.log ("Ticket Is Currently Closed")
+    }
+}   
+
+setCorrectStatusButton ();
+
+async function changeStatus () {
+    const ticketID = JSON.parse(sessionStorage.getItem("currentTicket")).id;
+    const statusButtonText = document.getElementById ("changeStatusButton").innerText;
+    let toStatus = 1;
+    if (statusButtonText == "Close Ticket") {toStatus = 2}
+    const ticket = `ticketID=${encodeURIComponent(ticketID)}&toStatus=${encodeURIComponent(toStatus)}`;
+
+    try {
+        const serverResponse = await fetch("http://192.168.1.33:8080/changeStatus", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+        console.log ("changed Status");
+    }
+    catch (exception) {
+        console.error (exception);
+    }
+    window.location.reload();
+}

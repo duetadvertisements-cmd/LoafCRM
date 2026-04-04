@@ -50,7 +50,8 @@ function ticketClicked(ticket) {
         title: ticket.title,
         data: ticket.data,
         creator: ticket.creator,
-        id: ticket.id
+        id: ticket.id,
+        status: ticket.status
     }));
     sessionStorage.setItem ("dashboardHref", "dashboards/dashboard.html")
     window.location.href = "../ticketPage.html";

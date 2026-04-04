@@ -50,7 +50,8 @@ function ticketClicked(ticket) {
         title: ticket.title,
         data: ticket.data,
         creator: ticket.creator,
-        id: ticket.id
+        id: ticket.id,
+        status: ticket.status
     }));
     sessionStorage.setItem ("dashboardHref", "dashboards/AdminDashboard.html")
     window.location.href = "../ticketPage.html";
@@ -213,6 +214,12 @@ function displayTickets(tickets) {
     }
 
     tickets.forEach(ticket => {
+        if (ticket.status == 1) {
+            ticket.status = "Open";
+        }
+        else {
+            ticket.status = "Closed";
+        }
         const ticketDiv = document.createElement("div");
         ticketDiv.className = "ticket";
         ticketDiv.onclick = () => ticketClicked(ticket);
@@ -223,8 +230,15 @@ function displayTickets(tickets) {
             </div>
             <p class="ticket-data">${ticket.data}</p>
             <p class="ticket-creator">Created by: ${ticket.creator}</p>
+            <p>Status: ${ticket.status}</p>
         `;
         container.appendChild(ticketDiv);
+        if (ticket.status == "Open") {
+            ticket.status = 1;
+        }
+        else {
+            ticket.status = 2;
+        }
     });
 }
 
@@ -271,7 +285,7 @@ function displayUsers (users) {
         </div>
         <p class="user-email">Email: ${user.email}</p>
         <br>
-        <p><button onclick = "promoteUserToWorker (${user.id})">Promote To Worker</button></p>
+        <p><button onclick = "promoteUserToWorker (${user.id})" class = 'userPromotionButton'>Promote To Worker</button></p>
         `;  
         container.appendChild(userDiv);
     });
@@ -415,7 +429,7 @@ function applyTheme(name) {
     document.documentElement.style.setProperty(`--${key}`, theme[key]);
   }
 }
-applyTheme ("royalLuxe");
+applyTheme ("cyberNight2");
 
 async function promoteUserToWorker (id) {
     const response = await fetch("http://192.168.1.33:8080/promoteUserToWorker", {
@@ -425,4 +439,36 @@ async function promoteUserToWorker (id) {
     });
     console.log ("Promoted User To Worker")
     console.log (response.text);
+}
+
+async function getUnassignedTickets () {  
+
+    const ticket = `key=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.33:8080/getUnassignedTickets", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getUnassignedTickets ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        const tickets = JSON.parse (responseText);
+        console.log ("-----------------------getUnassignedTickets ()-------------------------------");
+        console.log (tickets);
+        console.log ("------------------------------------------------------");
+
+        displayTickets(tickets);
+    }
+    catch (error) {
+        console.error ("----------------------error to get Unassigned Tickets--------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
+    }
 }
