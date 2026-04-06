@@ -387,3 +387,38 @@ button {
         padding: 16px;
     }
 }
+.subticket-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.subticket-container label {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.subticket-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #4b7bec; /* your CRM blue */
+    cursor: pointer;
+}.subticket-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.subticket-container label {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.subticket-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #4b7bec; /* your CRM blue */
+    cursor: pointer;
+}

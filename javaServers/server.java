@@ -32,6 +32,7 @@ public class server {
         server.createContext("/promoteUserToWorker", new promoteUserToWorkerHandler());
         server.createContext("/changeStatus", new changeStatusHandler());
         server.createContext("/getUnassignedTickets", new getUnassignedTicketsHandler());
+        server.createContext("/assignTicket", new assignTicketHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -842,28 +843,34 @@ public class server {
 
                     Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
 
-                    String id = formData.get("ticketID");
+                    String ticketID = formData.get("ticketID");
                     String toStatus = formData.get ("toStatus");
 
                     Connection connection = DriverManager.getConnection(
                         "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                     );
 
-                    PreparedStatement statement = connection.prepareStatement(
-                        "UPDATE LOAF_TICKETS SET STATUS = ? WHERE ID = ?"
-                    );
+                    PreparedStatement statement;
+
+
+                        statement = connection.prepareStatement (
+                            "UPDATE LOAF_USERS SET SUCCESSFULLY_CLOSED = CASE " +
+                            "WHEN ? = 1 THEN SUCCESSFULLY_CLOSED + 1 " +
+                            "WHEN ? = 2 THEN SUCCESSFULLY_CLOSED - 1 END " +
+                            "WHERE USERNAME = (SELECT ASSIGNED_TO FROM LOAF_TICKETS WHERE ID = ?)"
+                        );
 
                     statement.setString(1, toStatus);
-                    statement.setString(2, id);
+                    statement.setString(2, toStatus);
+                    statement.setString(3, ticketID);
 
+                    statement.executeUpdate ();
+
+                    statement = connection.prepareStatement("UPDATE LOAF_TICKETS SET STATUS = ? WHERE ID = ?");
+                    statement.setString(1, toStatus);
+                    statement.setString(2, ticketID);
                     statement.executeUpdate();
-
-                    if (Integer.parseInt (toStatus) == 1) {
-                        statement = connection.prepareStatement (
-                            "UPDATE LOAF_USER u JOIN LOAF_TICKETS t ON u.USERNAME = t.Assigned"
-                        );
-                    }
-
+                        
                     String response = "SUCCESS";
 
                     server.sendResponse(exchange, 200, response);
@@ -951,8 +958,57 @@ public class server {
             }
         }
     }
+    static class assignTicketHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
 
-    
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String assignTo = formData.get("assignTo");
+                    int ticketID = Integer.parseInt(formData.get ("ticketID"));
+
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "UPDATE LOAF_TICKETS SET ASSIGNED_TO = ? WHERE ID = ?"
+                    );
+
+                    statement.setString(1, assignTo);
+                    statement.setInt(2, ticketID);
+
+                    statement.executeUpdate();
+
+
+                    String response = "SUCCESS";
+
+                    server.sendResponse(exchange, 200, response);
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
 }
 
     

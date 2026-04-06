@@ -60,11 +60,16 @@ async function submitComment() {
     const creator = sessionStorage.getItem("username");
     const ticket = JSON.parse(sessionStorage.getItem("currentTicket")).id;
 
+    const isSubTicket = document.getElementById ("isSubTicketInput").value;
+    if (isSubTicket == "on") {isSubTicket == true}
+    else {isSubTicket == false}
+
     const formData = new FormData();
     formData.append("title", title);
     formData.append("data", text);
     formData.append("creator", creator);
     formData.append("ticket", ticket);
+    // formData.append ("isSubTicket", );
     if (file) formData.append("file", file);
 
     try {
