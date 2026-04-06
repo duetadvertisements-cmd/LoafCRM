@@ -372,5 +372,5 @@ async function changeStatus () {
     catch (exception) {
         console.error (exception);
     }
-    window.location.reload();
+    goBack ();
 }

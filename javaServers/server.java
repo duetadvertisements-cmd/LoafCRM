@@ -31,6 +31,7 @@ public class server {
         server.createContext("/getUsers", new getUsersHandler());
         server.createContext("/promoteUserToWorker", new promoteUserToWorkerHandler());
         server.createContext("/changeStatus", new changeStatusHandler());
+        server.createContext("/getUnassignedTickets", new getUnassignedTicketsHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -733,8 +734,10 @@ public class server {
                     );
 
                     PreparedStatement statement = connection.prepareStatement(
-                        "SELECT * FROM LOAF_USERS"
+                        "SELECT * FROM LOAF_USERS WHERE ROLES = ?"
                     );
+
+                    statement.setString(1, "CLIENT");
 
                     ResultSet result = statement.executeQuery();
 
@@ -855,7 +858,11 @@ public class server {
 
                     statement.executeUpdate();
 
-
+                    if (Integer.parseInt (toStatus) == 1) {
+                        statement = connection.prepareStatement (
+                            "UPDATE LOAF_USER u JOIN LOAF_TICKETS t ON u.USERNAME = t.Assigned"
+                        );
+                    }
 
                     String response = "SUCCESS";
 
@@ -874,6 +881,78 @@ public class server {
             }
         }
     }
+
+    static class getUnassignedTicketsHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
+
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String key = formData.get("key");
+
+                    if (!"4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe".equals(key)) {
+                        server.sendResponse(exchange, 403, "INVALID KEY");
+                        return;
+                    }
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "SELECT * FROM LOAF_TICKETS WHERE ASSIGNED_TO = ? "
+                    );
+
+                    statement.setString(1, "null");
+
+                    ResultSet result = statement.executeQuery();
+
+                    StringBuilder responseBuilder = new StringBuilder();
+                    responseBuilder.append("[");
+
+                    while (result.next()) {
+                        responseBuilder.append("{");
+                        responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
+                        responseBuilder.append("\"title\":\"").append(result.getString("TITLE")).append("\",");
+                        responseBuilder.append("\"data\":\"").append(result.getString("DATA")).append("\",");
+                        responseBuilder.append("\"status\":\"").append(result.getString("STATUS")).append("\",");
+                        responseBuilder.append("\"creator\":\"").append(result.getString("CREATOR")).append("\"");
+                        responseBuilder.append("},");
+                    }
+
+                    if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
+                        responseBuilder.deleteCharAt(responseBuilder.length() - 1);
+                    }
+
+                    responseBuilder.append("]");
+
+                    server.sendResponse(exchange, 200, responseBuilder.toString());
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
+
+    
 }
 
     

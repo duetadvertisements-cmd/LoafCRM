@@ -130,7 +130,7 @@ async function getTickets () {
         console.log (tickets);
         console.log ("------------------------------------------------------");
 
-        displayTickets(tickets);
+        displayTickets(tickets, "ticketContainer");
     }
     catch (error) {
         console.error ("----------------------error to get tickets--------------------------------");
@@ -204,8 +204,9 @@ async function getUsers () {
     }
 }
 
-function displayTickets(tickets) {
-    const container = document.getElementById("ticketContainer");
+function displayTickets(tickets, containerID) {
+        const container = document.getElementById(containerID);
+    
     container.innerHTML = "";  // Clear previous tickets
 
     if (tickets.length === 0) {
@@ -231,6 +232,45 @@ function displayTickets(tickets) {
             <p class="ticket-data">${ticket.data}</p>
             <p class="ticket-creator">Created by: ${ticket.creator}</p>
             <p>Status: ${ticket.status}</p>
+        `;
+        container.appendChild(ticketDiv);
+        if (ticket.status == "Open") {
+            ticket.status = 1;
+        }
+        else {
+            ticket.status = 2;
+        }
+    });
+}
+
+function displayUnassignedTickets(tickets, containerID) {
+        const container = document.getElementById(containerID);
+    
+    container.innerHTML = "";  // Clear previous tickets
+
+    if (tickets.length === 0) {
+        container.innerHTML = "<p class='no-tickets'>No tickets found</p>";
+        return;
+    }
+
+    tickets.forEach(ticket => {
+        if (ticket.status == 1) {
+            ticket.status = "Open";
+        }
+        else {
+            ticket.status = "Closed";
+        }
+        const ticketDiv = document.createElement("div");
+        ticketDiv.className = "unassignedTicket";
+        ticketDiv.innerHTML = `
+            <div class="ticket-header">
+                <h3 class="ticket-title">${ticket.title}</h3>
+                <span class="ticket-id">#${ticket.id}</span>
+            </div>
+            <p class="ticket-data">${ticket.data}</p>
+            <p class="ticket-creator">Created by: ${ticket.creator}</p> <br><br>
+
+            <button onclick = "assignTicket (${ticket.id})" class = "assignTicketButton">Assign</button>
         `;
         container.appendChild(ticketDiv);
         if (ticket.status == "Open") {
@@ -462,7 +502,7 @@ async function getUnassignedTickets () {
         console.log (tickets);
         console.log ("------------------------------------------------------");
 
-        displayTickets(tickets);
+        displayUnassignedTickets(tickets, "unassignedTicketContainer");
     }
     catch (error) {
         console.error ("----------------------error to get Unassigned Tickets--------------------------------");
@@ -470,5 +510,25 @@ async function getUnassignedTickets () {
         console.log ("\n");
         console.error("Request failed:", error);
         console.error ("------------------------------------------------------");
+    }
+}
+getUnassignedTickets ();
+
+async function assignTicket (ticketID) {
+    const assignTo = prompt ("Assign To:")
+
+    const ticket = `ticketID=${encodeURIComponent(ticketID)}&assignTo=${encodeURIComponent(assignTo)}`;
+    
+    try {
+        const serverResponse = await fetch("http://192.168.1.33:8080/assignTicket", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+        console.log (responseText);
+    }
+    catch (exception) {
+        console.error (exception);
     }
 }
