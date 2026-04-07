@@ -439,6 +439,8 @@ public class server {
                     String data = parser.getField("data");
                     String creator = parser.getField("creator");
                     String ticket = parser.getField("ticket");
+                    String isSubTicketString = parser.getField("isSubTicket");
+
                     String filePath = null;
 
                     if (parser.hasFile()) {
@@ -462,13 +464,20 @@ public class server {
                 System.out.println ("Data: "+data);
                 System.out.println ("Creator: "+creator);
                 System.out.println ("ticket: "+ticket);
+                System.out.println ("is Sub Ticket: "+ isSubTicketString);
+
+                int isSubTicket = Integer.parseInt (isSubTicketString);
+
                 
+                
+                System.out.println ("is Sub Ticket Integer: "+ isSubTicket);
+
                  Connection connection = DriverManager.getConnection(
                         "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                     );
 
                     PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH) VALUES (?, ?, ?, ?, ?)"
+                        "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH, IS_SUB_TICKET) VALUES (?, ?, ?, ?, ?, ?)"
                     );  
 
                     statement.setString(1, title);
@@ -476,6 +485,7 @@ public class server {
                     statement.setString(3, creator);
                     statement.setString(4, ticket);
                     statement.setString (5, filePath);
+                    statement.setInt (6, isSubTicket);
 
                     statement.executeUpdate ();
 
@@ -535,7 +545,8 @@ public class server {
                         responseBuilder.append("\"comment\":\"").append(result.getString("COMMENT")).append("\",");
                         responseBuilder.append("\"commentTitle\":\"").append(result.getString("COMMENT_TITLE")).append("\",");
                         responseBuilder.append("\"madeOn\":\"").append(result.getString("CREATED_AT")).append("\",");
-                        responseBuilder.append("\"filepath\":\"").append(result.getString("FILE_PATH")).append("\"");
+                        responseBuilder.append("\"filepath\":\"").append(result.getString("FILE_PATH")).append("\",");
+                        responseBuilder.append("\"isSubTicket\":\"").append(result.getInt("IS_SUB_TICKET")).append("\"");
                         responseBuilder.append("},");
                     }
 

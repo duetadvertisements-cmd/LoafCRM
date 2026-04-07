@@ -77,7 +77,7 @@ async function addTicket () {
     const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}`;    
 
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/addTicket", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/addTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -113,7 +113,7 @@ async function getTickets () {
 
     const ticket = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/getTickets", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -145,7 +145,7 @@ async function getEmployees () {
 
     const employee = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/getEmployees", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getEmployees", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: employee
@@ -176,7 +176,7 @@ async function getUsers () {
 
     const users = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/getUsers", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getUsers", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: users
@@ -350,7 +350,7 @@ async function loadDashboardStats() {
     }
 
     try {   
-        const response = await fetch("http://192.168.1.33:8080/getTickets", {
+        const response = await fetch("http://192.168.1.35:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
@@ -472,7 +472,7 @@ function applyTheme(name) {
 applyTheme ("cyberNight2");
 
 async function promoteUserToWorker (id) {
-    const response = await fetch("http://192.168.1.33:8080/promoteUserToWorker", {
+    const response = await fetch("http://192.168.1.35:8080/promoteUserToWorker", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `id=${encodeURIComponent(id)}`
@@ -485,7 +485,7 @@ async function getUnassignedTickets () {
 
     const ticket = `key=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/getUnassignedTickets", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getUnassignedTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -520,7 +520,7 @@ async function assignTicket (ticketID) {
     const ticket = `ticketID=${encodeURIComponent(ticketID)}&assignTo=${encodeURIComponent(assignTo)}`;
     
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/assignTicket", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/assignTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket

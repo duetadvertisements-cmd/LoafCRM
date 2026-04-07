@@ -1,5 +1,47 @@
-function setMainTicket() {
-    const ticket = JSON.parse(sessionStorage.getItem("currentTicket"));
+function setMainTicket(ticket) {
+    if (ticket != "null") {
+        ticket = JSON.parse(sessionStorage.getItem("currentTicket"));
+    }
+    
+    if (ticket.status == "1") {
+        ticket.status = "Open";
+    }
+    else {
+        ticket.status = "Closed"
+    }
+    document.getElementById("mainTicket").innerHTML = `
+        <div class="ticket-header">
+            <h1 class="ticket-title">${ticket.title}</h1>
+            <span class="ticket-id">#${ticket.id}</span>
+        </div>
+
+        <div class="ticket-content">
+            <h3>Ticket Details</h3>
+            <p>${ticket.data}</p>
+        </div>
+
+        <hr>
+
+        <div class="ticket-meta">
+            <div class="meta-item">
+                <strong>Created by:</strong> ${ticket.creator}
+            </div>
+            <div class="meta-item">
+                <strong>Ticket ID:</strong> #${ticket.id} <br>
+                <strong id = "statusDisplay">Ticket Status:</strong> ${ticket.status}
+            </div>
+        </div>
+    `;
+    if (ticket.status == "Open") {
+        ticket.status = 1;
+    }
+    else {
+        ticket.status = 2;
+    }
+}
+
+function setSubTicket (ticket) {
+    
     if (ticket.status == "1") {
         ticket.status = "Open";
     }
@@ -60,20 +102,20 @@ async function submitComment() {
     const creator = sessionStorage.getItem("username");
     const ticket = JSON.parse(sessionStorage.getItem("currentTicket")).id;
 
-    const isSubTicket = document.getElementById ("isSubTicketInput").value;
-    if (isSubTicket == "on") {isSubTicket == true}
-    else {isSubTicket == false}
+    let isSubTicket = document.getElementById ("isSubTicketInput").value;
+    if (isSubTicket == "on") {isSubTicket = 1}
+    else {isSubTicket = 2}
 
     const formData = new FormData();
     formData.append("title", title);
     formData.append("data", text);
     formData.append("creator", creator);
     formData.append("ticket", ticket);
-    // formData.append ("isSubTicket", );
+    formData.append ("isSubTicket", isSubTicket);
     if (file) formData.append("file", file);
 
     try {
-        const response = await fetch("http://192.168.1.33:8080/addComment", {
+        const response = await fetch("http://192.168.1.35:8080/addComment", {
             method: "POST",
             body: formData
         });
@@ -96,7 +138,7 @@ async function getComments () {
     const ticket = `ticketID=${encodeURIComponent(ticketID)}`;
 
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/getComments", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getComments", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -135,7 +177,7 @@ function displayComments(commentsArray) {
         let attachmentHTML = "";
         
         if (c.filepath && c.filepath !== "null") {
-            const fullUrl = `http://192.168.1.33:8080/${c.filepath}`;
+            const fullUrl = `http://192.168.1.35:8080/${c.filepath}`;
             const fileName = c.filepath.split('/').pop(); 
             const extension = fileName.split('.').pop().toLowerCase();
 
@@ -171,13 +213,24 @@ function displayComments(commentsArray) {
                     </div>`;
             }
         }
-
-        div.innerHTML = `
-            <h4>${c.commentTitle}</h4>
-            <p>${c.comment}</p>
-            ${attachmentHTML}
-            <small style="display:block; margin-top:15px; color:#888;">By ${c.username} • ${c.madeOn}</small>
-        `;
+        console.log (c.isSubTicket);
+        if (c.isSubTicket == 2) {
+            div.innerHTML = `
+                <h4>${c.commentTitle}</h4>
+                <p>${c.comment}</p>
+                ${attachmentHTML}
+                <small style="display:block; margin-top:15px; color:#888;">By ${c.username} • ${c.madeOn}</small>
+            `;
+        }
+        else {
+            div.innerHTML = `
+                <h4>${c.commentTitle}</h4>
+                <p>${c.comment}</p>
+                ${attachmentHTML}
+                <small style="display:block; margin-top:15px; color:#888;">By ${c.username} • ${c.madeOn}</small>
+            `
+            div.classList.add("subTicket");
+        }
         
         container.appendChild(div);
     });
@@ -366,7 +419,7 @@ async function changeStatus () {
     const ticket = `ticketID=${encodeURIComponent(ticketID)}&toStatus=${encodeURIComponent(toStatus)}`;
 
     try {
-        const serverResponse = await fetch("http://192.168.1.33:8080/changeStatus", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/changeStatus", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -379,3 +432,17 @@ async function changeStatus () {
     }
     goBack ();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const subTicketCheckbox = document.getElementById("isSubTicketInput");
+    const fileInput = document.getElementById("commentFile");
+
+    subTicketCheckbox.addEventListener("change", () => {
+        if (subTicketCheckbox.checked) {
+            fileInput.disabled = true;
+            fileInput.value = ""; // clear selected file
+        } else {
+            fileInput.disabled = false;
+        }
+    });
+});

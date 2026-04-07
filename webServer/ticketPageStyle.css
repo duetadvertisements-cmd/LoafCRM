@@ -422,3 +422,17 @@ button {
     accent-color: #4b7bec; /* your CRM blue */
     cursor: pointer;
 }
+
+#commentFile:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.subTicket {
+    cursor: pointer;
+}
+
+.subTicket:hover  {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
