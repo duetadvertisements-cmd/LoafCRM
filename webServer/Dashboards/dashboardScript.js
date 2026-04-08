@@ -292,4 +292,4 @@ function applyTheme(name) {
     document.documentElement.style.setProperty(`--${key}`, theme[key]);
   }
 }
-applyTheme ("cyberNight2");
+applyTheme ("cyberNight2"); 

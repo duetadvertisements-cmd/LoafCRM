@@ -439,7 +439,6 @@ public class server {
                     String data = parser.getField("data");
                     String creator = parser.getField("creator");
                     String ticket = parser.getField("ticket");
-                    String isSubTicketString = parser.getField("isSubTicket");
 
                     String filePath = null;
 
@@ -464,30 +463,27 @@ public class server {
                 System.out.println ("Data: "+data);
                 System.out.println ("Creator: "+creator);
                 System.out.println ("ticket: "+ticket);
-                System.out.println ("is Sub Ticket: "+ isSubTicketString);
 
-                int isSubTicket = Integer.parseInt (isSubTicketString);
 
                 
-                
-                System.out.println ("is Sub Ticket Integer: "+ isSubTicket);
 
                  Connection connection = DriverManager.getConnection(
                         "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                     );
 
                     PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH, IS_SUB_TICKET) VALUES (?, ?, ?, ?, ?, ?)"
+                        "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH) VALUES (?, ?, ?, ?, ?)"
                     );  
+
+                    
 
                     statement.setString(1, title);
                     statement.setString(2, data);
                     statement.setString(3, creator);
                     statement.setString(4, ticket);
-                    statement.setString (5, filePath);
-                    statement.setInt (6, isSubTicket);
 
                     statement.executeUpdate ();
+                
 
                     String response;
                     response = "SUCCESS";
@@ -541,12 +537,11 @@ public class server {
 
                     while (result.next()) {
                         responseBuilder.append("{");
-                        responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
-                        responseBuilder.append("\"comment\":\"").append(result.getString("COMMENT")).append("\",");
-                        responseBuilder.append("\"commentTitle\":\"").append(result.getString("COMMENT_TITLE")).append("\",");
-                        responseBuilder.append("\"madeOn\":\"").append(result.getString("CREATED_AT")).append("\",");
-                        responseBuilder.append("\"filepath\":\"").append(result.getString("FILE_PATH")).append("\",");
-                        responseBuilder.append("\"isSubTicket\":\"").append(result.getInt("IS_SUB_TICKET")).append("\"");
+                        responseBuilder.append("\"username\":\"").append(escapeJson(result.getString("USERNAME"))).append("\",");
+                        responseBuilder.append("\"comment\":\"").append(escapeJson(result.getString("COMMENT"))).append("\",");
+                        responseBuilder.append("\"commentTitle\":\"").append(escapeJson(result.getString("COMMENT_TITLE"))).append("\",");
+                        responseBuilder.append("\"madeOn\":\"").append(escapeJson(result.getString("CREATED_AT"))).append("\",");
+                        responseBuilder.append("\"filepath\":\"").append(escapeJson(result.getString("FILE_PATH"))).append("\"");
                         responseBuilder.append("},");
                     }
 
@@ -1019,6 +1014,30 @@ public class server {
                 exchange.sendResponseHeaders(405, -1);  
             }
         }
+    }
+
+    public static String escapeJson(String s) {
+        if (s == null) return "";
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            switch (c) {
+                case '"': sb.append("\\\""); break;
+                case '\\': sb.append("\\\\"); break;
+                case '\b': sb.append("\\b"); break;
+                case '\f': sb.append("\\f"); break;
+                case '\n': sb.append("\\n"); break;
+                case '\r': sb.append("\\r"); break;
+                case '\t': sb.append("\\t"); break;
+                default:
+                    if (c < 0x20 || c > 0x7E) {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+            }
+        }
+        return sb.toString();
     }
 }
 

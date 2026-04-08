@@ -40,7 +40,7 @@ function setMainTicket(ticket) {
     }
 }
 
-function setSubTicket (ticket) {
+async function setSubTicket (ticket) {
     
     if (ticket.status == "1") {
         ticket.status = "Open";
@@ -50,24 +50,22 @@ function setSubTicket (ticket) {
     }
     document.getElementById("mainTicket").innerHTML = `
         <div class="ticket-header">
-            <h1 class="ticket-title">${ticket.title}</h1>
-            <span class="ticket-id">#${ticket.id}</span>
+            <h1 class="ticket-title">${ticket.commentTitle}</h1>
         </div>
 
         <div class="ticket-content">
             <h3>Ticket Details</h3>
-            <p>${ticket.data}</p>
+            <p>${ticket.comment}</p>
         </div>
 
         <hr>
 
         <div class="ticket-meta">
             <div class="meta-item">
-                <strong>Created by:</strong> ${ticket.creator}
+                <strong>Created by:</strong> ${ticket.username}
             </div>
             <div class="meta-item">
-                <strong>Ticket ID:</strong> #${ticket.id} <br>
-                <strong id = "statusDisplay">Ticket Status:</strong> ${ticket.status}
+                <strong>Made On:</strong> #${ticket.madeOn} <br>
             </div>
         </div>
     `;
@@ -76,6 +74,37 @@ function setSubTicket (ticket) {
     }
     else {
         ticket.status = 2;
+    }
+
+    document.getElementById ("commentsContainer").innerHTML = ``;
+
+    ticket = `key=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}&madeOn=${encodeURIComponent(ticket.madeOn)}&comment=${encodeURIComponent(ticket.comment)}&username=${encodeURIComponent(ticket.username)}&commentTitle=${encodeURIComponent(ticket.commentTitle)}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getSubTicketComments", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getTickets ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        const tickets = JSON.parse (responseText);
+        console.log ("-----------------------GETTICKETS ()-------------------------------");
+        console.log (tickets);
+        console.log ("------------------------------------------------------");
+
+        displayTickets(tickets, "ticketContainer");
+    }
+    catch (error) {
+        console.error ("----------------------error to get tickets--------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
     }
 }
 
@@ -102,16 +131,11 @@ async function submitComment() {
     const creator = sessionStorage.getItem("username");
     const ticket = JSON.parse(sessionStorage.getItem("currentTicket")).id;
 
-    let isSubTicket = document.getElementById ("isSubTicketInput").value;
-    if (isSubTicket == "on") {isSubTicket = 1}
-    else {isSubTicket = 2}
-
     const formData = new FormData();
     formData.append("title", title);
     formData.append("data", text);
     formData.append("creator", creator);
     formData.append("ticket", ticket);
-    formData.append ("isSubTicket", isSubTicket);
     if (file) formData.append("file", file);
 
     try {
@@ -213,24 +237,12 @@ function displayComments(commentsArray) {
                     </div>`;
             }
         }
-        console.log (c.isSubTicket);
-        if (c.isSubTicket == 2) {
             div.innerHTML = `
                 <h4>${c.commentTitle}</h4>
                 <p>${c.comment}</p>
                 ${attachmentHTML}
                 <small style="display:block; margin-top:15px; color:#888;">By ${c.username} • ${c.madeOn}</small>
             `;
-        }
-        else {
-            div.innerHTML = `
-                <h4>${c.commentTitle}</h4>
-                <p>${c.comment}</p>
-                ${attachmentHTML}
-                <small style="display:block; margin-top:15px; color:#888;">By ${c.username} • ${c.madeOn}</small>
-            `
-            div.classList.add("subTicket");
-        }
         
         container.appendChild(div);
     });
@@ -432,17 +444,3 @@ async function changeStatus () {
     }
     goBack ();
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const subTicketCheckbox = document.getElementById("isSubTicketInput");
-    const fileInput = document.getElementById("commentFile");
-
-    subTicketCheckbox.addEventListener("change", () => {
-        if (subTicketCheckbox.checked) {
-            fileInput.disabled = true;
-            fileInput.value = ""; // clear selected file
-        } else {
-            fileInput.disabled = false;
-        }
-    });
-});
