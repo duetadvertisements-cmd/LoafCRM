@@ -276,3 +276,13 @@ body {
     word-wrap: break-word;
     white-space: normal;
 }
+
+#dataInput {
+    width: 100%;
+    height: 120px;      /* adjust height here */
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: vertical;   /* allows user to drag-resize */
+}
