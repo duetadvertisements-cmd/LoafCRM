@@ -394,45 +394,6 @@ const themes = {
         dshticket1: "#eee" ,
         dshticket2: "#999"
     },
-    sunsetPro: {
-        dshbackground1: "#ff6a3d",
-        dshbackground2: "#ff9a3d",
-        dshbackground3: "#fff7f3",
-        dshnav1: "#6b3b2f",
-        dshhead1: "#3c1f15",
-        dshhead2: "#ff7a55",
-        dshhead3: "#f2d5c8",
-        dshticket1: "#f7e3d8",
-        tickettitle: "black",
-        tickettext: "black",
-        dshticket2: "#a77d6e"
-    },
-    aquaBreeze: {
-        dshbackground1: "#009ffd",
-        dshbackground2: "#2a2a72",
-        dshbackground3: "#ffffff",
-        dshnav1: "#4d5d7a",
-        dshhead1: "#212b40",
-        dshhead2: "#2678ff",
-        dshhead3: "#d0d8e8",
-        dshticket1: "#e8f1ff",
-        dshticket2: "#7e8cab",
-        tickettitle: "black",
-        tickettext: "black",
-    },
-    emeraldMist: { 
-        dshbackground1: "#0bab64",
-        dshbackground2: "#3bb78f",
-        dshbackground3: "#f6fffa",
-        dshnav1: "#3b5c52",
-        dshhead1: "#233c34",
-        dshhead2: "#0abf74",
-        dshhead3: "#cfe8dd",
-        dshticket1: "#e4f7ef",
-        dshticket2: "#84a797",
-        tickettitle: "black",
-        tickettext: "black",
-    },
     royalLuxe: {
         dshbackground1: "#4e54c8",
         dshbackground2: "#8f94fb",
@@ -446,30 +407,55 @@ const themes = {
         tickettitle: "black",
         tickettext: "black",
     },
-    cyberNight2: {
-        dshbackground1: "#1f2b3a",   // gradient start (soft navy)
-        dshbackground2: "#354a62",   // gradient end (lighter navy)
-        dshbackground3: "#f5f7fa",   // MAIN CONTENT background (light!)
-        
-        dshnav1: "#4e5f77",          // sidebar text
-        dshhead1: "#1c2533",         // main titles
-        dshhead2: "#3ca3ff",         // button hover + highlight
-        dshhead3: "#c7d2e5",         // input borders
-        
-        dshticket1: "#e3e9f2",       // ticket border lines
-        dshticket2: "#6e7f99",        // ticket small text
-        tickettitle: "black",
-        tickettext: "black",
+    desert_slate: {
+        dshbackground1: "#2d2926", 
+        dshbackground2: "#403a34", 
+        dshbackground3: "#fffcf9", 
+        dshnav1: "#5d544b",        
+        dshhead1: "#1a1a1a",        
+        dshhead2: "#d97757",        
+        dshhead3: "#e8e2db",        
+        dshticket1: "#f2ede7",      
+        dshticket2: "#a69d95",
+        tickettitle: "#1a1a1a"
+    },
+    cobalt_horizon: {
+        dshbackground1: "#1e293b", 
+        dshbackground2: "#334155", 
+        dshbackground3: "#ffffff", 
+        dshnav1: "#64748b",        
+        dshhead1: "#0f172a",        
+        dshhead2: "#3b82f6",        
+        dshhead3: "#e2e8f0",        
+        dshticket1: "#f1f5f9",      
+        dshticket2: "#94a3b8",
+        tickettitle: "#0f172a"
+    },
+    phantom_forest: {
+        dshbackground1: "#0f1d1a", 
+        dshbackground2: "#1c3a34", 
+        dshbackground3: "#fcfdfd", 
+        dshnav1: "#4a6b65",        
+        dshhead1: "#122621",        
+        dshhead2: "#10b981",        
+        dshhead3: "#e6efed",        
+        dshticket1: "#f0f7f5",      
+        dshticket2: "#7ca29a",
+        tickettitle: "#122621"
     },
 }
 
 function applyTheme(name) {
-  const theme = themes[name];
-  for (let key in theme) {
-    document.documentElement.style.setProperty(`--${key}`, theme[key]);
-  }
+    const theme = themes[name];
+    if (!theme) return; // Safety check
+
+    for (let key in theme) {
+        // If the key doesn't start with '--', add it
+        const cssVar = key.startsWith('--') ? key : `--${key}`;
+        document.documentElement.style.setProperty(cssVar, theme[key]);
+    }
 }
-applyTheme ("cyberNight2");
+applyTheme ("desert_slate");
 
 async function promoteUserToWorker (id) {
     const response = await fetch("http://192.168.1.35:8080/promoteUserToWorker", {

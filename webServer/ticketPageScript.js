@@ -137,6 +137,7 @@ async function submitComment() {
     formData.append("creator", creator);
     formData.append("ticket", ticket);
     if (file) formData.append("file", file);
+    console.log (file);
 
     try {
         const response = await fetch("http://192.168.1.35:8080/addComment", {
@@ -250,164 +251,68 @@ function displayComments(commentsArray) {
 
 const themes = {
     basic: {
-        "--bg1": "#667eea",
-        "--bg2": "#49BC9B",
-        "--card-bg": "#ffffff",
-        "--card-border": "#e0e0e0",
-        "--card-top-strip": "#49BC9B",
-
-        "--ticket-title": "#222",
-        "--ticket-text": "#444",
-        "--ticket-id-bg": "linear-gradient(135deg, #667eea, #49BC9B)",
-
-        "--comment-bg": "#fafafa",
-        "--comment-title": "#333",
-        "--comment-text": "#555",
-        "--comment-border": "#ddd",
-
-        "--button-bg": "#667eea",
-        "--button-hover": "#5a67d8",
-        "--button-text": "#fff",
-
-        "--input-bg": "#fff",
-        "--input-border": "#ccc",
-        "--input-focus": "#667eea"
+        "bg1": "#667eea", "bg2": "#49BC9B",
+        "card-bg": "#ffffff", "card-border": "#49BC9B", "card-top-strip": "#667eea",
+        "ticket-title": "#333", "ticket-text": "#444",
+        "comment-bg": "#ffffff", "comment-border": "#6366f1", "comment-title": "#1f2937",
+        "comment-text": "#374151", "comment-small": "#6b7280",
+        "button-bg": "#667eea", "button-hover": "#5a67d8", "button-text": "#ffffff",
+        "input-bg": "#f7f9fc", "input-border": "#d1d5db",
+        "modal-bg": "#ffffff", "modal-strip": "#667eea"
     },
-
-    sunsetPro: {
-        "--bg1": "#ff9966",
-        "--bg2": "#ff5e62",
-        "--card-bg": "#fff7f3",
-        "--card-border": "#ffb199",
-        "--card-top-strip": "#ff5e62",
-
-        "--ticket-title": "#662200",
-        "--ticket-text": "#773300",
-        "--ticket-id-bg": "linear-gradient(135deg, #ff9966, #ff5e62)",
-
-        "--comment-bg": "#fff1e8",
-        "--comment-title": "#552200",
-        "--comment-text": "#663300",
-        "--comment-border": "#ffb199",
-
-        "--button-bg": "#ff5e62",
-        "--button-hover": "#ff3b42",
-        "--button-text": "#fff",
-
-        "--input-bg": "#fff7f3",
-        "--input-border": "#ffb199",
-        "--input-focus": "#ff5e62"
-    },
-
-    aquaBreeze: {
-        "--bg1": "#6dd5ed",
-        "--bg2": "#2193b0",
-        "--card-bg": "#f0fcff",
-        "--card-border": "#a8e9f6",
-        "--card-top-strip": "#2193b0",
-
-        "--ticket-title": "#003a4d",
-        "--ticket-text": "#004d66",
-        "--ticket-id-bg": "linear-gradient(135deg, #6dd5ed, #2193b0)",
-
-        "--comment-bg": "#e6f9ff",
-        "--comment-title": "#003644",
-        "--comment-text": "#005066",
-        "--comment-border": "#a8e9f6",
-
-        "--button-bg": "#2193b0",
-        "--button-hover": "#1a6f85",
-        "--button-text": "#fff",
-
-        "--input-bg": "#f0fcff",
-        "--input-border": "#a8e9f6",
-        "--input-focus": "#2193b0"
-    },
-
-    emeraldMist: {
-        "--bg1": "#00b894",
-        "--bg2": "#55efc4",
-        "--card-bg": "#f3fffa",
-        "--card-border": "#a5f2d6",
-        "--card-top-strip": "#00b894",
-
-        "--ticket-title": "#004d3d",
-        "--ticket-text": "#006652",
-        "--ticket-id-bg": "linear-gradient(135deg, #00b894, #55efc4)",
-
-        "--comment-bg": "#e8fff7",
-        "--comment-title": "#004033",
-        "--comment-text": "#00604d",
-        "--comment-border": "#a5f2d6",
-
-        "--button-bg": "#00b894",
-        "--button-hover": "#009a7a",
-        "--button-text": "#fff",
-
-        "--input-bg": "#f3fffa",
-        "--input-border": "#a5f2d6",
-        "--input-focus": "#00b894"
-    },
-
     royalLuxe: {
-        "--bg1": "#654ea3",
-        "--bg2": "#eaafc8",
-        "--card-bg": "#faf5ff",
-        "--card-border": "#d8b7ff",
-        "--card-top-strip": "#654ea3",
-
-        "--ticket-title": "#2f1b52",
-        "--ticket-text": "#3c2466",
-        "--ticket-id-bg": "linear-gradient(135deg, #654ea3, #eaafc8)",
-
-        "--comment-bg": "#f4ebff",
-        "--comment-title": "#2c1a4b",
-        "--comment-text": "#3a2362",
-        "--comment-border": "#d8b7ff",
-
-        "--button-bg": "#654ea3",
-        "--button-hover": "#513d85",
-        "--button-text": "#fff",
-
-        "--input-bg": "#faf5ff",
-        "--input-border": "#d8b7ff",
-        "--input-focus": "#654ea3"
+        "bg1": "#4e54c8", "bg2": "#8f94fb",
+        "card-bg": "#ffffff", "card-border": "#8f94fb", "card-top-strip": "#4e54c8",
+        "ticket-title": "#2e3160", "ticket-text": "#4a4e89",
+        "comment-bg": "#fafaff", "comment-border": "#d7d9ff", "comment-title": "#2e3160",
+        "comment-text": "#4a4e89", "comment-small": "#9d9ccc",
+        "button-bg": "#6a6efb", "button-hover": "#4e54c8", "button-text": "#ffffff",
+        "input-bg": "#f5f6ff", "input-border": "#d7d9ff",
+        "modal-bg": "#ffffff", "modal-strip": "#4e54c8"
     },
-
-    cyberNight2: {
-        "--bg1": "#0a0f24",
-        "--bg2": "#111d4a",
-        "--card-bg": "#141a33",
-        "--card-border": "#1e2b55",
-        "--card-top-strip": "#00eaff",
-
-        "--ticket-title": "#d6eaff",
-        "--ticket-text": "#b6c9ff",
-        "--ticket-id-bg": "linear-gradient(135deg, #00eaff, #0088ff)",
-
-        "--comment-bg": "#10162c",
-        "--comment-title": "#c5d8ff",
-        "--comment-text": "#a6bbff",
-        "--comment-border": "#1e2b55",
-
-        "--button-bg": "#0088ff",
-        "--button-hover": "#006bd1",
-        "--button-text": "#fff",
-
-        "--input-bg": "#0d142b",
-        "--input-border": "#1e2b55",
-        "--input-focus": "#00eaff",
-        "--ticket-meta-1": "white"
+    desert_slate: {
+        "bg1": "#2d2926", "bg2": "#403a34",
+        "card-bg": "#ffffff", "card-border": "#d97757", "card-top-strip": "#2d2926",
+        "ticket-title": "#1a1a1a", "ticket-text": "#5d544b",
+        "comment-bg": "#fffcf9", "comment-border": "#e8e2db", "comment-title": "#1a1a1a",
+        "comment-text": "#5d544b", "comment-small": "#a69d95",
+        "button-bg": "#d97757", "button-hover": "#bf6346", "button-text": "#ffffff",
+        "input-bg": "#fdfaf7", "input-border": "#e8e2db",
+        "modal-bg": "#ffffff", "modal-strip": "#2d2926"
+    },
+    cobalt_horizon: {
+        "bg1": "#1e293b", "bg2": "#334155",
+        "card-bg": "#ffffff", "card-border": "#3b82f6", "card-top-strip": "#1e293b",
+        "ticket-title": "#0f172a", "ticket-text": "#475569",
+        "comment-bg": "#f8fafc", "comment-border": "#e2e8f0", "comment-title": "#0f172a",
+        "comment-text": "#475569", "comment-small": "#94a3b8",
+        "button-bg": "#3b82f6", "button-hover": "#2563eb", "button-text": "#ffffff",
+        "input-bg": "#f1f5f9", "input-border": "#e2e8f0",
+        "modal-bg": "#ffffff", "modal-strip": "#1e293b"
+    },
+    phantom_forest: {
+        "bg1": "#0f1d1a", "bg2": "#1c3a34",
+        "card-bg": "#ffffff", "card-border": "#10b981", "card-top-strip": "#0f1d1a",
+        "ticket-title": "#122621", "ticket-text": "#2d3735",
+        "comment-bg": "#f0f7f5", "comment-border": "#e6efed", "comment-title": "#122621",
+        "comment-text": "#2d3735", "comment-small": "#7ca29a",
+        "button-bg": "#10b981", "button-hover": "#059669", "button-text": "#ffffff",
+        "input-bg": "#f9fcfb", "input-border": "#e6efed",
+        "modal-bg": "#ffffff", "modal-strip": "#0f1d1a"
     }
 };
 
 function applyTheme(name) {
     const theme = themes[name];
-    Object.entries(theme).forEach(([key, value]) => {
-        document.documentElement.style.setProperty(key, value);
+    if (!theme) return;
+    
+    Object.keys(theme).forEach(key => {
+        document.documentElement.style.setProperty(`--${key}`, theme[key]);
     });
 }
-applyTheme ("royalLuxe");
+
+// Initial call
+applyTheme('cobalt_horizon');
 
 function setCorrectStatusButton () {
      const ticket = JSON.parse(sessionStorage.getItem("currentTicket"));

@@ -10,24 +10,24 @@ async function getTickets () {
         });
         const responseText = await serverResponse.text();
 
-        console.log ("------------------------------------------------------");
+        console.log ("");
         console.log("Server response to getTickets ():");
         console.log(responseText);
-        console.log ("------------------------------------------------------");
+        console.log ("");
 
         const tickets = JSON.parse (responseText);
-        console.log ("-----------------------GETTICKETS ()-------------------------------");
+        console.log ("-GETTICKETS ()-");
         console.log (tickets);
-        console.log ("------------------------------------------------------");
+        console.log ("");
 
         displayTickets(tickets);
     }
     catch (error) {
-        console.error ("----------------------error to get tickets--------------------------------");
+        console.error ("error to get tickets");
         console.error ("YOU FORGOT TO TURN THE SERVER ON");
         console.log ("\n");
         console.error("Request failed:", error);
-        console.error ("------------------------------------------------------");
+        console.error ("");
     }
 }
 
@@ -87,54 +87,6 @@ const themes = {
         ticketText: "#555",
         ticketSmall: "#777"
     },
-    sunsetPro: {
-        bg1: "#ff6a3d",
-        bg2: "#ff9a3d",
-        mainBg: "#fff7f3",
-
-        navText: "#6b3b2f",
-        headingMain: "#3c1f15",
-        headingAccent: "#ff7a55",
-        headingBorder: "#f2d5c8",
-
-        ticketBg: "#f7e3d8",
-        ticketBorder: "#ff9a3d",
-        ticketTitle: "white",
-        ticketText: "white",
-        ticketSmall: "#a77d6e"
-    },
-    aquaBreeze: {
-        bg1: "#009ffd",
-        bg2: "#2a2a72",
-        mainBg: "#ffffff",
-
-        navText: "#4d5d7a",
-        headingMain: "#212b40",
-        headingAccent: "#2678ff",
-        headingBorder: "#d0d8e8",
-
-        ticketBg: "#e8f1ff",
-        ticketBorder: "#2678ff",
-        ticketTitle: "white",
-        ticketText: "white",
-        ticketSmall: "#7e8cab"
-    },
-    emeraldMist: {
-        bg1: "#0bab64",
-        bg2: "#3bb78f",
-        mainBg: "#f6fffa",
-
-        navText: "#3b5c52",
-        headingMain: "#233c34",
-        headingAccent: "#0abf74",
-        headingBorder: "#cfe8dd",
-
-        ticketBg: "#e4f7ef",
-        ticketBorder: "#0abf74",
-        ticketTitle: "white",
-        ticketText: "white",
-        ticketSmall: "#84a797"
-    },
     royalLuxe: {
         bg1: "#4e54c8",
         bg2: "#8f94fb",
@@ -151,30 +103,60 @@ const themes = {
         ticketText: "black",
         ticketSmall: "#9d9ccc"
     },
-    cyberNight2: {
-        bg1: "#1f2b3a",
-        bg2: "#354a62",
-        mainBg: "#0f1622",
-
-        navText: "#4e5f77",
-        headingMain: "#c7d2e5",
-        headingAccent: "#3ca3ff",
-        headingBorder: "#2a3545",
-
-        ticketBg: "#1c2533",
-        ticketBorder: "#3ca3ff",
-        ticketTitle: "white",
-        ticketText: "white",
-        ticketSmall: "#6e7f99"
+    desert_slate: {
+        "bg1": "#2d2926",
+        "bg2": "#403a34",
+        "main-bg": "#fffcf9",
+        "nav-text": "#5d544b",
+        "heading-main": "#1a1a1a",
+        "heading-accent": "#d97757",
+        "heading-border": "#e8e2db",
+        "ticket-bg": "#ffffff",
+        "ticket-border": "#d97757",
+        "ticket-title": "#1a1a1a",
+        "ticket-text": "#5d544b",
+        "ticket-smalltext": "#a69d95"
+    },
+    cobalt_horizon: {
+        "bg1": "#1e293b",
+        "bg2": "#334155",
+        "main-bg": "#ffffff",
+        "nav-text": "#64748b",
+        "heading-main": "#0f172a",
+        "heading-accent": "#3b82f6",
+        "heading-border": "#e2e8f0",
+        "ticket-bg": "#ffffff",
+        "ticket-border": "#3b82f6",
+        "ticket-title": "#0f172a",
+        "ticket-text": "#475569",
+        "ticket-smalltext": "#94a3b8"
+    },
+    phantom_forest: {
+        "bg1": "#0f1d1a",
+        "bg2": "#1c3a34",
+        "main-bg": "#fcfdfd",
+        "nav-text": "#4a6b65",
+        "heading-main": "#122621",
+        "heading-accent": "#10b981",
+        "heading-border": "#e6efed",
+        "ticket-bg": "#ffffff",
+        "ticket-border": "#10b981",
+        "ticket-title": "#122621",
+        "ticket-text": "#2d3735",
+        "ticket-smalltext": "#7ca29a"
     }
 }
 
 function applyTheme(name) {
-  const theme = themes[name];
-  for (let key in theme) {
-    document.documentElement.style.setProperty(`--${key}`, theme[key]);
-  }
+    const theme = themes[name];
+    if (!theme) return; // Safety check
+
+    for (let key in theme) {
+        // If the key doesn't start with '--', add it
+        const cssVar = key.startsWith('--') ? key : `--${key}`;
+        document.documentElement.style.setProperty(cssVar, theme[key]);
+    }
 }
-applyTheme ("royalLuxe");
+applyTheme ("cobalt_horizon");
 
 

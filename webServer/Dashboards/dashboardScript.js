@@ -206,7 +206,7 @@ async function loadDashboardStats() {
 getTickets ();
 
 const themes = {
-    basic: {
+    basic: { //GOOD
         dshbackground1: "#667eea",
         dshbackground2: "#49BC9B",
         dshbackground3: "white",
@@ -217,46 +217,7 @@ const themes = {
         dshticket1: "#eee" ,
         dshticket2: "#999"
     },
-    sunsetPro: {
-        dshbackground1: "#ff6a3d",
-        dshbackground2: "#ff9a3d",
-        dshbackground3: "#fff7f3",
-        dshnav1: "#6b3b2f",
-        dshhead1: "#3c1f15",
-        dshhead2: "#ff7a55",
-        dshhead3: "#f2d5c8",
-        dshticket1: "#f7e3d8",
-        tickettitle: "black",
-        tickettext: "black",
-        dshticket2: "#a77d6e"
-    },
-    aquaBreeze: {
-        dshbackground1: "#009ffd",
-        dshbackground2: "#2a2a72",
-        dshbackground3: "#ffffff",
-        dshnav1: "#4d5d7a",
-        dshhead1: "#212b40",
-        dshhead2: "#2678ff",
-        dshhead3: "#d0d8e8",
-        dshticket1: "#e8f1ff",
-        dshticket2: "#7e8cab",
-        tickettitle: "black",
-        tickettext: "black",
-    },
-    emeraldMist: { 
-        dshbackground1: "#0bab64",
-        dshbackground2: "#3bb78f",
-        dshbackground3: "#f6fffa",
-        dshnav1: "#3b5c52",
-        dshhead1: "#233c34",
-        dshhead2: "#0abf74",
-        dshhead3: "#cfe8dd",
-        dshticket1: "#e4f7ef",
-        dshticket2: "#84a797",
-        tickettitle: "black",
-        tickettext: "black",
-    },
-    royalLuxe: {
+    royalLuxe: { //GOOD
         dshbackground1: "#4e54c8",
         dshbackground2: "#8f94fb",
         dshbackground3: "#fafaff",
@@ -269,20 +230,38 @@ const themes = {
         tickettitle: "black",
         tickettext: "black",
     },
-    cyberNight2: {
-        dshbackground1: "#1f2b3a",   // gradient start (soft navy)
-        dshbackground2: "#354a62",   // gradient end (lighter navy)
-        dshbackground3: "#f5f7fa",   // MAIN CONTENT background (light!)
-        
-        dshnav1: "#4e5f77",          // sidebar text
-        dshhead1: "#1c2533",         // main titles
-        dshhead2: "#3ca3ff",         // button hover + highlight
-        dshhead3: "#c7d2e5",         // input borders
-        
-        dshticket1: "#e3e9f2",       // ticket border lines
-        dshticket2: "#6e7f99",        // ticket small text
-        tickettitle: "black",
-        tickettext: "black",
+    desert_slate: { //GOOD
+        dshbackground1: "#2d2926", // Charcoal Umber
+        dshbackground2: "#403a34", // Warm Slate
+        dshbackground3: "#fffcf9", // Paper White
+        dshnav1: "#5d544b",        // Deep Taupe
+        dshhead1: "#1a1a1a",        // Ink Black
+        dshhead2: "#d97757",        // Terracotta
+        dshhead3: "#e8e2db",        // Sand Border
+        dshticket1: "#f2ede7",      // Light Grain
+        dshticket2: "#a69d95"       // Stone Gray
+    },
+    cobalt_horizon: { //GOOD
+        dshbackground1: "#1e293b", // Deep Navy
+        dshbackground2: "#334155", // Slate Blue
+        dshbackground3: "#ffffff", // Clean White Card (contrast)
+        dshnav1: "#64748b",        // Cool Slate
+        dshhead1: "#0f172a",        // Midnight Text
+        dshhead2: "#3b82f6",        // Bright Azure Accent
+        dshhead3: "#e2e8f0",        // Soft Border
+        dshticket1: "#f1f5f9",      // Ice Gray
+        dshticket2: "#94a3b8"       // Muted Steel
+    },
+    phantom_forest: { //GOOD
+        dshbackground1: "#0f1d1a", // Dark Forest
+        dshbackground2: "#1c3a34", // Deep Teal
+        dshbackground3: "#fcfdfd", // Off-White Card
+        dshnav1: "#4a6b65",        // Muted Sage
+        dshhead1: "#122621",        // Deep Spruce Text
+        dshhead2: "#10b981",        // Emerald Pop
+        dshhead3: "#e6efed",        // Pale Mint Border
+        dshticket1: "#f0f7f5",      // Soft Mint Wash
+        dshticket2: "#7ca29a"       // Dusty Teal
     },
 }
 
@@ -292,4 +271,4 @@ function applyTheme(name) {
     document.documentElement.style.setProperty(`--${key}`, theme[key]);
   }
 }
-applyTheme ("cyberNight2"); 
+applyTheme ("royalLuxe"); 

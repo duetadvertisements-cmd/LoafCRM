@@ -463,6 +463,7 @@ public class server {
                 System.out.println ("Data: "+data);
                 System.out.println ("Creator: "+creator);
                 System.out.println ("ticket: "+ticket);
+                System.out.println ("filepath: "+filePath);
 
 
                 
@@ -481,6 +482,7 @@ public class server {
                     statement.setString(2, data);
                     statement.setString(3, creator);
                     statement.setString(4, ticket);
+                    statement.setString(5, filePath);
 
                     statement.executeUpdate ();
                 
