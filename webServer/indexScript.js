@@ -3,6 +3,12 @@ async function signUp () {
     const email = document.getElementById ("signInPageEmailInput").value;
     const password = document.getElementById ("signInPagePasswordInput").value;
 
+    if (!isValidEmail (email)) {
+        console.log ("Email is not valid");
+        alert ("Email is invalid");
+        return;
+    }
+
     const formData = `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
     try {
@@ -126,4 +132,9 @@ async function getRole(username) {
         console.error("Error getting role:", error);
         return null;
     }
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
 }
