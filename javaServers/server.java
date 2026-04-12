@@ -38,6 +38,7 @@ public class server {
         server.createContext("/changeStatus", new changeStatusHandler());
         server.createContext("/getUnassignedTickets", new getUnassignedTicketsHandler());
         server.createContext("/assignTicket", new assignTicketHandler());
+        server.createContext("/getEmail", new getEmailHandler());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -182,6 +183,22 @@ public class server {
                         "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                     );
 
+
+                    if (!email.equalsIgnoreCase("tanishkumardewangan@outlook.com")) {
+                        PreparedStatement checkStmt = connection.prepareStatement(
+                            "SELECT 1 FROM LOAF_USERS WHERE EMAIL = ?"
+                        );
+                        checkStmt.setString(1, email);
+
+                        ResultSet checkResult = checkStmt.executeQuery();
+
+                        if (checkResult.next()) {
+                            sendResponse(exchange, 400, "ERROR: Email already exists");
+                            return;
+                        }
+                    }
+
+                    
                     PreparedStatement statement = connection.prepareStatement(
                         "INSERT INTO LOAF_USERS (USERNAME, EMAIL, PASSWORD) VALUES (?, ?, ?)"
                     );
@@ -203,7 +220,7 @@ public class server {
 
                     String message = error.getMessage();
                     String response;
-
+                    
                     if (message != null && message.contains("USERNAME")) {
                         response = "ERROR: Username already exists";
                     } else if (message != null && message.contains("EMAIL")) {
@@ -300,6 +317,7 @@ public class server {
                     String title = formData.get("title");
                     String data = formData.get("data");
                     String creator = formData.get("creator");
+                    String toEmail = formData.get ("toEmail");
 
                    
 
@@ -326,8 +344,24 @@ public class server {
                     response = "SUCCESS";
 
                     server.sendResponse(exchange, 200, response);
+                    // SEND MAIL
 
-                    sendMail ("LOAFCRM@OUTLOOK.COM", "obzcwbksijnturtk", "", "", "");
+                    statement = connection.prepareStatement(
+                        "SELECT  FROM"
+                    );
+                    String emailBody = "Dear User,\n\n"
+                    + "This is to inform you that a ticket has been successfully created based on your request.\n\n"
+                    + "Ticket Details:\n"
+                    + "Subject: " + title + "\n"
+                    + "Status: Open\n\n"
+                    + "Our support team will review your request and get back to you shortly.\n\n"
+                    + "If you have any additional information to provide, please visit our official website to manage your ticket.\n\n"
+                    + "Thank you for contacting us.\n\n"
+                    + "Best regards,\n"
+                    + "Support Team\n"
+                    + "LoafCRM";
+
+                    sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation", emailBody);
 
                     statement.close();
                     connection.close();
@@ -1138,6 +1172,60 @@ public static void sendMail(String user, String pass, String to, String subject,
         System.out.println("Mail sent.");
     }
 
+     static class getEmailHandler implements HttpHandler {
+
+        public void handle(HttpExchange exchange) throws IOException {
+
+            server.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    String username = formData.get("username");
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement;
+
+                        statement = connection.prepareStatement(
+                            "SELECT * FROM LOAF_USERS WHERE USERNAME = ?"
+                        );
+
+                        statement.setString(1, username);
+                        System.out.println ("Performed getEmail with username: "+username);
+
+                    ResultSet result = statement.executeQuery();
+
+                    StringBuilder responseBuilder = new StringBuilder();
+                    responseBuilder.append("[");
+
+                        String response = result.getString("EMAIL");
+
+
+                    server.sendResponse(exchange, 200, response);
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    server.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
 }
 
     

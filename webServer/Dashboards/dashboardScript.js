@@ -74,7 +74,7 @@ async function addTicket () {
     const data = document.getElementById ("dataInput").value;
     const creator = sessionStorage.getItem ("username");
 
-    const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}`;    
+    const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}&toEmail=${encodeURIComponent(sessionStorage.getItem ("email"))}`;    
 
     try {
         const serverResponse = await fetch("http://192.168.1.35:8080/addTicket", {
@@ -141,6 +141,35 @@ async function getTickets () {
         console.error ("------------------------------------------------------");
     }
 }
+
+async function getEmail () {  
+
+    const username = sessionStorage.getItem ("username");
+    const ticket = `username=${encodeURIComponent(username)}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getEmail", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getEmail ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        sessionStorage.setItem ("email", responseText);
+    }
+    catch (error) {
+        console.error ("----------------------error to get email--------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
+    }
+}
+getEmail ();
 
 function displayTickets(tickets) {
     const container = document.getElementById("ticketContainer");
