@@ -339,19 +339,26 @@ public class server {
                     statement.setString(3, creator);
 
                     statement.executeUpdate ();
-
                     String response;
                     response = "SUCCESS";
 
                     server.sendResponse(exchange, 200, response);
                     // SEND MAIL
 
-                    statement = connection.prepareStatement(
-                        "SELECT  FROM"
-                    );
+                    Statement getIdStatement = connection.createStatement ();
+                    ResultSet recentAddedTicket = getIdStatement.executeQuery("SELECT last_insert_rowid ()");
+
+                    int ticketID = -1;
+                    if (recentAddedTicket.next ()) {
+                        ticketID = recentAddedTicket.getInt (1);
+                    }
+
+                    System.out.println ("Ticket Created With ID: "+ticketID);
+
                     String emailBody = "Dear User,\n\n"
                     + "This is to inform you that a ticket has been successfully created based on your request.\n\n"
                     + "Ticket Details:\n"
+                    + "Ticket ID: " + ticketID + "\n"
                     + "Subject: " + title + "\n"
                     + "Status: Open\n\n"
                     + "Our support team will review your request and get back to you shortly.\n\n"
@@ -361,7 +368,7 @@ public class server {
                     + "Support Team\n"
                     + "LoafCRM";
 
-                    sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation", emailBody);
+                    sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation With ID "+ticketID, emailBody);
 
                     statement.close();
                     connection.close();
