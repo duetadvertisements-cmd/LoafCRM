@@ -487,6 +487,7 @@ public class server {
                     String data = parser.getField("data");
                     String creator = parser.getField("creator");
                     String ticket = parser.getField("ticket");
+                    String toEmail = parser.getField ("toEmail");
 
                     String filePath = null;
 
@@ -539,6 +540,32 @@ public class server {
                     response = "SUCCESS";
 
                     server.sendResponse(exchange, 200, response);
+                    //SEND MAIL
+
+                    Statement getIdStatement = connection.createStatement ();
+                    ResultSet recentAddedTicket = getIdStatement.executeQuery("SELECT last_insert_rowid ()");
+
+                    int ticketID = -1;
+                    if (recentAddedTicket.next ()) {
+                        ticketID = recentAddedTicket.getInt (1);
+                    }
+
+                    System.out.println ("Comment Created With ID: "+ticketID);
+
+                    String emailBody = "Dear User,\n\n"
+                    + "This is to inform you that a comment has been successfully created based on your request.\n\n"
+                    + "Comment Details:\n"
+                    + "Comment ID: " + ticketID + "\n"
+                    + "Subject: " + title + "\n"
+                    + "Our support team will review your request and get back to you shortly.\n\n"
+                    + "If you have any additional information to provide, please visit our official website to manage your ticket.\n\n"
+                    + "Thank you for contacting us.\n\n"
+                    + "Best regards,\n"
+                    + "Support Team\n"
+                    + "LoafCRM";
+
+                    sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation With ID "+ticketID, emailBody);
+
 
                     statement.close();
                     connection.close();

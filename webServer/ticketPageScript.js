@@ -136,6 +136,7 @@ async function submitComment() {
     formData.append("data", text);
     formData.append("creator", creator);
     formData.append("ticket", ticket);
+    formData.append ("toEmail", sessionStorage.getItem ("email"));
     if (file) formData.append("file", file);
     console.log (file);
 
