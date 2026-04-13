@@ -503,7 +503,7 @@ getUnassignedTickets ();
 async function assignTicket (ticketID) {
     const assignTo = prompt ("Assign To:")
 
-    const ticket = `ticketID=${encodeURIComponent(ticketID)}&assignTo=${encodeURIComponent(assignTo)}`;
+    const ticket = `ticketID=${encodeURIComponent(ticketID)}&assignTo=${encodeURIComponent(assignTo)}&toEmail=${sessionStorage.getItem ("email")}`;
     
     try {
         const serverResponse = await fetch("http://192.168.1.35:8080/assignTicket", {
@@ -518,3 +518,32 @@ async function assignTicket (ticketID) {
         console.error (exception);
     }
 }
+
+async function getEmail () {  
+
+    const username = sessionStorage.getItem ("username");
+    const ticket = `username=${encodeURIComponent(username)}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.35:8080/getEmail", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getEmail ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        sessionStorage.setItem ("email", responseText);
+    }
+    catch (error) {
+        console.error ("----------------------error to get email--------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
+    }
+}
+getEmail ();

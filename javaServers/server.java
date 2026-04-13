@@ -564,7 +564,7 @@ public class server {
                     + "Support Team\n"
                     + "LoafCRM";
 
-                    sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation With ID "+ticketID, emailBody);
+                    sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Comment Creation With ID "+ticketID, emailBody);
 
 
                     statement.close();
@@ -1059,6 +1059,7 @@ public class server {
 
                     String assignTo = formData.get("assignTo");
                     int ticketID = Integer.parseInt(formData.get ("ticketID"));
+                    String toEmail = formData.get ("toEmail");
 
 
                     Connection connection = DriverManager.getConnection(
@@ -1078,6 +1079,22 @@ public class server {
                     String response = "SUCCESS";
 
                     server.sendResponse(exchange, 200, response);
+
+                    //SEND MAIL
+
+
+                    String emailBody = "Dear User,\n\n"
+                        + "This is to inform you that your ticket (Ticket ID: " + ticketID + ") has been successfully assigned for further processing.\n\n"
+                        + "Assignment Details:\n"
+                        + "Assigned To: " + assignTo + "\n"
+                        + "The assigned representative will review your request and take the necessary actions to resolve it at the earliest.\n\n"
+                        + "If you have any additional information to provide, please visit our official website to manage your ticket.\n\n"
+                        + "Thank you for contacting us.\n\n"
+                        + "Best regards,\n"
+                        + "Support Team\n"
+                        + "LoafCRM";
+
+                    sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Assignment With ID "+ticketID, emailBody);
 
                     statement.close();
                     connection.close();
