@@ -313,7 +313,7 @@ function applyTheme(name) {
 }
 
 // Initial call
-applyTheme('cobalt_horizon');
+applyTheme(localStorage.getItem ("preferredTheme"));
 
 function setCorrectStatusButton () {
      const ticket = JSON.parse(sessionStorage.getItem("currentTicket"));

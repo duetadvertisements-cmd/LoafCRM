@@ -1,162 +1,76 @@
-async function getTickets () {  
-
-    const username = sessionStorage.getItem ("username");
-    const ticket = `username=${encodeURIComponent(username)}`;
-    try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/getTicketsEmployee", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: ticket
-        });
-        const responseText = await serverResponse.text();
-
-        console.log ("");
-        console.log("Server response to getTickets ():");
-        console.log(responseText);
-        console.log ("");
-
-        const tickets = JSON.parse (responseText);
-        console.log ("-GETTICKETS ()-");
-        console.log (tickets);
-        console.log ("");
-
-        displayTickets(tickets);
-    }
-    catch (error) {
-        console.error ("error to get tickets");
-        console.error ("YOU FORGOT TO TURN THE SERVER ON");
-        console.log ("\n");
-        console.error("Request failed:", error);
-        console.error ("");
-    }
-}
-
-function displayTickets(tickets) {
-    const container = document.getElementById("ticketContainer");
-    container.innerHTML = "";  // Clear previous tickets
-
-    if (tickets.length === 0) {
-        container.innerHTML = "<p class='no-tickets'>No tickets found</p>";
-        return;
-    }
-
-    tickets.forEach(ticket => {
-        const ticketDiv = document.createElement("div");
-        ticketDiv.className = "ticket";
-        ticketDiv.onclick = () => ticketClicked(ticket);
-        ticketDiv.innerHTML = `
-            <div class="ticket-header">
-                <h3 class="ticket-title">${ticket.title}</h3>
-                <span class="ticket-id">#${ticket.id}</span>
-            </div>
-            <p class="ticket-data">${ticket.data}</p>
-            <p class="ticket-creator">Created by: ${ticket.creator}</p>
-        `;
-        container.appendChild(ticketDiv);
-    });
-}
-
-getTickets ();
-
-function ticketClicked(ticket) {
-    sessionStorage.setItem ("currentTicket", JSON.stringify ({
-        title: ticket.title,
-        data: ticket.data,
-        creator: ticket.creator,
-        id: ticket.id,
-        status: ticket.status
-    }));
-    sessionStorage.setItem ("dashboardHref", "dashboards/WorkerDashboard.html")
-    window.location.href = "../ticketPage.html";
-}
-
 const themes = {
-    basic: {
-        bg1: "#667eea",
-        bg2: "#49BC9B",
-        mainBg: "white",
+    cobalt_horizon: { bg1: "#1e293b", bg2: "#334155", "main-bg": "#ffffff", "heading-accent": "#3b82f6", "ticket-bg": "#ffffff", "ticket-border": "#3b82f6" },
+    royalLuxe: { bg1: "#4e54c8", bg2: "#8f94fb", "main-bg": "#fafaff", "heading-accent": "#6a6efb", "ticket-bg": "#ecebff", "ticket-border": "#6a6efb" },
+    phantom_forest: { bg1: "#0f1d1a", bg2: "#1c3a34", "main-bg": "#fcfdfd", "heading-accent": "#10b981", "ticket-bg": "#ffffff", "ticket-border": "#10b981" },
+    desert_slate: { bg1: "#2d2926", bg2: "#403a34", "main-bg": "#fffcf9", "heading-accent": "#d97757", "ticket-bg": "#ffffff", "ticket-border": "#d97757" },
+    basic: { bg1: "#667eea", bg2: "#49BC9B", "main-bg": "white", "heading-accent": "#5a67d8", "ticket-bg": "white", "ticket-border": "#49BC9B" }
+};
 
-        navText: "#666",
-        headingMain: "#333",
-        headingAccent: "#5a67d8",
-        headingBorder: "#ddd",
+document.addEventListener("DOMContentLoaded", () => {
+    applyTheme(localStorage.getItem("preferredTheme") || "cobalt_horizon");
+    getTickets();
+});
 
-        ticketBg: "white",
-        ticketBorder: "#49BC9B",
-        ticketTitle: "#333",
-        ticketText: "#555",
-        ticketSmall: "#777"
-    },
-    royalLuxe: {
-        bg1: "#4e54c8",
-        bg2: "#8f94fb",
-        mainBg: "#fafaff",
+function toggleMenu() {
+    document.getElementById('navMenu').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
 
-        navText: "#4a4e89",
-        headingMain: "#2e3160",
-        headingAccent: "#6a6efb",
-        headingBorder: "#d7d9ff",
+function showSection(name) {
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-        ticketBg: "#ecebff",
-        ticketBorder: "#6a6efb",
-        ticketTitle: "black",
-        ticketText: "black",
-        ticketSmall: "#9d9ccc"
-    },
-    desert_slate: {
-        "bg1": "#2d2926",
-        "bg2": "#403a34",
-        "main-bg": "#fffcf9",
-        "nav-text": "#5d544b",
-        "heading-main": "#1a1a1a",
-        "heading-accent": "#d97757",
-        "heading-border": "#e8e2db",
-        "ticket-bg": "#ffffff",
-        "ticket-border": "#d97757",
-        "ticket-title": "#1a1a1a",
-        "ticket-text": "#5d544b",
-        "ticket-smalltext": "#a69d95"
-    },
-    cobalt_horizon: {
-        "bg1": "#1e293b",
-        "bg2": "#334155",
-        "main-bg": "#ffffff",
-        "nav-text": "#64748b",
-        "heading-main": "#0f172a",
-        "heading-accent": "#3b82f6",
-        "heading-border": "#e2e8f0",
-        "ticket-bg": "#ffffff",
-        "ticket-border": "#3b82f6",
-        "ticket-title": "#0f172a",
-        "ticket-text": "#475569",
-        "ticket-smalltext": "#94a3b8"
-    },
-    phantom_forest: {
-        "bg1": "#0f1d1a",
-        "bg2": "#1c3a34",
-        "main-bg": "#fcfdfd",
-        "nav-text": "#4a6b65",
-        "heading-main": "#122621",
-        "heading-accent": "#10b981",
-        "heading-border": "#e6efed",
-        "ticket-bg": "#ffffff",
-        "ticket-border": "#10b981",
-        "ticket-title": "#122621",
-        "ticket-text": "#2d3735",
-        "ticket-smalltext": "#7ca29a"
-    }
+    document.getElementById(`${name}-section`).classList.add('active');
+    document.getElementById(`nav-${name}`).classList.add('active');
+
+    if (name === 'settings') loadSettingsData();
+    toggleMenu(); // Close menu after selection
 }
 
 function applyTheme(name) {
     const theme = themes[name];
-    if (!theme) return; // Safety check
-
+    if (!theme) return;
     for (let key in theme) {
-        // If the key doesn't start with '--', add it
-        const cssVar = key.startsWith('--') ? key : `--${key}`;
-        document.documentElement.style.setProperty(cssVar, theme[key]);
+        document.documentElement.style.setProperty(`--${key}`, theme[key]);
     }
+    localStorage.setItem("preferredTheme", name);
 }
-applyTheme ("cobalt_horizon");
 
+async function getTickets() {
+    const username = sessionStorage.getItem("username");
+    try {
+        const response = await fetch("http://192.168.1.35:8080/getTicketsEmployee", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(username)}`
+        });
+        const tickets = JSON.parse(await response.text());
+        displayTickets(tickets);
+    } catch (e) { console.error("Server Error"); }
+}
 
+function displayTickets(tickets) {
+    const container = document.getElementById("ticketContainer");
+    container.innerHTML = tickets.length ? "" : "<p>No tickets found.</p>";
+    tickets.forEach(ticket => {
+        const div = document.createElement("div");
+        div.className = "ticket";
+        div.onclick = () => {
+            sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
+            sessionStorage.setItem ("dashboardHref", "dashboards/WorkerDashboard.html")
+            window.location.href = "../ticketPage.html";
+        };
+        div.innerHTML = `<h3>${ticket.title}</h3><p>${ticket.data}</p><small>ID: #${ticket.id}</small>`;
+        container.appendChild(div);
+    });
+}
+
+function loadSettingsData() {
+    document.getElementById("settings-username").value = sessionStorage.getItem("username") || "";
+    document.getElementById("settings-email").value = sessionStorage.getItem("email") || "";
+}
+
+function logout() {
+    sessionStorage.clear();
+    window.location.href = '../index.HTML';
+}

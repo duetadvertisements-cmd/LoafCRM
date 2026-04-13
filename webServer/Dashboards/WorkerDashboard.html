@@ -1,11 +1,60 @@
-<HTML>
-    <HEAD>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src = "WorkerDashboardScript.js" defer></script>
-        <link rel = "Stylesheet" href = "WorkerDashboardStyle.css">
-    </HEAD>
-    <BODY>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loaf CRM - Dashboard</title>
+    <link rel="stylesheet" href="WorkerDashboardStyle.css">
+    <script src="WorkerDashboardScript.js" defer></script>
+</head>
+<body>
+    <header class="top-bar">
+        <div class="logo-section">
+            <span class="logo-icon">🍞</span>
+            <h2>Loaf CRM</h2>
+        </div>
+        <button class="menu-toggle-btn" onclick="toggleMenu()">Menu ☰</button>
         
-        <div id = "ticketContainer"></div>
-    </BODY>
-</HTML>
+        <nav class="nav-menu" id="navMenu">
+            <a href="#" class="nav-item active" id="nav-tickets" onclick="showSection('tickets')">📋 Tickets</a>
+            <a href="#" class="nav-item" id="nav-settings" onclick="showSection('settings')">⚙️ Settings</a>
+            <hr>
+            <a href="#" class="nav-item logout" onclick="logout()">🚪 Logout</a>
+        </nav>
+    </header>
+
+    <div class="sidebar-overlay" onclick="toggleMenu()"></div>
+
+    <main class="main-content">
+        <div id="tickets-section" class="content-section active">
+            <div class="header-banner">
+                <h1>Support Tickets</h1>
+                <p>Manage and track active customer requests.</p>
+            </div>
+            <div id="ticketContainer"></div>
+        </div>
+
+        <div id="settings-section" class="content-section">
+            <div class="header-banner">
+                <h1>Settings</h1>
+                <p>Customize your application look and feel.</p>
+            </div>
+            <div class="settings-container">
+                <div class="settings-card">
+                    <h3>🎨 Appearance</h3>
+                    <div class="settings-group">
+                        <label>Choose Theme</label>
+                        <select id="theme-selector" onchange="applyTheme(this.value)">
+                            <option value="cobalt_horizon">Cobalt Horizon</option>
+                            <option value="royalLuxe">Royal Luxe</option>
+                            <option value="phantom_forest">Phantom Forest</option>
+                            <option value="desert_slate">Desert Slate</option>
+                            <option value="basic">Basic Light</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

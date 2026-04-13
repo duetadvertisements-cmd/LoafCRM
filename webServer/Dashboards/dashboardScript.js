@@ -196,42 +196,6 @@ function displayTickets(tickets) {
     });
 }
 
-async function loadDashboardStats() {
-    const username = sessionStorage.getItem("username");
-    if (!username) {
-        console.warn("No username in session, skipping dashboard stats.");
-        return;
-    }
-
-    try {   
-        const response = await fetch("http://192.168.1.35:8080/getTickets", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `username=${encodeURIComponent(username)}`
-        });
-
-        const text = await response.text();
-        const tickets = JSON.parse(text || "[]");
-
-        const totalTickets = tickets.length;
-        const completedTasks = tickets.filter(ticket => {
-            const status = ticket.status || "";
-            return status.toString().toLowerCase().includes("complete") || status.toString().toLowerCase().includes("done");
-        }).length;
-
-        const totalTicketsEl = document.getElementById('totalTickets');
-        const activeUsersEl = document.getElementById('activeUsers');
-        const completedTasksEl = document.getElementById('completedTasks');
-
-        if (totalTicketsEl) totalTicketsEl.textContent = totalTickets;
-        if (activeUsersEl) activeUsersEl.textContent = Math.max(1, totalTickets > 0 ? 1 : 0).toString();
-        if (completedTasksEl) completedTasksEl.textContent = completedTasks;
-
-    } catch (error) {
-        console.error('Failed to load dashboard stats:', error);
-    }
-}
-
 getTickets ();
 
 const themes = {
