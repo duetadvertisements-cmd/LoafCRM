@@ -9,8 +9,11 @@ import java.util.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+
 import javaServers.models.passwordHasher;
+import javaServers.utility.ParseFormData;
 import javaServers.models.multiFormParser;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -48,28 +51,6 @@ public class server {
         server.start();
     }
 
-    // 🔧 COMMON: Parse form data
-    public static Map<String, String> parseFormData(InputStream body) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(body));
-        StringBuilder requestBody = new StringBuilder();
-        String line;
-
-        while ((line = reader.readLine()) != null) {
-            requestBody.append(line);
-        }
-
-        Map<String, String> formData = new HashMap<>();
-
-        for (String pair : requestBody.toString().split("&")) {
-            String[] keyValue = pair.split("=", 2);
-            String key = URLDecoder.decode(keyValue[0], StandardCharsets.UTF_8);
-            String value = URLDecoder.decode(keyValue[1], StandardCharsets.UTF_8);
-            formData.put(key, value);
-        }
-
-        return formData;
-    }
-
     // 🔧 COMMON: CORS
     public static void addCORS(HttpExchange exchange) {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
@@ -102,7 +83,10 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
+                    
 
                     String username = formData.get("username");
                     String password = formData.get("password");
@@ -171,7 +155,9 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String username = formData.get("username");
                     String email = formData.get("email");
@@ -254,7 +240,8 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String username = formData.get("username");
 
@@ -312,7 +299,9 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String title = formData.get("title");
                     String data = formData.get("data");
@@ -402,7 +391,9 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String username = formData.get("username");
 
@@ -593,7 +584,9 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String TICKET_ID = formData.get("ticketID");
 
@@ -658,7 +651,9 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String username = formData.get("username");
                     System.out.println (username);
@@ -873,7 +868,8 @@ public class server {
 
                 try {
 
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String id = formData.get("id");
 
@@ -924,7 +920,8 @@ public class server {
 
                 try {
 
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+                   ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String ticketID = formData.get("ticketID");
                     String toStatus = formData.get ("toStatus");
@@ -986,7 +983,9 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String key = formData.get("key");
 
@@ -1055,7 +1054,9 @@ public class server {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String assignTo = formData.get("assignTo");
                     int ticketID = Integer.parseInt(formData.get ("ticketID"));
@@ -1237,7 +1238,9 @@ public static void sendMail(String user, String pass, String to, String subject,
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 try {
-                    Map<String, String> formData = server.parseFormData(exchange.getRequestBody());
+
+                    ParseFormData formDataParser = new ParseFormData ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String username = formData.get("username");
 
