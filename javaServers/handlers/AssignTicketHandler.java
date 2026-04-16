@@ -1,0 +1,90 @@
+package javaServers.handlers;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.util.Map;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+
+import javaServers.utility.CORSUtils;
+import javaServers.utility.FormDataUtils;
+import javaServers.utility.MailUtils;
+import javaServers.utility.ResponseUtils;
+
+public class AssignTicketHandler implements HttpHandler {
+        
+        public void handle(HttpExchange exchange) throws IOException {
+
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
+
+            if ("OPTIONS".equals(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            if ("POST".equals(exchange.getRequestMethod())) {
+
+                try {
+
+                    FormDataUtils formDataParser = new FormDataUtils ();
+                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
+
+                    String assignTo = formData.get("assignTo");
+                    int ticketID = Integer.parseInt(formData.get ("ticketID"));
+                    String toEmail = formData.get ("toEmail");
+
+
+                    Connection connection = DriverManager.getConnection(
+                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                    );
+
+                    PreparedStatement statement = connection.prepareStatement(
+                        "UPDATE LOAF_TICKETS SET ASSIGNED_TO = ? WHERE ID = ?"
+                    );
+
+                    statement.setString(1, assignTo);
+                    statement.setInt(2, ticketID);
+
+                    statement.executeUpdate();
+
+
+                    String response = "SUCCESS";
+
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
+
+                    //SEND MAIL
+
+
+                    String emailBody = "Dear User,\n\n"
+                        + "This is to inform you that your ticket (Ticket ID: " + ticketID + ") has been successfully assigned for further processing.\n\n"
+                        + "Assignment Details:\n"
+                        + "Assigned To: " + assignTo + "\n"
+                        + "The assigned representative will review your request and take the necessary actions to resolve it at the earliest.\n\n"
+                        + "If you have any additional information to provide, please visit our official website to manage your ticket.\n\n"
+                        + "Thank you for contacting us.\n\n"
+                        + "Best regards,\n"
+                        + "Support Team\n"
+                        + "LoafCRM";
+
+                    MailUtils mailUtils = new MailUtils ();
+                    mailUtils.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Assignment With ID "+ticketID, emailBody);
+
+                    statement.close();
+                    connection.close();
+
+                } catch (Exception e) {
+                    System.err.println(e);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
+                }
+
+            } else {
+                exchange.sendResponseHeaders(405, -1);  
+            }
+        }
+    }
