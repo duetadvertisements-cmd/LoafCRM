@@ -11,8 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import javaServers.models.passwordHasher;
-import javaServers.utility.FormDataUtils;
 import javaServers.models.multiFormParser;
+
+import javaServers.utility.FormDataUtils;
+import javaServers.utility.CORSUtils;
+
 
 import java.io.*;
 import java.net.Socket;
@@ -51,13 +54,6 @@ public class server {
         server.start();
     }
 
-    // 🔧 COMMON: CORS
-    public static void addCORS(HttpExchange exchange) {
-        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
-        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
-    }
-
     // 🔧 COMMON: Send response
     public static void sendResponse(HttpExchange exchange, int code, String response) throws IOException {
         exchange.sendResponseHeaders(code, response.length());
@@ -73,7 +69,8 @@ public class server {
 
         public void handle(HttpExchange exchange) throws IOException {
 
-            addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -145,7 +142,8 @@ public class server {
 
         public void handle(HttpExchange exchange) throws IOException {
 
-            addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -230,7 +228,8 @@ public class server {
 
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -289,7 +288,8 @@ public class server {
 
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -381,7 +381,8 @@ public class server {
 
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -462,7 +463,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -574,7 +576,9 @@ public class server {
 
     static class getCommentHandler implements HttpHandler {
         public void handle (HttpExchange exchange) throws IOException {
-            server.addCORS(exchange);
+
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -641,7 +645,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -707,7 +712,9 @@ public class server {
     static class FileServerHandler implements HttpHandler {
         
         public void handle(HttpExchange exchange) throws IOException {
-            server.addCORS(exchange);
+
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             String path = exchange.getRequestURI().getPath();  // /uploads/xxx.png
             File file = new File(path.substring(1));
@@ -737,7 +744,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -797,7 +805,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -857,7 +866,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -909,7 +919,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -973,7 +984,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -1044,7 +1056,8 @@ public class server {
         
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
@@ -1228,7 +1241,8 @@ public static void sendMail(String user, String pass, String to, String subject,
 
         public void handle(HttpExchange exchange) throws IOException {
 
-            server.addCORS(exchange);
+            CORSUtils addCorsUtils = new CORSUtils ();
+            addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
