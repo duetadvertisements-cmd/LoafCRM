@@ -15,6 +15,7 @@ import javaServers.models.multiFormParser;
 
 import javaServers.utility.FormDataUtils;
 import javaServers.utility.CORSUtils;
+import javaServers.utility.ResponseUtils;
 
 
 import java.io.*;
@@ -54,14 +55,6 @@ public class server {
         server.start();
     }
 
-    // 🔧 COMMON: Send response
-    public static void sendResponse(HttpExchange exchange, int code, String response) throws IOException {
-        exchange.sendResponseHeaders(code, response.length());
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
-    }
-
     // =========================
     // 🔐 LOGIN HANDLER
     // =========================
@@ -73,6 +66,7 @@ public class server {
             addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
+
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
@@ -119,14 +113,16 @@ public class server {
                         response = "USER_NOT_FOUND";
                     }
 
-                    sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -177,7 +173,8 @@ public class server {
                         ResultSet checkResult = checkStmt.executeQuery();
 
                         if (checkResult.next()) {
-                            sendResponse(exchange, 400, "ERROR: Email already exists");
+                            ResponseUtils responseUtils = new ResponseUtils ();
+                            responseUtils.sendResponse(exchange, 400, "ERROR: Email already exists");
                             return;
                         }
                     }
@@ -195,7 +192,8 @@ public class server {
 
                     statement.executeUpdate();
 
-                    sendResponse(exchange, 200, "SUCCESS");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, "SUCCESS");
 
                     statement.close();
                     connection.close();
@@ -213,7 +211,8 @@ public class server {
                         response = "ERROR: Something went wrong";
                     }
 
-                    sendResponse(exchange, 400, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 400, response);
                 }
 
             } else {
@@ -264,14 +263,16 @@ public class server {
                         response = "USER_NOT_FOUND";
                     }
 
-                    server.sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -331,7 +332,9 @@ public class server {
                     String response;
                     response = "SUCCESS";
 
-                    server.sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
+
                     // SEND MAIL
 
                     Statement getIdStatement = connection.createStatement ();
@@ -364,7 +367,8 @@ public class server {
 
                 } catch (Exception e) {
                     System.err.println (e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -439,14 +443,16 @@ public class server {
 
                     responseBuilder.append("]");
 
-                    server.sendResponse(exchange, 200, responseBuilder.toString());
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -532,7 +538,9 @@ public class server {
                     String response;
                     response = "SUCCESS";
 
-                    server.sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
+
                     //SEND MAIL
 
                     Statement getIdStatement = connection.createStatement ();
@@ -565,7 +573,8 @@ public class server {
 
                 } catch (Exception e) {
                     System.err.println (e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -625,14 +634,16 @@ public class server {
 
                     responseBuilder.append("]");
 
-                    server.sendResponse(exchange, 200, responseBuilder.toString());
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, "ERROR");
                 }
 
             } else {
@@ -694,14 +705,16 @@ public class server {
 
                     responseBuilder.append("]");
 
-                    server.sendResponse(exchange, 200, responseBuilder.toString());
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -786,14 +799,16 @@ public class server {
 
                     responseBuilder.append("]");
 
-                    server.sendResponse(exchange, 200, responseBuilder.toString());
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -846,14 +861,16 @@ public class server {
 
                     responseBuilder.append("]");
 
-                    server.sendResponse(exchange, 200, responseBuilder.toString());
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -900,14 +917,16 @@ public class server {
 
                     String response = "SUCCESS";
 
-                    server.sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -964,14 +983,16 @@ public class server {
                         
                     String response = "SUCCESS";
 
-                    server.sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -1002,7 +1023,8 @@ public class server {
                     String key = formData.get("key");
 
                     if (!"4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe".equals(key)) {
-                        server.sendResponse(exchange, 403, "INVALID KEY");
+                        ResponseUtils responseUtils = new ResponseUtils ();
+                        responseUtils.sendResponse(exchange, 403, "INVALID KEY");
                         return;
                     }
 
@@ -1037,14 +1059,16 @@ public class server {
 
                     responseBuilder.append("]");
 
-                    server.sendResponse(exchange, 200, responseBuilder.toString());
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -1092,7 +1116,8 @@ public class server {
 
                     String response = "SUCCESS";
 
-                    server.sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
 
                     //SEND MAIL
 
@@ -1115,7 +1140,8 @@ public class server {
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
@@ -1279,14 +1305,16 @@ public static void sendMail(String user, String pass, String to, String subject,
                         String response = result.getString("EMAIL");
 
 
-                    server.sendResponse(exchange, 200, response);
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 200, response);
 
                     statement.close();
                     connection.close();
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    server.sendResponse(exchange, 500, "ERROR");
+                    ResponseUtils responseUtils = new ResponseUtils ();
+                    responseUtils.sendResponse(exchange, 500, "ERROR");
                 }
 
             } else {
