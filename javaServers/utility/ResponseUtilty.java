@@ -5,7 +5,7 @@ import java.io.OutputStream;
 
 import com.sun.net.httpserver.HttpExchange;
 
-public class ResponseUtils {
+public class ResponseUtilty {
     public static void sendResponse(HttpExchange exchange, int code, String response) throws IOException {
         exchange.sendResponseHeaders(code, response.length());
         OutputStream os = exchange.getResponseBody();

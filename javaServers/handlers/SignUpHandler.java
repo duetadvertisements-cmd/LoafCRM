@@ -11,15 +11,15 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import javaServers.models.passwordHasher;
-import javaServers.utility.CORSUtils;
-import javaServers.utility.FormDataUtils;
-import javaServers.utility.ResponseUtils;
+import javaServers.utility.CORSUtility;
+import javaServers.utility.FormDataUtility;
+import javaServers.utility.ResponseUtilty;
 
 public class SignUpHandler implements HttpHandler {
 
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtils addCorsUtils = new CORSUtils ();
+        CORSUtility addCorsUtils = new CORSUtility ();
         addCorsUtils.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
@@ -31,7 +31,7 @@ public class SignUpHandler implements HttpHandler {
 
             try {
 
-                FormDataUtils formDataParser = new FormDataUtils ();
+                FormDataUtility formDataParser = new FormDataUtility ();
                 Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                 String username = formData.get("username");
@@ -54,7 +54,7 @@ public class SignUpHandler implements HttpHandler {
                     ResultSet checkResult = checkStmt.executeQuery();
 
                     if (checkResult.next()) {
-                        ResponseUtils responseUtils = new ResponseUtils ();
+                        ResponseUtilty responseUtils = new ResponseUtilty ();
                         responseUtils.sendResponse(exchange, 400, "ERROR: Email already exists");
                         return;
                     }
@@ -73,7 +73,7 @@ public class SignUpHandler implements HttpHandler {
 
                 statement.executeUpdate();
 
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 200, "SUCCESS");
 
                 statement.close();
@@ -92,7 +92,7 @@ public class SignUpHandler implements HttpHandler {
                     response = "ERROR: Something went wrong";
                 }
 
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 400, response);
             }
 

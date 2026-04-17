@@ -10,7 +10,7 @@ import java.util.Base64;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
-public class MailUtils {
+public class MailUtilty {
     public static void sendMail(String user, String pass, String to, String subject, String body) throws Exception {
 
     // Helper functions inside method (using anonymous classes workaround)

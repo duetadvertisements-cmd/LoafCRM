@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FormDataUtils {
+public class FormDataUtility {
     public static Map<String, String> parseFormData(InputStream body) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(body));
         StringBuilder requestBody = new StringBuilder();

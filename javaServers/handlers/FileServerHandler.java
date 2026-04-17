@@ -10,14 +10,14 @@ import java.sql.ResultSet;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import javaServers.utility.CORSUtils;
-import javaServers.utility.ResponseUtils;
+import javaServers.utility.CORSUtility;
+import javaServers.utility.ResponseUtilty;
 
 public class FileServerHandler implements HttpHandler {
         
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtils addCorsUtils = new CORSUtils ();
+        CORSUtility addCorsUtils = new CORSUtility ();
         addCorsUtils.addCORS(exchange);
 
         String path = exchange.getRequestURI().getPath();  // /uploads/xxx.png

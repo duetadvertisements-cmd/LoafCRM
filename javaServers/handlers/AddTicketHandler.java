@@ -11,16 +11,16 @@ import java.util.Map;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import javaServers.utility.CORSUtils;
-import javaServers.utility.FormDataUtils;
-import javaServers.utility.MailUtils;
-import javaServers.utility.ResponseUtils;
+import javaServers.utility.CORSUtility;
+import javaServers.utility.FormDataUtility;
+import javaServers.utility.MailUtilty;
+import javaServers.utility.ResponseUtilty;
 
 public class AddTicketHandler implements HttpHandler {
 
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtils addCorsUtils = new CORSUtils ();
+        CORSUtility addCorsUtils = new CORSUtility ();
         addCorsUtils.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
@@ -32,7 +32,7 @@ public class AddTicketHandler implements HttpHandler {
 
             try {
 
-                FormDataUtils formDataParser = new FormDataUtils ();
+                FormDataUtility formDataParser = new FormDataUtility ();
                 Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                 String title = formData.get("title");
@@ -63,7 +63,7 @@ public class AddTicketHandler implements HttpHandler {
                 String response;
                 response = "SUCCESS";
 
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 200, response);
 
                 // SEND MAIL
@@ -91,7 +91,7 @@ public class AddTicketHandler implements HttpHandler {
                 + "Support Team\n"
                 + "LoafCRM";
 
-                MailUtils mailUtils = new MailUtils ();
+                MailUtilty mailUtils = new MailUtilty ();
                 mailUtils.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation With ID "+ticketID, emailBody);
 
                 statement.close();
@@ -99,7 +99,7 @@ public class AddTicketHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println (e);
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 500, "ERROR");
             }
 

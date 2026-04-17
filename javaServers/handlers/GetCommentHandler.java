@@ -10,15 +10,15 @@ import java.util.Map;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import javaServers.utility.CORSUtils;
-import javaServers.utility.FormDataUtils;
-import javaServers.utility.ResponseUtils;
-import javaServers.utility.JSONUtils;
+import javaServers.utility.CORSUtility;
+import javaServers.utility.FormDataUtility;
+import javaServers.utility.ResponseUtilty;
+import javaServers.utility.JSONUtility;
 
 public class GetCommentHandler implements HttpHandler {
         public void handle (HttpExchange exchange) throws IOException {
 
-            CORSUtils addCorsUtils = new CORSUtils ();
+            CORSUtility addCorsUtils = new CORSUtility ();
             addCorsUtils.addCORS(exchange);
 
             if ("OPTIONS".equals(exchange.getRequestMethod())) {
@@ -30,7 +30,7 @@ public class GetCommentHandler implements HttpHandler {
 
                 try {
 
-                    FormDataUtils formDataParser = new FormDataUtils ();
+                    FormDataUtility formDataParser = new FormDataUtility ();
                     Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
                     String TICKET_ID = formData.get("ticketID");
@@ -50,7 +50,7 @@ public class GetCommentHandler implements HttpHandler {
                     StringBuilder responseBuilder = new StringBuilder();
                     responseBuilder.append("[");
 
-                    JSONUtils JSONUtils = new JSONUtils ();
+                    JSONUtility JSONUtils = new JSONUtility ();
 
                     while (result.next()) {
                         responseBuilder.append("{");
@@ -68,7 +68,7 @@ public class GetCommentHandler implements HttpHandler {
 
                     responseBuilder.append("]");
 
-                    ResponseUtils responseUtils = new ResponseUtils ();
+                    ResponseUtilty responseUtils = new ResponseUtilty ();
                     responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                     statement.close();
@@ -76,7 +76,7 @@ public class GetCommentHandler implements HttpHandler {
 
                 } catch (Exception e) {
                     System.err.println(e);
-                    ResponseUtils responseUtils = new ResponseUtils ();
+                    ResponseUtilty responseUtils = new ResponseUtilty ();
                     responseUtils.sendResponse(exchange, 200, "ERROR");
                 }
 

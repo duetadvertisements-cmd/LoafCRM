@@ -1,6 +1,6 @@
 package javaServers.utility;
 
-public class JSONUtils {
+public class JSONUtility {
     public static String escapeJson(String s) {
         if (s == null) return "";
 

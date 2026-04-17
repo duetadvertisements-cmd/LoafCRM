@@ -145,7 +145,7 @@ async function getTickets () {
 async function getEmail () {  
 
     const username = sessionStorage.getItem ("username");
-    const ticket = `username=${encodeURIComponent(username)}`;
+    // MAKE TICKET
     try {
         const serverResponse = await fetch("http://192.168.1.35:8080/getEmail", {
             method: "POST",
@@ -265,3 +265,19 @@ function applyTheme(name) {
   }
 }
 applyTheme ("royalLuxe"); 
+
+
+
+async function postForm (url, dataObj) {
+    const body = new URLSearchParams(dataObj).toString();
+
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: body
+    });
+
+    return await response.text();
+}

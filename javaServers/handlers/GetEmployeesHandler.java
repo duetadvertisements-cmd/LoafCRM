@@ -9,14 +9,14 @@ import java.sql.ResultSet;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import javaServers.utility.CORSUtils;
-import javaServers.utility.ResponseUtils;
+import javaServers.utility.CORSUtility;
+import javaServers.utility.ResponseUtilty;
 
 public class GetEmployeesHandler implements HttpHandler {
     
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtils addCorsUtils = new CORSUtils ();
+        CORSUtility addCorsUtils = new CORSUtility ();
         addCorsUtils.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
@@ -58,7 +58,7 @@ public class GetEmployeesHandler implements HttpHandler {
 
                 responseBuilder.append("]");
 
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
                 statement.close();
@@ -66,7 +66,7 @@ public class GetEmployeesHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 500, "ERROR");
             }
 

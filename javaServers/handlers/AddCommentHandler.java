@@ -13,15 +13,15 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import javaServers.models.multiFormParser;
-import javaServers.utility.CORSUtils;
-import javaServers.utility.MailUtils;
-import javaServers.utility.ResponseUtils;
+import javaServers.utility.CORSUtility;
+import javaServers.utility.MailUtilty;
+import javaServers.utility.ResponseUtilty;
 
 public class AddCommentHandler implements HttpHandler {
     
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtils addCorsUtils = new CORSUtils ();
+        CORSUtility addCorsUtils = new CORSUtility ();
         addCorsUtils.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
@@ -90,7 +90,7 @@ public class AddCommentHandler implements HttpHandler {
                 String response;
                 response = "SUCCESS";
 
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 200, response);
 
                 //SEND MAIL
@@ -117,7 +117,7 @@ public class AddCommentHandler implements HttpHandler {
                 + "Support Team\n"
                 + "LoafCRM";
 
-                MailUtils mailUtils = new MailUtils ();
+                MailUtilty mailUtils = new MailUtilty ();
                 mailUtils.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Comment Creation With ID "+ticketID, emailBody);
 
 
@@ -126,7 +126,7 @@ public class AddCommentHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println (e);
-                ResponseUtils responseUtils = new ResponseUtils ();
+                ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 500, "ERROR");
             }
 
