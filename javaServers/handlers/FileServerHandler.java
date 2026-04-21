@@ -17,29 +17,29 @@ public class FileServerHandler implements HttpHandler {
         
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+        CORSUtility addCORSUtility = new CORSUtility ();
+        addCORSUtility.addCORS(exchange);
 
-        String path = exchange.getRequestURI().getPath();  // /uploads/xxx.png
-        File file = new File(path.substring(1));
+        String imagePath = exchange.getRequestURI().getPath();
+        File imageFile = new File(imagePath.substring(1));
 
-        if (!file.exists()) {
+        if (!imageFile.exists()) {
             exchange.sendResponseHeaders(404, -1);
             return;
         }
 
-        byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
-        exchange.getResponseHeaders().add("Content-Type", getMimeType(file.getName()));
+        byte[] imageFileBytes = java.nio.file.Files.readAllBytes(imageFile.toPath());
+        exchange.getResponseHeaders().add("Content-Type", getMimeType(imageFile.getName()));
 
-        exchange.sendResponseHeaders(200, bytes.length);
-        exchange.getResponseBody().write(bytes);
+        exchange.sendResponseHeaders(200, imageFileBytes.length);
+        exchange.getResponseBody().write(imageFileBytes);
         exchange.getResponseBody().close();
     }
 
-    private String getMimeType(String name) {
-        if (name.endsWith(".png")) return "image/png";
-        if (name.endsWith(".jpg") || name.endsWith(".jpeg")) return "image/jpeg";
-        if (name.endsWith(".gif")) return "image/gif";
+    private String getMimeType(String imagePath) {
+        if (imagePath.endsWith(".png")) return "image/png";
+        if (imagePath.endsWith(".jpg") || imagePath.endsWith(".jpeg")) return "image/jpeg";
+        if (imagePath.endsWith(".gif")) return "image/gif";
         return "application/octet-stream";
     }
 }

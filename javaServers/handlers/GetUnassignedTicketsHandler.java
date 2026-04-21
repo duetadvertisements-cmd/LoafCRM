@@ -12,14 +12,15 @@ import com.sun.net.httpserver.HttpHandler;
 
 import javaServers.utility.CORSUtility;
 import javaServers.utility.FormDataUtility;
+import javaServers.utility.JSONUtility;
 import javaServers.utility.ResponseUtilty;
 
 public class GetUnassignedTicketsHandler implements HttpHandler {
     
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+        CORSUtility addCORSUtility = new CORSUtility ();
+        addCORSUtility.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -35,9 +36,10 @@ public class GetUnassignedTicketsHandler implements HttpHandler {
 
                 String key = formData.get("key");
 
+                //CHECKS IF KEY IS CORRECT, 
                 if (!"4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe".equals(key)) {
-                    ResponseUtilty responseUtils = new ResponseUtilty ();
-                    responseUtils.sendResponse(exchange, 403, "INVALID KEY");
+                    ResponseUtilty responseUtility = new ResponseUtilty ();
+                    responseUtility.sendResponse(exchange, 403, "INVALID KEY");
                     return;
                 }
 
@@ -45,24 +47,26 @@ public class GetUnassignedTicketsHandler implements HttpHandler {
                     "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                 );
 
-                PreparedStatement statement = connection.prepareStatement(
+                PreparedStatement selectStatement = connection.prepareStatement(
                     "SELECT * FROM LOAF_TICKETS WHERE ASSIGNED_TO = ? "
                 );
 
-                statement.setString(1, "null");
+                selectStatement.setString(1, "null");
 
-                ResultSet result = statement.executeQuery();
+                ResultSet result = selectStatement.executeQuery();
 
                 StringBuilder responseBuilder = new StringBuilder();
                 responseBuilder.append("[");
 
+                JSONUtility JSONUtility = new JSONUtility ();
+
                 while (result.next()) {
                     responseBuilder.append("{");
                     responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
-                    responseBuilder.append("\"title\":\"").append(result.getString("TITLE")).append("\",");
-                    responseBuilder.append("\"data\":\"").append(result.getString("DATA")).append("\",");
-                    responseBuilder.append("\"status\":\"").append(result.getString("STATUS")).append("\",");
-                    responseBuilder.append("\"creator\":\"").append(result.getString("CREATOR")).append("\"");
+                    responseBuilder.append("\"title\":\"").append(JSONUtility.escapeJson(result.getString("TITLE"))).append("\",");
+                    responseBuilder.append("\"data\":\"").append(JSONUtility.escapeJson(result.getString("DATA"))).append("\",");
+                    responseBuilder.append("\"status\":\"").append(JSONUtility.escapeJson(result.getString("STATUS"))).append("\",");
+                    responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson(result.getString("CREATOR"))).append("\"");
                     responseBuilder.append("},");
                 }
 
@@ -72,16 +76,16 @@ public class GetUnassignedTicketsHandler implements HttpHandler {
 
                 responseBuilder.append("]");
 
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
+                ResponseUtilty responseUtility = new ResponseUtilty ();
+                responseUtility.sendResponse(exchange, 200, responseBuilder.toString ());
 
-                statement.close();
+                selectStatement.close();
                 connection.close();
 
             } catch (Exception e) {
                 System.err.println(e);
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 500, "ERROR");
+                ResponseUtilty responseUtility = new ResponseUtilty ();
+                responseUtility.sendResponse(exchange, 500, "ERROR");
             }
 
         } else {

@@ -10,14 +10,17 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import javaServers.utility.CORSUtility;
+import javaServers.utility.JSONUtility;
 import javaServers.utility.ResponseUtilty;
 
 public class GetEmployeesHandler implements HttpHandler {
+
+    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
     
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+        CORSUtility addCORSUtility = new CORSUtility ();
+        addCORSUtility.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -28,27 +31,27 @@ public class GetEmployeesHandler implements HttpHandler {
 
             try {
 
-                Connection connection = DriverManager.getConnection(
-                    "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
-                );
+                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
 
-                PreparedStatement statement = connection.prepareStatement(
+                PreparedStatement selectStatement = databaseConnection.prepareStatement(
                     "SELECT * FROM LOAF_USERS WHERE ROLES = ? "
                 );
 
-                statement.setString(1, "EMPLOYEE");
+                selectStatement.setString(1, "EMPLOYEE");
 
-                ResultSet result = statement.executeQuery();
+                ResultSet selectStatementResult = selectStatement.executeQuery();
 
                 StringBuilder responseBuilder = new StringBuilder();
                 responseBuilder.append("[");
 
-                while (result.next()) {
+                JSONUtility JSONUtility = new JSONUtility ();
+
+                while (selectStatementResult.next()) {
                     responseBuilder.append("{");
-                    responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
-                    responseBuilder.append("\"username\":\"").append(result.getString("USERNAME")).append("\",");
-                    responseBuilder.append("\"sucessfullyClosed\":\"").append(result.getString("SUCCESSFULLY_CLOSED")).append("\",");
-                    responseBuilder.append("\"email\":\"").append(result.getString("EMAIL")).append("\"");
+                    responseBuilder.append("\"id\":").append(selectStatementResult.getInt("ID")).append(",");
+                    responseBuilder.append("\"username\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("USERNAME"))).append("\",");
+                    responseBuilder.append("\"sucessfullyClosed\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("SUCCESSFULLY_CLOSED"))).append("\",");
+                    responseBuilder.append("\"email\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("EMAIL"))).append("\"");
                     responseBuilder.append("},");
                 }
 
@@ -58,16 +61,16 @@ public class GetEmployeesHandler implements HttpHandler {
 
                 responseBuilder.append("]");
 
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
+                ResponseUtilty responseUtility = new ResponseUtilty ();
+                responseUtility.sendResponse(exchange, 200, responseBuilder.toString ());
 
-                statement.close();
-                connection.close();
+                selectStatement.close();
+                databaseConnection.close();
 
             } catch (Exception e) {
                 System.err.println(e);
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 500, "ERROR");
+                ResponseUtilty responseUtility = new ResponseUtilty ();
+                responseUtility.sendResponse(exchange, 500, "ERROR");
             }
 
         } else {

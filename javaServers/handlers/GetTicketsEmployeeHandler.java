@@ -12,14 +12,17 @@ import com.sun.net.httpserver.HttpHandler;
 
 import javaServers.utility.CORSUtility;
 import javaServers.utility.FormDataUtility;
+import javaServers.utility.JSONUtility;
 import javaServers.utility.ResponseUtilty;
 
 public class GetTicketsEmployeeHandler implements HttpHandler {
-    
+    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+
+
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+        CORSUtility addCORSUtility = new CORSUtility ();
+        addCORSUtility.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -36,28 +39,28 @@ public class GetTicketsEmployeeHandler implements HttpHandler {
                 String username = formData.get("username");
                 System.out.println (username);
 
-                Connection connection = DriverManager.getConnection(
-                    "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
-                );
+                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
 
-                PreparedStatement statement = connection.prepareStatement(
+                PreparedStatement selectStatement = databaseConnection.prepareStatement(
                     "SELECT * FROM LOAF_TICKETS WHERE ASSIGNED_TO = ? "
                 );
 
-                statement.setString(1, username);
+                selectStatement.setString(1, username);
 
-                ResultSet result = statement.executeQuery();
+                ResultSet selectStatementResult = selectStatement.executeQuery();
 
                 StringBuilder responseBuilder = new StringBuilder();
                 responseBuilder.append("[");
 
-                while (result.next()) {
+                JSONUtility JSONUtility = new JSONUtility ();
+                
+                while (selectStatementResult.next()) {
                     responseBuilder.append("{");
-                    responseBuilder.append("\"id\":").append(result.getInt("ID")).append(",");
-                    responseBuilder.append("\"title\":\"").append(result.getString("TITLE")).append("\",");
-                    responseBuilder.append("\"data\":\"").append(result.getString("DATA")).append("\",");
-                    responseBuilder.append("\"status\":\"").append(result.getString("STATUS")).append("\",");
-                    responseBuilder.append("\"creator\":\"").append(result.getString("CREATOR")).append("\"");
+                    responseBuilder.append("\"id\":").append(selectStatementResult.getInt("ID")).append(",");
+                    responseBuilder.append("\"title\":\"").append (JSONUtility.escapeJson (selectStatementResult.getString("TITLE"))).append("\",");
+                    responseBuilder.append("\"data\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString("DATA"))).append("\",");
+                    responseBuilder.append("\"status\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString("STATUS"))).append("\",");
+                    responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("CREATOR"))).append("\"");
                     responseBuilder.append("},");
                 }
 
@@ -70,8 +73,8 @@ public class GetTicketsEmployeeHandler implements HttpHandler {
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
 
-                statement.close();
-                connection.close();
+                selectStatement.close();
+                databaseConnection.close();
 
             } catch (Exception e) {
                 System.err.println(e);

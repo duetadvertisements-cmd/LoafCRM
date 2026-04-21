@@ -14,11 +14,13 @@ import javaServers.utility.FormDataUtility;
 import javaServers.utility.ResponseUtilty;
 
 public class PromoteUserToWorkerHandler implements HttpHandler {
-    
+
+    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+
     public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+        CORSUtility addCORSUtility = new CORSUtility ();
+        addCORSUtility.addCORS(exchange);
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -34,33 +36,31 @@ public class PromoteUserToWorkerHandler implements HttpHandler {
 
                 String id = formData.get("id");
 
-                Connection connection = DriverManager.getConnection(
-                    "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
-                );
+                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
 
-                PreparedStatement statement = connection.prepareStatement(
+                PreparedStatement updateStatement = databaseConnection.prepareStatement(
                     "UPDATE LOAF_USERS SET ROLES = ? WHERE ID = ?"
                 );
 
-                statement.setString(1, "EMPLOYEE");
-                statement.setString(2, id);
+                updateStatement.setString(1, "EMPLOYEE");
+                updateStatement.setString(2, id);
 
-                statement.executeUpdate();
+                updateStatement.executeUpdate();
 
 
 
                 String response = "SUCCESS";
 
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 200, response);
+                ResponseUtilty responseUtility = new ResponseUtilty ();
+                responseUtility.sendResponse(exchange, 200, response);
 
-                statement.close();
-                connection.close();
+                updateStatement.close();
+                databaseConnection.close();
 
             } catch (Exception e) {
                 System.err.println(e);
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 500, "ERROR");
+                ResponseUtilty responseUtility = new ResponseUtilty ();
+                responseUtility.sendResponse(exchange, 500, "ERROR");
             }
 
         } else {
