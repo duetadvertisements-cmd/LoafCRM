@@ -8,33 +8,64 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Map;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import javaServers.models.multiFormParser;
 import javaServers.utility.CORSUtility;
+import javaServers.utility.FormDataUtility;
 import javaServers.utility.MailUtilty;
 import javaServers.utility.ResponseUtilty;
 
 public class ClockInHandler implements HttpHandler {
     
-    public void handle(HttpExchange exchange) throws IOException {
+    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+
+    public void handle(HttpExchange httpExchange) throws IOException {
 
         CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+        addCorsUtils.addCORS(httpExchange);
 
-        if ("OPTIONS".equals(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(204, -1);
+        if ("OPTIONS".equals(httpExchange.getRequestMethod())) {
+            httpExchange.sendResponseHeaders(204, -1);
             return;
         }
 
-        if ("POST".equals(exchange.getRequestMethod())) {
-            
+        if ("POST".equals(httpExchange.getRequestMethod())) {
+            try {
+                FormDataUtility formDataParser = new FormDataUtility ();
+                Map<String, String> formData = formDataParser.parseFormData(httpExchange.getRequestBody ());
+
+                String userID = formData.get ("userID");
+
+                System.out.println ("User ID: "+userID+"has clocked In for work");
+
+                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                PreparedStatement insertStatement = databaseConnection.prepareStatement(
+                    "INSERT INTO LOAF_ATTENDANCE (USER_ID) VALUES (?)"
+                );
+
+                insertStatement.setString(1, userID);
+
+                insertStatement.close();
+                databaseConnection.close();
+
+                String response;
+                response = "SUCCESS";
+                ResponseUtilty responseUtils = new ResponseUtilty ();
+                responseUtils.sendResponse(httpExchange, 200, response);
+            }
+            catch (Exception error) {
+                System.err.println (error);
+                ResponseUtilty responseUtils = new ResponseUtilty ();
+                responseUtils.sendResponse(httpExchange, 500, "ERROR");
+            }
         } 
         
         else {
-            exchange.sendResponseHeaders(405, -1);  
+            httpExchange.sendResponseHeaders(405, -1);  
         }
     }
 }
