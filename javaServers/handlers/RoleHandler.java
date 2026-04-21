@@ -16,58 +16,59 @@ import javaServers.utility.ResponseUtilty;
 
 public class RoleHandler implements HttpHandler {
 
-    public void handle(HttpExchange exchange) throws IOException {
+    //DEFENATION
+    String DATABASE_URL = "jdbc:sqlite:C:\\\\Users\\\\tanis\\\\OneDrive\\\\Documents\\\\LoafCRM\\\\resources\\\\LOAFCRM.db";
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+    public void handle(HttpExchange httpExchange) throws IOException {
 
-        if ("OPTIONS".equals(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(204, -1);
+        CORSUtility addCorsUtility = new CORSUtility ();
+        addCorsUtility.addCORS(httpExchange);
+
+        if ("OPTIONS".equals(httpExchange.getRequestMethod())) {
+            httpExchange.sendResponseHeaders(204, -1);
             return;
         }
 
-        if ("POST".equals(exchange.getRequestMethod())) {
+        if ("POST".equals(httpExchange.getRequestMethod())) {
 
             try {
                 FormDataUtility formDataParser = new FormDataUtility ();
-                Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
+                Map<String, String> formData = formDataParser.parseFormData(httpExchange.getRequestBody());
 
                 String username = formData.get("username");
 
-                Connection connection = DriverManager.getConnection(
-                    "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
-                );
+                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
 
-                PreparedStatement statement = connection.prepareStatement(
+                PreparedStatement selectStatement = databaseConnection.prepareStatement(
                     "SELECT ROLES FROM LOAF_USERS WHERE USERNAME = ?"
                 );
 
-                statement.setString(1, username);
+                selectStatement.setString(1, username);
+                
+                ResultSet selectStatementResult = selectStatement.executeQuery();
 
-                ResultSet result = statement.executeQuery();
+                String serverResponse;
 
-                String response;
-
-                if (result.next()) {
-                    response = result.getString("ROLES");  // 🔥 returns role
+                if (selectStatementResult.next()) {
+                    serverResponse = selectStatementResult.getString("ROLES");  // 🔥 returns role
                 } else {
-                    response = "USER_NOT_FOUND";
+                    serverResponse = "USER_NOT_FOUND";
                 }
 
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 200, response);
+                ResponseUtilty serverResponseUtils = new ResponseUtilty ();
+                serverResponseUtils.sendResponse(httpExchange, 200, serverResponse);
 
-                statement.close();
-                connection.close();
+                selectStatement.close();
+                databaseConnection.close();
 
             } catch (Exception e) {
                 e.printStackTrace();
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 500, "ERROR");
+                ResponseUtilty serverResponseUtils = new ResponseUtilty ();
+                serverResponseUtils.sendResponse(httpExchange, 500, "ERROR");
             }
 
         } else {
-            exchange.sendResponseHeaders(405, -1);
+            httpExchange.sendResponseHeaders(405, -1);
         }
     }
 }

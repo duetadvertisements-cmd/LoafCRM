@@ -23,8 +23,8 @@ public class LoginHandler implements HttpHandler {
 
     public void handle (HttpExchange exchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS (exchange);
+        CORSUtility addCorsUtility = new CORSUtility ();
+        addCorsUtility.addCORS (exchange);
 
         if ("OPTIONS".equals (exchange.getRequestMethod ())) {
 
