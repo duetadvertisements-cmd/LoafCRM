@@ -16,12 +16,12 @@ import javaServers.handlers.GetEmployeesHandler;
 import javaServers.handlers.GetUsersHandler;
 import javaServers.handlers.PromoteUserToWorkerHandler;
 import javaServers.handlers.ChangeStatusHandler;
-import javaServers.handlers.ClockOutHandler;
 import javaServers.handlers.GetUnassignedTicketsHandler;
 import javaServers.handlers.AssignTicketHandler;
 import javaServers.handlers.GetEmailHandler;
 import javaServers.handlers.ClockInHandler;
 import javaServers.handlers.ClockOutHandler;
+import javaServers.handlers.GetUserID;
 
 public class server {
 
@@ -46,6 +46,7 @@ public class server {
         server.createContext ("/getEmail", new GetEmailHandler ());
         server.createContext ("/clockIn", new ClockInHandler ());
         server.createContext ("/clockOut", new ClockOutHandler ());
+        server.createContext ("/getUserID", new GetUserID ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED

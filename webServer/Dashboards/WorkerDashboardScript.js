@@ -39,7 +39,7 @@ function applyTheme(name) {
 async function getTickets() {
     const username = sessionStorage.getItem("username");
     try {
-        const response = await fetch("http://192.168.1.35:8080/getTicketsEmployee", {
+        const response = await fetch("http://192.168.1.36:8080/getTicketsEmployee", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
@@ -74,3 +74,59 @@ function logout() {
     sessionStorage.clear();
     window.location.href = '../index.HTML';
 }
+
+async function clockIn () {
+    const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}`;
+    try {
+        const response = await fetch ("http://192.168.1.36:8080/clockIn", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded"},
+            body: formData
+        });
+        console.log ("Clocked In: "+await response.text ());
+    }
+    catch (error) {
+        console.error (error);
+    }
+}
+
+async function clockOut () {
+    const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}`;
+    try {
+        const response = await fetch ("http://192.168.1.36:8080/clockOut", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded"},
+            body: formData
+        });
+        console.log ("Clocked Out: "+await response.text ());
+    }
+    catch (error) {
+        console.error (error);
+    }
+}
+
+async function getUserID () {
+    const formData = `username=${encodeURIComponent (sessionStorage.getItem ("username"))}`
+    try {
+        const response = await fetch ("http://192.168.1.36:8080/getUserID", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: formData
+        });
+        console.log ("Got User ID");
+        sessionStorage.setItem ("userID", await response.text ());
+    }
+    catch (error) {
+        console.error (error);
+    }
+}
+getUserID ();
+
+if (!localStorage.getItem("clockedIn")) {
+    clockIn();
+    localStorage.setItem("clockedIn", "true");
+}
+
+window.addEventListener("beforeunload", () => {
+    clockOut ();
+});

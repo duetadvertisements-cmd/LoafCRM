@@ -1,7 +1,5 @@
 package javaServers.handlers;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,10 +11,8 @@ import java.util.Map;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import javaServers.models.multiFormParser;
 import javaServers.utility.CORSUtility;
 import javaServers.utility.FormDataUtility;
-import javaServers.utility.MailUtilty;
 import javaServers.utility.ResponseUtilty;
 
 public class ClockInHandler implements HttpHandler {
@@ -25,8 +21,8 @@ public class ClockInHandler implements HttpHandler {
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(httpExchange);
+        CORSUtility addCORSUtility = new CORSUtility ();
+        addCORSUtility.addCORS(httpExchange);
 
         if ("OPTIONS".equals(httpExchange.getRequestMethod())) {
             httpExchange.sendResponseHeaders(204, -1);
@@ -40,22 +36,30 @@ public class ClockInHandler implements HttpHandler {
 
                 String userID = formData.get ("userID");
 
-                System.out.println ("User ID: "+userID+"has clocked In for work");
+                System.out.println ("User ID: "+userID+" has clocked In for work");
 
                 Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
                 PreparedStatement insertStatement = databaseConnection.prepareStatement(
-                    "INSERT INTO LOAF_ATTENDANCE (USER_ID) VALUES (?)"
+                    "INSERT INTO LOAF_ATTENDANCE (USER_ID) VALUES (?)",
+                    Statement.RETURN_GENERATED_KEYS
                 );
 
                 insertStatement.setString(1, userID);
 
-                insertStatement.close();
-                databaseConnection.close();
+                
 
-                String response;
-                response = "SUCCESS";
+                insertStatement.executeUpdate ();
+
+                ResultSet insertStatementGeneratedKeys = insertStatement.getGeneratedKeys ();
+                String response = "";
+                if (insertStatementGeneratedKeys.next ()) {
+                    response = String.valueOf (insertStatementGeneratedKeys.getInt (1));
+                }
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 200, response);
+
+                insertStatement.close();
+                databaseConnection.close();
             }
             catch (Exception error) {
                 System.err.println (error);
