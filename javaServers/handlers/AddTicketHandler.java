@@ -17,59 +17,54 @@ import javaServers.utility.MailUtilty;
 import javaServers.utility.ResponseUtilty;
 
 public class AddTicketHandler implements HttpHandler {
+    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
 
-    public void handle(HttpExchange exchange) throws IOException {
 
-        CORSUtility addCorsUtils = new CORSUtility ();
-        addCorsUtils.addCORS(exchange);
+    public void handle(HttpExchange httpExchange) throws IOException {
 
-        if ("OPTIONS".equals(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(204, -1);
+        CORSUtility addCORSUtility = new CORSUtility ();
+        addCORSUtility.addCORS (httpExchange);
+
+        if ("OPTIONS".equals (httpExchange.getRequestMethod())) {
+            httpExchange.sendResponseHeaders (204, -1);
             return;
         }
 
-        if ("POST".equals(exchange.getRequestMethod())) {
+        if ("POST".equals(httpExchange.getRequestMethod ())) {
 
             try {
 
                 FormDataUtility formDataParser = new FormDataUtility ();
-                Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
+                Map<String, String> formData = formDataParser.parseFormData(httpExchange.getRequestBody ());
 
-                String title = formData.get("title");
-                String data = formData.get("data");
-                String creator = formData.get("creator");
+                String title = formData.get ("title");
+                String data = formData.get ("data");
+                String creator = formData.get ("creator");
                 String toEmail = formData.get ("toEmail");
 
                 
-
-            System.out.println ("Recieved:");
-            System.out.println ("Title: "+title);
-            System.out.println ("Data: "+data);
-            System.out.println ("Creator: "+creator);
+                System.out.println ("Recieved:");
+                System.out.println ("Title: "+title);
+                System.out.println ("Data: "+data);
+                System.out.println ("Creator: "+creator);
             
-                Connection connection = DriverManager.getConnection(
-                    "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+
+                PreparedStatement insertStatement = databaseConnection.prepareStatement(
+                    "INSERT INTO LOAF_TICKETS (TITLE, DATA, CREATOR) VALUES (?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
                 );
 
-                PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO LOAF_TICKETS (TITLE, DATA, CREATOR) VALUES (?, ?, ?)"
-                );
+                insertStatement.setString(1, title);
+                insertStatement.setString(2, data);
+                insertStatement.setString(3, creator);
 
-                statement.setString(1, title);
-                statement.setString(2, data);
-                statement.setString(3, creator);
-
-                statement.executeUpdate ();
-                String response;
-                response = "SUCCESS";
-
-                ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 200, response);
+                insertStatement.executeUpdate ();
+                
 
                 // SEND MAIL
 
-                Statement getIdStatement = connection.createStatement ();
-                ResultSet recentAddedTicket = getIdStatement.executeQuery("SELECT last_insert_rowid ()");
+                ResultSet recentAddedTicket = insertStatement.getGeneratedKeys ();
 
                 int ticketID = -1;
                 if (recentAddedTicket.next ()) {
@@ -91,20 +86,26 @@ public class AddTicketHandler implements HttpHandler {
                 + "Support Team\n"
                 + "LoafCRM";
 
-                MailUtilty mailUtils = new MailUtilty ();
-                mailUtils.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation With ID "+ticketID, emailBody);
+                MailUtilty mailUtility = new MailUtilty ();
+                mailUtility.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation With ID "+ticketID, emailBody);
 
-                statement.close();
-                connection.close();
+                insertStatement.close();
+                databaseConnection.close();
+
+                String response;
+                response = "SUCCESS";
+
+                ResponseUtilty responseUtils = new ResponseUtilty ();
+                responseUtils.sendResponse(httpExchange, 200, response);
 
             } catch (Exception e) {
                 System.err.println (e);
                 ResponseUtilty responseUtils = new ResponseUtilty ();
-                responseUtils.sendResponse(exchange, 500, "ERROR");
+                responseUtils.sendResponse(httpExchange, 500, "ERROR");
             }
 
         } else {
-            exchange.sendResponseHeaders(405, -1);  
+            httpExchange.sendResponseHeaders(405, -1);  
         }
     }
 }  
