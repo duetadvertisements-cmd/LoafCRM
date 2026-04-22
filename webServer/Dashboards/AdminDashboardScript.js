@@ -551,3 +551,22 @@ async function getEmail () {
     }
 }
 getEmail ();
+
+async function getAmountOfTimeEmployeeHasWorked () {
+    const ticket = `userID=${encodeURIComponent (13)}&workingYear=${encodeURIComponent (2026)}&workingMonth=${encodeURIComponent ("04")}`
+
+    try {
+        const serverResponse = await fetch ("http://192.168.1.34:8080/getTimeWorked", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded"},
+            body: ticket
+        });
+
+        console.log (await serverResponse.text ());
+    }
+    catch (error) {
+        console.error (error);
+    }
+}
+
+getAmountOfTimeEmployeeHasWorked ();
