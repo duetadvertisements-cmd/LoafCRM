@@ -350,3 +350,40 @@ async function changeStatus () {
     }
     goBack ();
 }
+//CLOCK SYSTEM
+
+async function clockInTicket () {
+    if (localStorage.getItem ("clockedIntoATicket") === "false") {
+        const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}&ticketId=${JSON.parse (sessionStorage.getItem ("currentTicket")).id}`;
+        try {
+            const response = await fetch ("http://192.168.1.34:8080/clockInTicket", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded"},
+                body: formData
+            });
+            console.log ("Clocked In: "+await response.text ());
+        }
+        catch (error) {
+            console.error (error);
+        }
+        localStorage.setItem ("clockedIntoATicket", "true");
+    }
+}
+
+async function clockOutTicket () {
+    if (localStorage.getItem ("clockedIntoATicket") === "true") {
+        const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}`;
+        try {
+            const response = await fetch ("http://192.168.1.34:8080/clockOutTicket", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded"},
+                body: formData
+            });
+            console.log ("Clocked Out: "+await response.text ());
+            localStorage.setItem ("clockedIntoATicket", "false");
+        }
+        catch (error) {
+            console.error (error);
+        }
+    }
+}

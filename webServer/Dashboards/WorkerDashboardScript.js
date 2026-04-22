@@ -6,10 +6,20 @@ const themes = {
     basic: { bg1: "#667eea", bg2: "#49BC9B", "main-bg": "white", "heading-accent": "#5a67d8", "ticket-bg": "white", "ticket-border": "#49BC9B" }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-    applyTheme(localStorage.getItem("preferredTheme") || "cobalt_horizon");
+/* ================= INIT ================= */
+
+let initRan = false;
+let isClockingIn = false;
+let allowUnloadClockOut = false;
+
+document.addEventListener("DOMContentLoaded", async () => {
+    applyTheme(sessionStorage.getItem("preferredTheme") || "cobalt_horizon");
+
+    await initClockSystem(); // controlled init
     getTickets();
 });
+
+/* ================= UI ================= */
 
 function toggleMenu() {
     document.getElementById('navMenu').classList.toggle('open');
@@ -24,123 +34,176 @@ function showSection(name) {
     document.getElementById(`nav-${name}`).classList.add('active');
 
     if (name === 'settings') loadSettingsData();
-    toggleMenu(); // Close menu after selection
+    toggleMenu();
 }
 
 function applyTheme(name) {
     const theme = themes[name];
     if (!theme) return;
+
     for (let key in theme) {
         document.documentElement.style.setProperty(`--${key}`, theme[key]);
     }
-    localStorage.setItem("preferredTheme", name);
+
+    sessionStorage.setItem("preferredTheme", name);
 }
+
+/* ================= TICKETS ================= */
 
 async function getTickets() {
     const username = sessionStorage.getItem("username");
+    if (!username) return;
+
     try {
         const response = await fetch("http://192.168.1.34:8080/getTicketsEmployee", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
         });
+
         const tickets = JSON.parse(await response.text());
         displayTickets(tickets);
-    } catch (e) { console.error("Server Error"); }
+    } catch (e) {
+        console.error("Server Error", e);
+    }
 }
 
 function displayTickets(tickets) {
     const container = document.getElementById("ticketContainer");
     container.innerHTML = tickets.length ? "" : "<p>No tickets found.</p>";
+
     tickets.forEach(ticket => {
         const div = document.createElement("div");
         div.className = "ticket";
+
         div.onclick = () => {
             sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
-            sessionStorage.setItem ("dashboardHref", "dashboards/WorkerDashboard.html")
+            sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
             window.location.href = "../ticketPage.html";
         };
+
         div.innerHTML = `<h3>${ticket.title}</h3><p>${ticket.data}</p><small>ID: #${ticket.id}</small>`;
         container.appendChild(div);
     });
 }
+
+/* ================= SETTINGS ================= */
 
 function loadSettingsData() {
     document.getElementById("settings-username").value = sessionStorage.getItem("username") || "";
     document.getElementById("settings-email").value = sessionStorage.getItem("email") || "";
 }
 
+/* ================= AUTH ================= */
+
 function logout() {
-    clockOut ();
-    window.location.href = '../index.HTML';
+    clockOut();
     sessionStorage.clear();
+    window.location.href = '../index.HTML';
 }
 
-async function clockIn () {
-    const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}`;
-    try {
-        const response = await fetch ("http://192.168.1.34:8080/clockIn", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded"},
-            body: formData
-        });
-        console.log ("Clocked In: "+await response.text ());
-    }
-    catch (error) {
-        console.error (error);
-    }
-}
+/* ================= CLOCK SYSTEM ================= */
 
-async function clockOut () {
-    const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}`;
-    try {
-        const response = await fetch ("http://192.168.1.34:8080/clockOut", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded"},
-            body: formData
-        });
-        console.log ("Clocked Out: "+await response.text ());
-        localStorage.setItem ("clockedIn", "false");
-    }
-    catch (error) {
-        console.error (error);
-    }
-}
-
-async function getUserID () {
-    const formData = `username=${encodeURIComponent (sessionStorage.getItem ("username"))}`
-    try {
-        const response = await fetch ("http://192.168.1.34:8080/getUserID", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: formData
-        });
-        console.log ("Got User ID");
-        sessionStorage.setItem ("userID", await response.text ());
-    }
-    catch (error) {
-        console.error (error);
-    }
-}
 async function initClockSystem() {
+    if (initRan) return;
+    initRan = true;
+
     await getUserID();
 
-    if (localStorage.getItem("clockedIn") !== "true") {
+    if (sessionStorage.getItem("clockedIn") !== "true") {
         await clockIn();
-        localStorage.setItem("clockedIn", "true");
+        sessionStorage.setItem("clockedIn", "true");
+    }
+
+    // 🔥 IMPORTANT: delay enabling unload (fixes login-triggered clockOut)
+    setTimeout(() => {
+        allowUnloadClockOut = true;
+    }, 2000);
+}
+
+async function clockIn() {
+    if (isClockingIn) return;
+    isClockingIn = true;
+
+    const id = sessionStorage.getItem("userID");
+    if (!id) return;
+
+    try {
+        const response = await fetch("http://192.168.1.34:8080/clockIn", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `userID=${encodeURIComponent(id)}`
+        });
+
+        console.log("Clocked In:", await response.text());
+    } catch (error) {
+        console.error(error);
+    }
+
+    isClockingIn = false;
+}
+
+async function clockOut() {
+    const id = sessionStorage.getItem("userID");
+    if (!id) return;
+
+    try {
+        const response = await fetch("http://192.168.1.34:8080/clockOut", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `userID=${encodeURIComponent(id)}`
+        });
+
+        console.log("Clocked Out:", await response.text());
+
+        // ONLY safe place to update state
+        sessionStorage.setItem("clockedIn", "false");
+    } catch (error) {
+        console.error(error);
     }
 }
 
-initClockSystem();
+async function getUserID() {
+    const username = sessionStorage.getItem("username");
+    if (!username) return;
+
+    try {
+        const response = await fetch("http://192.168.1.34:8080/getUserID", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(username)}`
+        });
+
+        sessionStorage.setItem("userID", await response.text());
+        console.log("Got User ID");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/* ================= PAGE EXIT ================= */
+
+let isReload = false;
+
+const navEntry = performance.getEntriesByType("navigation")[0];
+if (navEntry && navEntry.type === "reload") {
+    isReload = true;
+}
 
 window.addEventListener("beforeunload", () => {
-    if (localStorage.getItem ("clockedIn") === "true") {  
-        
-        const userID = new URLSearchParams();
-        data.append("userID", sessionStorage.getItem("userID"));
+    if (!allowUnloadClockOut) return;
+    if (isReload) return; // 🚨 IGNORE reloads
 
+    if (sessionStorage.getItem("clockedIn") === "true") {
+        const id = sessionStorage.getItem("userID");
+        if (!id) return;
 
-        navigator.sendBeacon ("http://192.168.1.34:8080/clockOut", userID);
-        sessionStorage.setItem ("clockedIn", "false")
+        const data = new URLSearchParams();
+        data.append("userID", id);
+
+        navigator.sendBeacon(
+            "http://192.168.1.34:8080/clockOut",
+            data.toString()
+        );
     }
 });

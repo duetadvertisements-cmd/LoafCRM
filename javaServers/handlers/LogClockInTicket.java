@@ -46,6 +46,7 @@ public class LogClockInTicket implements HttpHandler {
                 );
 
                 insertStatement.setString(1, userID);
+                insertStatement.setString(2, ticketID);
 
                 
 

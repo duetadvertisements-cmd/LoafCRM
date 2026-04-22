@@ -18,8 +18,8 @@
                 <button onclick = "addComment()" id = "addCommentButton">Add Comment</button>
                 <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
                 <button onclick = "changeStatus ()" id = "changeStatusButton">Close Ticket</button> <br> <br>
-                <button class = "clockButton">Clock In</button>
-                <button class = "clockButton">Clock Out</button>
+                <button class = "clockButton" onclick = "clockInTicket ()">Clock In</button>
+                <button class = "clockButton" onclick = "clockOutTicket ()">Clock Out</button>
             </div>
         </div>
         <div id="commentModal" class="modal hidden">

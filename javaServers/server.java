@@ -14,6 +14,8 @@ import javaServers.handlers.GetTicketsEmployeeHandler;
 import javaServers.handlers.FileServerHandler;
 import javaServers.handlers.GetEmployeesHandler;
 import javaServers.handlers.GetUsersHandler;
+import javaServers.handlers.LogClockInTicket;
+import javaServers.handlers.LogClockOutTicket;
 import javaServers.handlers.PromoteUserToWorkerHandler;
 import javaServers.handlers.ChangeStatusHandler;
 import javaServers.handlers.GetUnassignedTicketsHandler;
@@ -47,6 +49,8 @@ public class server {
         server.createContext ("/clockIn", new ClockInHandler ());
         server.createContext ("/clockOut", new ClockOutHandler ());
         server.createContext ("/getUserID", new GetUserID ());
+        server.createContext ("/clockInTicket", new LogClockInTicket ());
+        server.createContext ("/clockOutTicket", new LogClockOutTicket ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
