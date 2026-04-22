@@ -72,8 +72,8 @@ function loadSettingsData() {
 
 function logout() {
     clockOut ();
-    sessionStorage.clear();
     window.location.href = '../index.HTML';
+    sessionStorage.clear();
 }
 
 async function clockIn () {
@@ -100,6 +100,7 @@ async function clockOut () {
             body: formData
         });
         console.log ("Clocked Out: "+await response.text ());
+        localStorage.setItem ("clockedIn", "false");
     }
     catch (error) {
         console.error (error);
@@ -121,21 +122,25 @@ async function getUserID () {
         console.error (error);
     }
 }
-getUserID ();
+async function initClockSystem() {
+    await getUserID();
 
-if (localStorage.getItem ("clockedIn") === "false") {
-    clockIn();
-    localStorage.setItem("clockedIn", "true");
+    if (localStorage.getItem("clockedIn") !== "true") {
+        await clockIn();
+        localStorage.setItem("clockedIn", "true");
+    }
 }
+
+initClockSystem();
 
 window.addEventListener("beforeunload", () => {
-    const clockedInCheck = localStorage.getItem ("clockedIn");
-    if (localStorage.getItem ("clockedIn" === "true")) {  
-        clockOut ();
-        localStorage.setItem ("clockedIn", "false");
+    if (localStorage.getItem ("clockedIn") === "true") {  
+        
+        const userID = new URLSearchParams();
+        data.append("userID", sessionStorage.getItem("userID"));
+
+
+        navigator.sendBeacon ("http://192.168.1.34:8080/clockOut", userID);
+        sessionStorage.setItem ("clockedIn", "false")
     }
 });
-
-if (sessionStorage.getItem ("")) {
-
-}
