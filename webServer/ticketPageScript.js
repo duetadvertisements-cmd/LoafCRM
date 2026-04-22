@@ -80,7 +80,7 @@ async function setSubTicket (ticket) {
 
     ticket = `key=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}&madeOn=${encodeURIComponent(ticket.madeOn)}&comment=${encodeURIComponent(ticket.comment)}&username=${encodeURIComponent(ticket.username)}&commentTitle=${encodeURIComponent(ticket.commentTitle)}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.36:8080/getSubTicketComments", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getSubTicketComments", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -141,7 +141,7 @@ async function submitComment() {
     console.log (file);
 
     try {
-        const response = await fetch("http://192.168.1.36:8080/addComment", {
+        const response = await fetch("http://192.168.1.34:8080/addComment", {
             method: "POST",
             body: formData
         });
@@ -164,7 +164,7 @@ async function getComments () {
     const ticket = `ticketID=${encodeURIComponent(ticketID)}`;
 
     try {
-        const serverResponse = await fetch("http://192.168.1.36:8080/getComments", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getComments", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -203,7 +203,7 @@ function displayComments(commentsArray) {
         let attachmentHTML = "";
         
         if (c.filepath && c.filepath !== "null") {
-            const fullUrl = `http://192.168.1.36:8080/${c.filepath}`;
+            const fullUrl = `http://192.168.1.34:8080/${c.filepath}`;
             const fileName = c.filepath.split('/').pop(); 
             const extension = fileName.split('.').pop().toLowerCase();
 
@@ -255,7 +255,7 @@ const themes = {
         "bg1": "#667eea", "bg2": "#49BC9B",
         "card-bg": "#ffffff", "card-border": "#49BC9B", "card-top-strip": "#667eea",
         "ticket-title": "#333", "ticket-text": "#444",
-        "comment-bg": "#ffffff", "comment-border": "#6366f1", "comment-title": "#1f2937",
+        "comment-bg": "#ffffff", "comment-border": "#6346f1", "comment-title": "#1f2937",
         "comment-text": "#374151", "comment-small": "#6b7280",
         "button-bg": "#667eea", "button-hover": "#5a67d8", "button-text": "#ffffff",
         "input-bg": "#f7f9fc", "input-border": "#d1d5db",
@@ -337,7 +337,7 @@ async function changeStatus () {
     const ticket = `ticketID=${encodeURIComponent(ticketID)}&toStatus=${encodeURIComponent(toStatus)}`;
 
     try {
-        const serverResponse = await fetch("http://192.168.1.36:8080/changeStatus", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/changeStatus", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket

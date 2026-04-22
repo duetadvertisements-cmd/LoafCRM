@@ -180,7 +180,8 @@ button {
 
 #addCommentButton,
 .back-btn,
-#changeStatusButton     
+#changeStatusButton,  
+.clockButton 
 {
     padding: 12px 24px;
     background: var(--button-bg);
@@ -195,7 +196,8 @@ button {
 
 #addCommentButton:hover,
 .back-btn:hover,
-#changeStatusButton:hover
+#changeStatusButton:hover,
+.clockButton:hover
 {
     transform: translateY(-2px);
     background: var(--button-hover);

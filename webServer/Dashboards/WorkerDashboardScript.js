@@ -39,7 +39,7 @@ function applyTheme(name) {
 async function getTickets() {
     const username = sessionStorage.getItem("username");
     try {
-        const response = await fetch("http://192.168.1.36:8080/getTicketsEmployee", {
+        const response = await fetch("http://192.168.1.34:8080/getTicketsEmployee", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
@@ -71,6 +71,7 @@ function loadSettingsData() {
 }
 
 function logout() {
+    clockOut ();
     sessionStorage.clear();
     window.location.href = '../index.HTML';
 }
@@ -78,7 +79,7 @@ function logout() {
 async function clockIn () {
     const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}`;
     try {
-        const response = await fetch ("http://192.168.1.36:8080/clockIn", {
+        const response = await fetch ("http://192.168.1.34:8080/clockIn", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded"},
             body: formData
@@ -93,7 +94,7 @@ async function clockIn () {
 async function clockOut () {
     const formData = `userID=${encodeURIComponent(sessionStorage.getItem ("userID"))}`;
     try {
-        const response = await fetch ("http://192.168.1.36:8080/clockOut", {
+        const response = await fetch ("http://192.168.1.34:8080/clockOut", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded"},
             body: formData
@@ -108,7 +109,7 @@ async function clockOut () {
 async function getUserID () {
     const formData = `username=${encodeURIComponent (sessionStorage.getItem ("username"))}`
     try {
-        const response = await fetch ("http://192.168.1.36:8080/getUserID", {
+        const response = await fetch ("http://192.168.1.34:8080/getUserID", {
             method: "POST",
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
             body: formData
@@ -122,11 +123,19 @@ async function getUserID () {
 }
 getUserID ();
 
-if (!localStorage.getItem("clockedIn")) {
+if (localStorage.getItem ("clockedIn") === "false") {
     clockIn();
     localStorage.setItem("clockedIn", "true");
 }
 
 window.addEventListener("beforeunload", () => {
-    clockOut ();
+    const clockedInCheck = localStorage.getItem ("clockedIn");
+    if (localStorage.getItem ("clockedIn" === "true")) {  
+        clockOut ();
+        localStorage.setItem ("clockedIn", "false");
+    }
 });
+
+if (sessionStorage.getItem ("")) {
+
+}

@@ -77,7 +77,7 @@ async function addTicket () {
     const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}&toEmail=${encodeURIComponent(sessionStorage.getItem ("email"))}`;    
 
     try {
-        const serverResponse = await fetch("http://192.168.1.36:8080/addTicket", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -114,7 +114,7 @@ async function getTickets () {
     const username = sessionStorage.getItem ("username");
     const ticket = `username=${encodeURIComponent(username)}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.36:8080/getTickets", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -147,7 +147,7 @@ async function getEmail () {
     const username = sessionStorage.getItem ("username");
     const ticket = `username=${encodeURIComponent (sessionStorage.getItem ("username"))}`
     try {
-        const serverResponse = await fetch("http://192.168.1.36:8080/getEmail", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getEmail", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
