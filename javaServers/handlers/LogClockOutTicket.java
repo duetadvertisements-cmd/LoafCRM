@@ -34,11 +34,11 @@ public class LogClockOutTicket implements HttpHandler {
 
                 String userID = formData.get ("userID");
 
-                System.out.println ("User ID: "+userID+" has clocked Out for work");
+                System.out.println ("User ID: "+userID+" has clocked Out for ticket");
 
                 Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
                 PreparedStatement updateStatement = databaseConnection.prepareStatement(
-                    "UPDATE LOAF_LOG_TIME_TICKET SET CLOCK_OUT = CURRENT_TIMESTAMP WHERE USER_ID = ? AND CLOCK_OUT IS NULL"
+                    "UPDATE LOAF_LOG_TIME_TICKET SET LOG_OUT = CURRENT_TIMESTAMP WHERE USER_ID = ? AND LOG_OUT IS NULL"
                 );
 
                 updateStatement.setString(1, userID);

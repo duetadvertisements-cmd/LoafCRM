@@ -41,7 +41,7 @@ public class LogClockInTicket implements HttpHandler {
 
                 Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
                 PreparedStatement insertStatement = databaseConnection.prepareStatement(
-                    "INSERT INTO LOAF_LOG_TIME_TICKET (USER_ID, CLOCK_IN) VALUES (?, ?)",
+                    "INSERT INTO LOAF_LOG_TIME_TICKET (USER_ID, TICKET_ID) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS
                 );
 
