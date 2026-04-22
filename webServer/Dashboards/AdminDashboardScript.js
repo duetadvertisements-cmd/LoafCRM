@@ -74,7 +74,11 @@ async function addTicket () {
     const data = document.getElementById ("dataInput").value;
     const creator = sessionStorage.getItem ("username");
 
-    const ticket = `title=${encodeURIComponent(title)}&data=${encodeURIComponent(data)}&creator=${encodeURIComponent(creator)}`;    
+    const ticket = `title=${encodeURIComponent(title)}
+                    &data=${encodeURIComponent(data)}
+                    &creator=${encodeURIComponent(creator)}
+                    &toEmail=${encodeURIComponent (sessionStorage.getItem ("email"))}
+                    &madeBy=${encodeURIComponent (creator)}`;    
 
     try {
         const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {

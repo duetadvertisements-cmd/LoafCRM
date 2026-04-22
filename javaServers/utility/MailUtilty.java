@@ -99,4 +99,8 @@ public class MailUtilty {
 
         System.out.println("Mail sent.");
     }
+
+    public static void readMail () {
+        
+    }
 }

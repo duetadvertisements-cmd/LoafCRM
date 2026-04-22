@@ -41,23 +41,26 @@ public class AddTicketHandler implements HttpHandler {
                 String data = formData.get ("data");
                 String creator = formData.get ("creator");
                 String toEmail = formData.get ("toEmail");
+                String madeBy = formData.get ("madeBy");
 
                 
                 System.out.println ("Recieved:");
                 System.out.println ("Title: "+title);
                 System.out.println ("Data: "+data);
                 System.out.println ("Creator: "+creator);
+                System.out.println ("Made By: "+madeBy);
             
                 Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
 
                 PreparedStatement insertStatement = databaseConnection.prepareStatement(
-                    "INSERT INTO LOAF_TICKETS (TITLE, DATA, CREATOR) VALUES (?, ?, ?)",
+                    "INSERT INTO LOAF_TICKETS (TITLE, DATA, CREATOR, MADE_BY) VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
                 );
 
                 insertStatement.setString(1, title);
                 insertStatement.setString(2, data);
                 insertStatement.setString(3, creator);
+                insertStatement.setString(4, madeBy);
 
                 insertStatement.executeUpdate ();
                 

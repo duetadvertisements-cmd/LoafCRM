@@ -1,9 +1,9 @@
 const themes = {
-    cobalt_horizon: { bg1: "#1e293b", bg2: "#334155", "main-bg": "#ffffff", "heading-accent": "#3b82f6", "ticket-bg": "#ffffff", "ticket-border": "#3b82f6" },
-    royalLuxe: { bg1: "#4e54c8", bg2: "#8f94fb", "main-bg": "#fafaff", "heading-accent": "#6a6efb", "ticket-bg": "#ecebff", "ticket-border": "#6a6efb" },
-    phantom_forest: { bg1: "#0f1d1a", bg2: "#1c3a34", "main-bg": "#fcfdfd", "heading-accent": "#10b981", "ticket-bg": "#ffffff", "ticket-border": "#10b981" },
-    desert_slate: { bg1: "#2d2926", bg2: "#403a34", "main-bg": "#fffcf9", "heading-accent": "#d97757", "ticket-bg": "#ffffff", "ticket-border": "#d97757" },
-    basic: { bg1: "#667eea", bg2: "#49BC9B", "main-bg": "white", "heading-accent": "#5a67d8", "ticket-bg": "white", "ticket-border": "#49BC9B" }
+    cobalt_horizon: { bg1: "#1e293b", bg2: "#334155", "main-bg": "#ffffff", "heading-accent": "#3b82f6", "ticket-bg": "#ffffff", "ticket-border": "#3b82f6",dshbackground1: "#1e293b", dshbackground3: "#ffffff" },
+    royalLuxe: { bg1: "#4e54c8", bg2: "#8f94fb", "main-bg": "#fafaff", "heading-accent": "#6a6efb", "ticket-bg": "#ecebff", "ticket-border": "#6a6efb", dshbackground1: "#4e54c8", dshbackground3: "#fafaff"},
+    phantom_forest: { bg1: "#0f1d1a", bg2: "#1c3a34", "main-bg": "#fcfdfd", "heading-accent": "#10b981", "ticket-bg": "#ffffff", "ticket-border": "#10b981", dshbackground1: "#0f1d1a", dshbackground3: "#fcfdfd"},
+    desert_slate: { bg1: "#2d2926", bg2: "#403a34", "main-bg": "#fffcf9", "heading-accent": "#d97757", "ticket-bg": "#ffffff", "ticket-border": "#d97757", dshbackground1: "#2d2926", dshbackground3: "#fffcf9" },
+    basic: { bg1: "#667eea", bg2: "#49BC9B", "main-bg": "white", "heading-accent": "#5a67d8", "ticket-bg": "white", "ticket-border": "#49BC9B",dshbackground1: "#667eea", dshbackground3: "white" }
 };
 
 /* ================= INIT ================= */
@@ -207,3 +207,53 @@ window.addEventListener("beforeunload", () => {
         );
     }
 });
+
+async function addTicket () {
+    const title = document.getElementById ("titleInput").value;
+    const data = document.getElementById ("dataInput").value;
+    const madeBy = sessionStorage.getItem ("username");
+    const creator = document.getElementById ("madeByInput").value;
+
+    console.log ("title: "+title);
+    console.log ("data: "+data);
+    console.log ("madeBy: "+madeBy);
+    console.log ("creatir: "+creator);
+
+    const ticket = `title=${encodeURIComponent(title)}
+                    &data=${encodeURIComponent(data)}
+                    &creator=${encodeURIComponent(creator)}
+                    &toEmail=${encodeURIComponent(sessionStorage.getItem ("email"))}
+                    &madeBy=${encodeURIComponent (madeBy)}`;    
+
+    try {
+        const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to addTicket:");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        if (responseText == "SUCCESS") {
+            alert ("Success");
+        }
+
+        else {
+            alert ("Failed");
+        }
+
+        history.go ();
+
+    } catch (error) {
+        console.log ("---------------------error to addtickets ()---------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.log ("------------------------------------------------------");
+    }
+}

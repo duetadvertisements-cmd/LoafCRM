@@ -18,6 +18,7 @@
         <nav class="nav-menu" id="navMenu">
             <a href="#" class="nav-item active" id="nav-tickets" onclick="showSection('tickets')">📋 Tickets</a>
             <a href="#" class="nav-item" id="nav-settings" onclick="showSection('settings')">⚙️ Settings</a>
+            <a href="#" class="nav-item" id="nav-makeTickets" onclick="showSection('makeTickets')">🧾 Make Tickets</a>
             <hr>
             <a href="#" class="nav-item logout" onclick="logout()">🚪 Logout</a>
         </nav>
@@ -53,6 +54,15 @@
                         </select>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div id="makeTickets-section" class="content-section active">
+            <div class="header-banner">
+                
+                <input type = "text" id = "titleInput" placeholder="Ticket Title"> <br>
+                <input type = "text" id = "dataInput" placeholder="Ticket Description">   <br><br>
+                <input type = "text" id = "madeByInput" placeholder="Made By"> <br><br>
+                <button onclick = "addTicket ()" id = "addTicketButton">Add Ticket</button> <br><br>
             </div>
         </div>
     </main>
