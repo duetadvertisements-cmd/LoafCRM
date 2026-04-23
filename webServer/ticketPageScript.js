@@ -9,6 +9,8 @@ function setMainTicket(ticket) {
     else {
         ticket.status = "Closed"
     }
+
+    if (ticket.madeBy != ticket.creator) {ticket.madeBy = "Employee"}
     document.getElementById("mainTicket").innerHTML = `
         <div class="ticket-header">
             <h1 class="ticket-title">${ticket.title}</h1>
@@ -24,7 +26,8 @@ function setMainTicket(ticket) {
 
         <div class="ticket-meta">
             <div class="meta-item">
-                <strong>Created by:</strong> ${ticket.creator}
+                <strong>Created by:</strong> ${ticket.creator} <br>
+                <strong>Made by:</strong> ${ticket.madeBy}
             </div>
             <div class="meta-item">
                 <strong>Ticket ID:</strong> #${ticket.id} <br>
