@@ -25,7 +25,6 @@ import javaServers.handlers.GetUnassignedTicketsHandler;
 import javaServers.handlers.AssignTicketHandler;
 import javaServers.handlers.GetEmailHandler;
 import javaServers.handlers.ClockInHandler;
-import javaServers.utility.EmailReader;
 import javaServers.handlers.ClockOutHandler;
 import javaServers.handlers.GetUserID;
 
@@ -63,58 +62,6 @@ public class server {
         server.setExecutor(java.util.concurrent.Executors.newFixedThreadPool(10));
 
         System.out.println("Server started on port 8080...");
-
-
-
-        new Thread(() -> {
-
-            String lastProcessed = "";
-
-            while (true) {
-                try {
-                    System.out.println("Checking email...");
-
-                    Map<String, String> email = EmailReader.readLatestEmail();
-
-                    String title = email.get("title");
-                    String data = email.get("data");
-                    String toEmail = email.get("toEmail");
-
-                    // skip empty
-                    if (title == null || title.trim().isEmpty()) {
-                        Thread.sleep(10000);
-                        continue;
-                    }
-
-                    String unique = title + toEmail;
-
-                    // avoid duplicates
-                    if (!unique.equals(lastProcessed)) {
-                        lastProcessed = unique;
-
-                        AddTicketHandler.createTicket(
-                            title,
-                            data,
-                            "EMAIL_SYSTEM",
-                            toEmail,
-                            "EMAIL"
-                        );
-
-                        System.out.println("AUTO ticket created: " + title);
-                    }
-
-                    Thread.sleep(10000); // check every 10 sec
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    try { Thread.sleep(5000); } catch (Exception ignored) {}
-                }
-            }
-
-        }).start();
-
-
-
 
         server.start();
     }
