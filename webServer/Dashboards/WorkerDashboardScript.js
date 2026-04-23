@@ -62,29 +62,115 @@ async function getTickets() {
         });
 
         const tickets = JSON.parse(await response.text());
-        displayTickets(tickets);
+        displayTickets(tickets, "ALL");
     } catch (e) {
         console.error("Server Error", e);
     }
 }
 
-function displayTickets(tickets) {
-    const container = document.getElementById("ticketContainer");
-    container.innerHTML = tickets.length ? "" : "<p>No tickets found.</p>";
+function displayTickets(tickets, filter) {
+        const container = document.getElementById("ticketContainer");
+    
+    container.innerHTML = "";  // Clear previous tickets
 
-    tickets.forEach(ticket => {
-        const div = document.createElement("div");
-        div.className = "ticket";
+    if (tickets.length === 0) {
+        container.innerHTML = "<p class='no-tickets'>No tickets found</p>";
+        return;
+    }
+    if (filter === "ALL") {
+        tickets.forEach(ticket => {
+            if (ticket.status == 1) {
+                ticket.status = "Open";
+            }
+            else {
+                ticket.status = "Closed";
+            }
 
-        div.onclick = () => {
-            sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
-            sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
-            window.location.href = "../ticketPage.html";
-        };
+            const ticketDiv = document.createElement("div");
+            ticketDiv.className = "ticket";
+            ticketDiv.onclick = () => ticketClicked(ticket);
+            ticketDiv.innerHTML = `
+                <div class="ticket-header">
+                    <h3 class="ticket-title">${ticket.title}</h3>
+                    <span class="ticket-id">#${ticket.id}</span>
+                </div>
+                <p class="ticket-data">${ticket.data}</p>
+                <p class="ticket-creator">Created by: ${ticket.creator}</p>
+                <p>Status: ${ticket.status}</p>
+            `;
+            container.appendChild(ticketDiv);
+            if (ticket.status == "Open") {
+                ticket.status = 1;
+            }
+            else {
+                ticket.status = 2;
+            }
+        });
+    }
 
-        div.innerHTML = `<h3>${ticket.title}</h3><p>${ticket.data}</p><small>ID: #${ticket.id}</small>`;
-        container.appendChild(div);
-    });
+    if (filter === "OPEN") {
+        tickets.forEach(ticket => {
+            if (ticket.status == 1) {
+                ticket.status = "Open";
+            }
+            else {
+                ticket.status = "Closed";
+            }
+            if (ticket.status === "Open") {
+                const ticketDiv = document.createElement("div");
+                ticketDiv.className = "ticket";
+                ticketDiv.onclick = () => ticketClicked(ticket);
+                ticketDiv.innerHTML = `
+                    <div class="ticket-header">
+                        <h3 class="ticket-title">${ticket.title}</h3>
+                        <span class="ticket-id">#${ticket.id}</span>
+                    </div>
+                    <p class="ticket-data">${ticket.data}</p>
+                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
+                    <p>Status: ${ticket.status}</p>
+                `;
+                container.appendChild(ticketDiv);
+                if (ticket.status == "Open") {
+                    ticket.status = 1;
+                }
+                else {
+                    ticket.status = 2;
+                }
+            }
+        });
+    }
+
+    if (filter === "CLOSED") {
+        tickets.forEach(ticket => {
+            if (ticket.status == 1) {
+                ticket.status = "Open";
+            }
+            else {
+                ticket.status = "Closed";
+            }
+            if (ticket.status === "Closed") {
+                const ticketDiv = document.createElement("div");
+                ticketDiv.className = "ticket";
+                ticketDiv.onclick = () => ticketClicked(ticket);
+                ticketDiv.innerHTML = `
+                    <div class="ticket-header">
+                        <h3 class="ticket-title">${ticket.title}</h3>
+                        <span class="ticket-id">#${ticket.id}</span>
+                    </div>
+                    <p class="ticket-data">${ticket.data}</p>
+                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
+                    <p>Status: ${ticket.status}</p>
+                `;
+                container.appendChild(ticketDiv);
+                if (ticket.status == "Open") {
+                    ticket.status = 1;
+                }
+                else {
+                    ticket.status = 2;
+                }
+            }
+        });
+    }
 }
 
 /* ================= SETTINGS ================= */
@@ -255,5 +341,28 @@ async function addTicket () {
         console.log ("\n");
         console.error("Request failed:", error);
         console.log ("------------------------------------------------------");
+    }
+}
+
+
+async function changeFilter (filter) {
+    document.getElementById ("ticketContainer").innerHTML = "";
+    
+
+
+    const ticket = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+        const tickets = JSON.parse (responseText);
+
+        displayTickets(tickets, filter);
+    }
+    catch (error) {
+        console.error (error);
     }
 }
