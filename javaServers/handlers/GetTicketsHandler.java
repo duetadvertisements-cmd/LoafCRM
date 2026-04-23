@@ -70,7 +70,8 @@ public class GetTicketsHandler implements HttpHandler {
                     responseBuilder.append("\"title\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("TITLE"))).append("\",");
                     responseBuilder.append("\"data\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("DATA"))).append("\",");
                     responseBuilder.append("\"status\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("STATUS"))).append("\",");
-                    responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("CREATOR"))).append("\"");
+                    responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("CREATOR"))).append("\",");
+                    responseBuilder.append("\"madeBy\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("MADE_BY"))).append("\"");
                     responseBuilder.append("},");
                 }
 

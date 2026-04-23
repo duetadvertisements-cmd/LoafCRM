@@ -13,6 +13,7 @@ import javaServers.handlers.GetCommentHandler;
 import javaServers.handlers.GetTicketsEmployeeHandler;
 import javaServers.handlers.FileServerHandler;
 import javaServers.handlers.GetAmountOfTimeEmployeeHasWorked;
+import javaServers.handlers.GetAmountOfTimeEmployeeHasWorkedOnTicket;
 import javaServers.handlers.GetEmployeesHandler;
 import javaServers.handlers.GetUsersHandler;
 import javaServers.handlers.LogClockInTicket;
@@ -52,7 +53,8 @@ public class server {
         server.createContext ("/getUserID", new GetUserID ());
         server.createContext ("/clockInTicket", new LogClockInTicket ());
         server.createContext ("/clockOutTicket", new LogClockOutTicket ());
-        server.createContext("/getTimeWorked", new GetAmountOfTimeEmployeeHasWorked ());
+        server.createContext ("/getTimeWorked", new GetAmountOfTimeEmployeeHasWorked ());
+        server.createContext ("/getTimeWorkedOnATicket", new GetAmountOfTimeEmployeeHasWorkedOnTicket ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED

@@ -109,7 +109,9 @@ body {
     font-size: 14px;
 }
 
-#getTimeWorkedUserIDInput {
+#getTimeWorkedUserIDInput,
+#getTimeWorkedOnATicketUserIDInput,
+#getTimeWorkedOnATicketTicketIDInput {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--dshhead3);
@@ -130,7 +132,8 @@ body {
     transition: background 0.3s;
 }
 
-#getAmountOfTimeEmployeeHasWorkedButton {
+#getAmountOfTimeEmployeeHasWorkedButton,
+#getAmountOfTimeEmployeeHasWorkedOnATicketButton {
     width: 100%;
     padding: 12px;
     background: var(--dshbackground1);

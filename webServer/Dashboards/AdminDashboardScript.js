@@ -591,7 +591,7 @@ async function getAmountOfTimeEmployeeHasWorked () {
 
         const workedHours = await serverResponse.text ();
         console.log (workedHours);
-        document.getElementById ("workingHoursDisplay").innerHTML = workedHours;
+        document.getElementById ("workingHoursDisplay").innerHTML = workedHours+ " Hours";
     }
     catch (error) {
         console.error (error);
@@ -599,4 +599,49 @@ async function getAmountOfTimeEmployeeHasWorked () {
     }
 }
 
-getAmountOfTimeEmployeeHasWorked ();
+async function getAmountOfTimeEmployeeHasWorkedOnATicket () {
+    let currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date ().getFullYear (); 
+
+    switch (currentMonth) {
+        case 1: currentMonth = "01"
+        break;
+        case 2: currentMonth = "02"
+        break;
+        case 3: currentMonth = "03"
+        break;
+        case 4: currentMonth = "04"
+        break;
+        case 5: currentMonth = "05"
+        break;
+        case 6: currentMonth = "06"
+        break;
+        case 7: currentMonth = "07"
+        break;
+        case 8: currentMonth = "08"
+        break;
+        case 9: currentMonth = "09"
+        break;
+    }
+
+    const ticketID = document.getElementById ("getTimeWorkedOnATicketTicketIDInput").value;
+    const userID = document.getElementById ("getTimeWorkedOnATicketUserIDInput").value;
+    if (userID === "" || ticketID === "") {return;}
+    const ticket = `userID=${encodeURIComponent (userID)}&workingYear=${encodeURIComponent (currentYear)}&workingMonth=${encodeURIComponent (currentMonth)}&ticketID=${encodeURIComponent (ticketID)}`
+
+    try {
+        const serverResponse = await fetch ("http://192.168.1.34:8080/getTimeWorkedOnATicket", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded"},
+            body: ticket
+        });
+
+        const workedHours = await serverResponse.text ();
+        console.log (workedHours);
+        document.getElementById ("workingHoursOfATicketDisplay").innerHTML = workedHours+ " Hours";
+    }
+    catch (error) {
+        console.error (error);
+        alert ("An Unexpected Error Occured");
+    }
+}
