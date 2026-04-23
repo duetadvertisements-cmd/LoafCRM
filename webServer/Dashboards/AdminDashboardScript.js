@@ -396,7 +396,7 @@ const themes = {
         dshhead2: "#5a67d8",
         dshhead3: "#ddd",
         dshticket1: "#eee" ,
-        dshticket2: "#999"
+        dshticket2: "#999",
     },
     royalLuxe: {
         dshbackground1: "#4e54c8",
@@ -553,7 +553,34 @@ async function getEmail () {
 getEmail ();
 
 async function getAmountOfTimeEmployeeHasWorked () {
-    const ticket = `userID=${encodeURIComponent (13)}&workingYear=${encodeURIComponent (2026)}&workingMonth=${encodeURIComponent ("04")}`
+    let currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date ().getFullYear (); 
+
+    switch (currentMonth) {
+        case 1: currentMonth = "01"
+        break;
+        case 2: currentMonth = "02"
+        break;
+        case 3: currentMonth = "03"
+        break;
+        case 4: currentMonth = "04"
+        break;
+        case 5: currentMonth = "05"
+        break;
+        case 6: currentMonth = "06"
+        break;
+        case 7: currentMonth = "07"
+        break;
+        case 8: currentMonth = "08"
+        break;
+        case 9: currentMonth = "09"
+        break;
+    }
+
+
+    const userID = document.getElementById ("getTimeWorkedUserIDInput").value;
+    if (userID === "") {return;}
+    const ticket = `userID=${encodeURIComponent (userID)}&workingYear=${encodeURIComponent (currentYear)}&workingMonth=${encodeURIComponent (currentMonth)}`
 
     try {
         const serverResponse = await fetch ("http://192.168.1.34:8080/getTimeWorked", {
@@ -562,10 +589,13 @@ async function getAmountOfTimeEmployeeHasWorked () {
             body: ticket
         });
 
-        console.log (await serverResponse.text ());
+        const workedHours = await serverResponse.text ();
+        console.log (workedHours);
+        document.getElementById ("workingHoursDisplay").innerHTML = workedHours;
     }
     catch (error) {
         console.error (error);
+        alert ("An Unexpected Error Occured");
     }
 }
 

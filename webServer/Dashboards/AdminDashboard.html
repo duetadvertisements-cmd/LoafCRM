@@ -34,10 +34,14 @@
                     <span class="nav-icon">⚙️</span>
                     Settings
                 </a>
+                <a href="#" class="nav-item" onclick="showSection('getTimeWorked');">
+                    <span class="nav-icon">📋</span>
+                    Get Working Time
+                </a>
                 <a href="#" class="nav-item" onclick="logout()">
                     <span class="nav-icon">🚪</span>
                     Logout
-                </a>
+                </a>       
             </nav>
         </div>
 
@@ -71,16 +75,38 @@
 
                 <div id="employeesContainer" class="employee-container"></div>
             </div>
-        <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- ------------------------------------------------------------------------------------------------------------------------------------------------->
             <div id="settings-section" class="content-section">
                 <div class="header">
                     <h1>Settings</h1>
                     <p>Configure your account and application settings.</p>
                 </div>
-                <div class="coming-soon">
-                    <h2>⚙️ Settings</h2>
-                    <p>Settings panel will be available soon.</p>
+                 <div class="settings-card">
+                    <h3>🎨 Appearance</h3>
+                    <div class="settings-group">
+                        <label>Choose Theme</label>
+                        <select id="theme-selector" onchange="applyTheme(this.value)">
+                            <option value="cobalt_horizon">Cobalt Horizon</option>
+                            <option value="royalLuxe">Royal Luxe</option>
+                            <option value="phantom_forest">Phantom Forest</option>
+                            <option value="desert_slate">Desert Slate</option>
+                            <option value="basic">Basic Light</option>
+                        </select>
+                    </div>  
                 </div>
+            </div>
+        <!---------------------------------------------------------------------------------------------------------------------------------------------------->
+            <div id = "getTimeWorked-section" class = "content-section">
+                <div class="header">
+                    <h1>Get Working Time</h1>
+                    <p>Get How Much Time An Employee Has Worked</p>
+                </div>
+                <div class="header">
+                    <p id = "workingHoursDisplay">The Amount Of Time An Employee Has Worked WIll be Shown Here</p>
+                </div><br><br>
+                <input type = "number" min = 1 id = "getTimeWorkedUserIDInput" placeholder="userID"> <br>
+                <button onclick = "getAmountOfTimeEmployeeHasWorked ()" id = "getAmountOfTimeEmployeeHasWorkedButton">Get Working Time</button> <br><br>
+                
             </div>
         </div>
     </BODY>
