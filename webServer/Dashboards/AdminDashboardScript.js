@@ -134,7 +134,7 @@ async function getTickets () {
         console.log (tickets);
         console.log ("------------------------------------------------------");
 
-        displayTickets(tickets, "ticketContainer");
+        displayTickets(tickets, "ticketContainer", "ALL");
     }
     catch (error) {
         console.error ("----------------------error to get tickets--------------------------------");
@@ -142,7 +142,7 @@ async function getTickets () {
         console.log ("\n");
         console.error("Request failed:", error);
         console.error ("------------------------------------------------------");
-    }
+    }   
 }
 
 async function getEmployees () {  
@@ -208,7 +208,7 @@ async function getUsers () {
     }
 }
 
-function displayTickets(tickets, containerID) {
+function displayTickets(tickets, containerID, filter) {
         const container = document.getElementById(containerID);
     
     container.innerHTML = "";  // Clear previous tickets
@@ -217,34 +217,100 @@ function displayTickets(tickets, containerID) {
         container.innerHTML = "<p class='no-tickets'>No tickets found</p>";
         return;
     }
+    if (filter === "ALL") {
+        tickets.forEach(ticket => {
+            if (ticket.status == 1) {
+                ticket.status = "Open";
+            }
+            else {
+                ticket.status = "Closed";
+            }
 
-    tickets.forEach(ticket => {
-        if (ticket.status == 1) {
-            ticket.status = "Open";
-        }
-        else {
-            ticket.status = "Closed";
-        }
-        const ticketDiv = document.createElement("div");
-        ticketDiv.className = "ticket";
-        ticketDiv.onclick = () => ticketClicked(ticket);
-        ticketDiv.innerHTML = `
-            <div class="ticket-header">
-                <h3 class="ticket-title">${ticket.title}</h3>
-                <span class="ticket-id">#${ticket.id}</span>
-            </div>
-            <p class="ticket-data">${ticket.data}</p>
-            <p class="ticket-creator">Created by: ${ticket.creator}</p>
-            <p>Status: ${ticket.status}</p>
-        `;
-        container.appendChild(ticketDiv);
-        if (ticket.status == "Open") {
-            ticket.status = 1;
-        }
-        else {
-            ticket.status = 2;
-        }
-    });
+            const ticketDiv = document.createElement("div");
+            ticketDiv.className = "ticket";
+            ticketDiv.onclick = () => ticketClicked(ticket);
+            ticketDiv.innerHTML = `
+                <div class="ticket-header">
+                    <h3 class="ticket-title">${ticket.title}</h3>
+                    <span class="ticket-id">#${ticket.id}</span>
+                </div>
+                <p class="ticket-data">${ticket.data}</p>
+                <p class="ticket-creator">Created by: ${ticket.creator}</p>
+                <p>Status: ${ticket.status}</p>
+            `;
+            container.appendChild(ticketDiv);
+            if (ticket.status == "Open") {
+                ticket.status = 1;
+            }
+            else {
+                ticket.status = 2;
+            }
+        });
+    }
+
+    if (filter === "OPEN") {
+        tickets.forEach(ticket => {
+            if (ticket.status == 1) {
+                ticket.status = "Open";
+            }
+            else {
+                ticket.status = "Closed";
+            }
+            if (ticket.status === "Open") {
+                const ticketDiv = document.createElement("div");
+                ticketDiv.className = "ticket";
+                ticketDiv.onclick = () => ticketClicked(ticket);
+                ticketDiv.innerHTML = `
+                    <div class="ticket-header">
+                        <h3 class="ticket-title">${ticket.title}</h3>
+                        <span class="ticket-id">#${ticket.id}</span>
+                    </div>
+                    <p class="ticket-data">${ticket.data}</p>
+                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
+                    <p>Status: ${ticket.status}</p>
+                `;
+                container.appendChild(ticketDiv);
+                if (ticket.status == "Open") {
+                    ticket.status = 1;
+                }
+                else {
+                    ticket.status = 2;
+                }
+            }
+        });
+    }
+
+    if (filter === "CLOSED") {
+        tickets.forEach(ticket => {
+            if (ticket.status == 1) {
+                ticket.status = "Open";
+            }
+            else {
+                ticket.status = "Closed";
+            }
+            if (ticket.status === "Closed") {
+                const ticketDiv = document.createElement("div");
+                ticketDiv.className = "ticket";
+                ticketDiv.onclick = () => ticketClicked(ticket);
+                ticketDiv.innerHTML = `
+                    <div class="ticket-header">
+                        <h3 class="ticket-title">${ticket.title}</h3>
+                        <span class="ticket-id">#${ticket.id}</span>
+                    </div>
+                    <p class="ticket-data">${ticket.data}</p>
+                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
+                    <p>Status: ${ticket.status}</p>
+                `;
+                container.appendChild(ticketDiv);
+                if (ticket.status == "Open") {
+                    ticket.status = 1;
+                }
+                else {
+                    ticket.status = 2;
+                }
+            }
+        });
+    }
 }
 
 function displayUnassignedTickets(tickets, containerID) {
@@ -643,5 +709,27 @@ async function getAmountOfTimeEmployeeHasWorkedOnATicket () {
     catch (error) {
         console.error (error);
         alert ("An Unexpected Error Occured");
+    }
+}
+
+async function changeFilter (filter) {
+    document.getElementById ("ticketContainer").innerHTML = "";
+    
+
+
+    const ticket = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+        const tickets = JSON.parse (responseText);
+
+        displayTickets(tickets, "ticketContainer", filter);
+    }
+    catch (error) {
+        console.error (error);
     }
 }
