@@ -211,3 +211,15 @@ body {
     font-size: 16px;
     transition: background 0.3s;
 }
+
+.addToToDoListButton {
+    width: 100%;
+    padding: 12px;
+    background: var(--dshbackground1);
+    border: none;
+    border-radius: 8px;
+    color: var(--dshbackground3);
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}

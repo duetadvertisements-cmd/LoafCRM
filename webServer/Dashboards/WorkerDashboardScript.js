@@ -16,7 +16,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     applyTheme(sessionStorage.getItem("preferredTheme") || "cobalt_horizon");
 
     await initClockSystem(); // controlled init
-    getTickets();
+
+    if (sessionStorage.getItem ("ticketsLoaded")) {
+        displayTickets (JSON.parse (sessionStorage.getItem ("tickets")), "ALL")
+    }
+    else {
+        getTickets ();
+        sessionStorage.setItem ("ticketsLoaded", "true")
+    }
 });
 
 /* ================= UI ================= */
@@ -70,25 +77,30 @@ async function getTickets() {
 
 function displayTickets(tickets, filter) {
         const container = document.getElementById("ticketContainer");
+        console.log (tickets);
     
     container.innerHTML = "";  // Clear previous tickets
-
-    if (tickets.length === 0) {
+    // console.log (Object.keys(tickets).length);
+    if (!tickets || tickets.length === 0) {
         container.innerHTML = "<p class='no-tickets'>No tickets found</p>";
         return;
     }
     if (filter === "ALL") {
+
         tickets.forEach(ticket => {
-            if (ticket.status == 1) {
-                ticket.status = "Open";
-            }
-            else {
-                ticket.status = "Closed";
+            if (ticket.toDoList !== "true") {
+                ticket.toDoList = "false";
             }
 
+            console.log (ticket.toDoList);
+            const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
             const ticketDiv = document.createElement("div");
             ticketDiv.className = "ticket";
-            ticketDiv.onclick = () => ticketClicked(ticket);
+            ticketDiv.onclick = () => {
+                sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
+                sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
+                window.location.href = "../ticketPage.html";
+            };
             ticketDiv.innerHTML = `
                 <div class="ticket-header">
                     <h3 class="ticket-title">${ticket.title}</h3>
@@ -96,30 +108,24 @@ function displayTickets(tickets, filter) {
                 </div>
                 <p class="ticket-data">${ticket.data}</p>
                 <p class="ticket-creator">Created by: ${ticket.creator}</p>
-                <p>Status: ${ticket.status}</p>
+                <p>Status: ${statusText}</p><br><br>
+                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
             `;
             container.appendChild(ticketDiv);
-            if (ticket.status == "Open") {
-                ticket.status = 1;
-            }
-            else {
-                ticket.status = 2;
-            }
         });
     }
 
     if (filter === "OPEN") {
         tickets.forEach(ticket => {
-            if (ticket.status == 1) {
-                ticket.status = "Open";
-            }
-            else {
-                ticket.status = "Closed";
-            }
-            if (ticket.status === "Open") {
+            const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
+            if (statusText === "Open") {
                 const ticketDiv = document.createElement("div");
                 ticketDiv.className = "ticket";
-                ticketDiv.onclick = () => ticketClicked(ticket);
+                ticketDiv.onclick = () => {
+                    sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
+                    sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
+                    window.location.href = "../ticketPage.html";
+                };
                 ticketDiv.innerHTML = `
                     <div class="ticket-header">
                         <h3 class="ticket-title">${ticket.title}</h3>
@@ -127,31 +133,26 @@ function displayTickets(tickets, filter) {
                     </div>
                     <p class="ticket-data">${ticket.data}</p>
                     <p class="ticket-creator">Created by: ${ticket.creator}</p>
-                    <p>Status: ${ticket.status}</p>
+                    <p>Status: ${statusText}</p><br><br>
+                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
                 `;
                 container.appendChild(ticketDiv);
-                if (ticket.status == "Open") {
-                    ticket.status = 1;
-                }
-                else {
-                    ticket.status = 2;
-                }
             }
         });
     }
 
     if (filter === "CLOSED") {
         tickets.forEach(ticket => {
-            if (ticket.status == 1) {
-                ticket.status = "Open";
-            }
-            else {
-                ticket.status = "Closed";
-            }
-            if (ticket.status === "Closed") {
+            const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
+            if (statusText === "Closed") {
                 const ticketDiv = document.createElement("div");
                 ticketDiv.className = "ticket";
-                ticketDiv.onclick = () => ticketClicked(ticket);
+                ticketDiv.onclick = () => {
+                    sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
+                    sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
+                    window.location.href = "../ticketPage.html";
+                };
+
                 ticketDiv.innerHTML = `
                     <div class="ticket-header">
                         <h3 class="ticket-title">${ticket.title}</h3>
@@ -159,18 +160,41 @@ function displayTickets(tickets, filter) {
                     </div>
                     <p class="ticket-data">${ticket.data}</p>
                     <p class="ticket-creator">Created by: ${ticket.creator}</p>
-                    <p>Status: ${ticket.status}</p>
+                    <p>Status: ${statusText}</p><br><br>
+                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
                 `;
                 container.appendChild(ticketDiv);
-                if (ticket.status == "Open") {
-                    ticket.status = 1;
-                }
-                else {
-                    ticket.status = 2;
-                }
             }
         });
     }
+
+    if (filter === "TODOLIST") {
+        tickets.forEach(ticket => {
+            const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
+            if (ticket.toDoList === "true") {
+                const ticketDiv = document.createElement("div");
+                ticketDiv.className = "ticket";
+                ticketDiv.onclick = () => {
+                    sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
+                    sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
+                    window.location.href = "../ticketPage.html";
+                };
+
+                ticketDiv.innerHTML = `
+                    <div class="ticket-header">
+                        <h3 class="ticket-title">${ticket.title}</h3>
+                        <span class="ticket-id">#${ticket.id}</span>
+                    </div>
+                    <p class="ticket-data">${ticket.data}</p>
+                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
+                    <p>Status: ${statusText}</p><br><br>
+                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
+                `;
+                container.appendChild(ticketDiv);
+            }
+        });
+    }
+    sessionStorage.setItem("tickets", JSON.stringify(tickets));
 }
 
 /* ================= SETTINGS ================= */
@@ -347,22 +371,19 @@ async function addTicket () {
 
 async function changeFilter (filter) {
     document.getElementById ("ticketContainer").innerHTML = "";
-    
-
-
-    const ticket = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
-    try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: ticket
-        });
-        const responseText = await serverResponse.text();
-        const tickets = JSON.parse (responseText);
-
+        const tickets = JSON.parse(sessionStorage.getItem("tickets"));
         displayTickets(tickets, filter);
-    }
-    catch (error) {
-        console.error (error);
-    }
+    
+}
+
+function addToToDoList (ticketID) {
+    const tickets = JSON.parse(sessionStorage.getItem("tickets"));
+    const ticket = tickets.find(t => t.id === ticketID);
+    if (!ticket) return;
+
+    ticket.toDoList = "true";
+    console.log ("Sucessfully added To ToDo List")
+    sessionStorage.setItem("tickets", JSON.stringify(tickets));
+
+    displayTickets(tickets, "ALL");
 }
