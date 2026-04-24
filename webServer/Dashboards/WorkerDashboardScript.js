@@ -7,7 +7,7 @@ const themes = {
 };
 
 /* ================= INIT ================= */
-
+const BASE_URL = "http://192.168.1.34:8080";
 let initRan = false;
 let isClockingIn = false;
 let allowUnloadClockOut = false;
@@ -62,7 +62,7 @@ async function getTickets() {
     if (!username) return;
 
     try {
-        const response = await fetch("http://192.168.1.34:8080/getTicketsEmployee", {
+        const response = await fetch(BASE_URL+"/getTicketsEmployee", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
@@ -91,27 +91,7 @@ function displayTickets(tickets, filter) {
             if (ticket.toDoList !== "true") {
                 ticket.toDoList = "false";
             }
-
-            console.log (ticket.toDoList);
-            const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
-            const ticketDiv = document.createElement("div");
-            ticketDiv.className = "ticket";
-            ticketDiv.onclick = () => {
-                sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
-                sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
-                window.location.href = "../ticketPage.html";
-            };
-            ticketDiv.innerHTML = `
-                <div class="ticket-header">
-                    <h3 class="ticket-title">${ticket.title}</h3>
-                    <span class="ticket-id">#${ticket.id}</span>
-                </div>
-                <p class="ticket-data">${ticket.data}</p>
-                <p class="ticket-creator">Created by: ${ticket.creator}</p>
-                <p>Status: ${statusText}</p><br><br>
-                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
-            `;
-            container.appendChild(ticketDiv);
+            renderTicket (ticket, container);
         });
     }
 
@@ -119,24 +99,7 @@ function displayTickets(tickets, filter) {
         tickets.forEach(ticket => {
             const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
             if (statusText === "Open") {
-                const ticketDiv = document.createElement("div");
-                ticketDiv.className = "ticket";
-                ticketDiv.onclick = () => {
-                    sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
-                    sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
-                    window.location.href = "../ticketPage.html";
-                };
-                ticketDiv.innerHTML = `
-                    <div class="ticket-header">
-                        <h3 class="ticket-title">${ticket.title}</h3>
-                        <span class="ticket-id">#${ticket.id}</span>
-                    </div>
-                    <p class="ticket-data">${ticket.data}</p>
-                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
-                    <p>Status: ${statusText}</p><br><br>
-                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
-                `;
-                container.appendChild(ticketDiv);
+                renderTicket (ticket, container);
             }
         });
     }
@@ -145,25 +108,7 @@ function displayTickets(tickets, filter) {
         tickets.forEach(ticket => {
             const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
             if (statusText === "Closed") {
-                const ticketDiv = document.createElement("div");
-                ticketDiv.className = "ticket";
-                ticketDiv.onclick = () => {
-                    sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
-                    sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
-                    window.location.href = "../ticketPage.html";
-                };
-
-                ticketDiv.innerHTML = `
-                    <div class="ticket-header">
-                        <h3 class="ticket-title">${ticket.title}</h3>
-                        <span class="ticket-id">#${ticket.id}</span>
-                    </div>
-                    <p class="ticket-data">${ticket.data}</p>
-                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
-                    <p>Status: ${statusText}</p><br><br>
-                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
-                `;
-                container.appendChild(ticketDiv);
+                renderTicket (ticket, container);
             }
         });
     }
@@ -172,29 +117,37 @@ function displayTickets(tickets, filter) {
         tickets.forEach(ticket => {
             const statusText = Number (ticket.status) === 1 ? "Open" : "Closed";
             if (ticket.toDoList === "true") {
-                const ticketDiv = document.createElement("div");
-                ticketDiv.className = "ticket";
-                ticketDiv.onclick = () => {
-                    sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
-                    sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
-                    window.location.href = "../ticketPage.html";
-                };
-
-                ticketDiv.innerHTML = `
-                    <div class="ticket-header">
-                        <h3 class="ticket-title">${ticket.title}</h3>
-                        <span class="ticket-id">#${ticket.id}</span>
-                    </div>
-                    <p class="ticket-data">${ticket.data}</p>
-                    <p class="ticket-creator">Created by: ${ticket.creator}</p>
-                    <p>Status: ${statusText}</p><br><br>
-                <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
-                `;
-                container.appendChild(ticketDiv);
+                renderTicket (ticket, container);
             }
         });
     }
     sessionStorage.setItem("tickets", JSON.stringify(tickets));
+}
+
+function renderTicket (ticket, container) {
+    let statusText;
+    if (ticket.status === 1) {statusText = "Open"}
+    else {statusText = "Closed"}
+
+    const ticketDiv = document.createElement("div");
+        ticketDiv.className = "ticket";
+        ticketDiv.onclick = () => {
+            sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
+            sessionStorage.setItem("dashboardHref", "dashboards/WorkerDashboard.html");
+            window.location.href = "../ticketPage.html";
+        };
+
+        ticketDiv.innerHTML = `
+            <div class="ticket-header">
+                <h3 class="ticket-title">${ticket.title}</h3>
+                <span class="ticket-id">#${ticket.id}</span>
+            </div>
+            <p class="ticket-data">${ticket.data}</p>
+            <p class="ticket-creator">Created by: ${ticket.creator}</p>
+            <p>Status: ${statusText}</p><br><br>
+        <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
+        `;
+        container.appendChild(ticketDiv);
 }
 
 /* ================= SETTINGS ================= */
@@ -239,7 +192,7 @@ async function clockIn() {
     if (!id) return;
 
     try {
-        const response = await fetch("http://192.168.1.34:8080/clockIn", {
+        const response = await fetch(BASE_URL+"/clockIn", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `userID=${encodeURIComponent(id)}`
@@ -258,7 +211,7 @@ async function clockOut() {
     if (!id) return;
 
     try {
-        const response = await fetch("http://192.168.1.34:8080/clockOut", {
+        const response = await fetch(BASE_URL+"/clockOut", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `userID=${encodeURIComponent(id)}`
@@ -278,7 +231,7 @@ async function getUserID() {
     if (!username) return;
 
     try {
-        const response = await fetch("http://192.168.1.34:8080/getUserID", {
+        const response = await fetch(BASE_URL+"/getUserID", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
@@ -312,7 +265,7 @@ window.addEventListener("beforeunload", () => {
         data.append("userID", id);
 
         navigator.sendBeacon(
-            "http://192.168.1.34:8080/clockOut",
+            BASE_URL+"/clockOut",
             data.toString()
         );
     }
@@ -336,7 +289,7 @@ async function addTicket () {
                     &madeBy=${encodeURIComponent (madeBy)}`;    
 
     try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {
+        const serverResponse = await fetch(BASE_URL+"/addTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -369,11 +322,12 @@ async function addTicket () {
 }
 
 
-async function changeFilter (filter) {
-    document.getElementById ("ticketContainer").innerHTML = "";
-        const tickets = JSON.parse(sessionStorage.getItem("tickets"));
-        displayTickets(tickets, filter);
-    
+function changeFilter(filter) {
+    const stored = sessionStorage.getItem("tickets");
+    if (!stored) return;
+
+    const tickets = JSON.parse(stored);
+    displayTickets(tickets, filter);
 }
 
 function addToToDoList (ticketID) {
