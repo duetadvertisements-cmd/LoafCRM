@@ -10,6 +10,7 @@ import javaServers.handlers.RoleHandler;
 import javaServers.handlers.AddTicketHandler;
 import javaServers.handlers.GetTicketsHandler;
 import javaServers.handlers.AddCommentHandler;
+import javaServers.handlers.AddExpectedFinishingTime;
 import javaServers.handlers.GetCommentHandler;
 import javaServers.handlers.GetTicketsEmployeeHandler;
 import javaServers.handlers.FileServerHandler;
@@ -56,6 +57,7 @@ public class server {
         server.createContext ("/clockOutTicket", new LogClockOutTicket ());
         server.createContext ("/getTimeWorked", new GetAmountOfTimeEmployeeHasWorked ());
         server.createContext ("/getTimeWorkedOnATicket", new GetAmountOfTimeEmployeeHasWorkedOnTicket ());
+        server.createContext ("/addExpectedFinishingTime", new AddExpectedFinishingTime ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED

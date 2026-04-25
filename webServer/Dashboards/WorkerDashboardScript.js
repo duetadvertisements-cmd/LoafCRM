@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         getTickets ();
         sessionStorage.setItem ("ticketsLoaded", "true")
     }
+
+    getEmail (sessionStorage.getItem ("username"), "SET");
 });
 
 /* ================= UI ================= */
@@ -140,7 +142,9 @@ function renderTicket (ticket, container) {
         ticketDiv.innerHTML = `
             <div class="ticket-header">
                 <h3 class="ticket-title">${ticket.title}</h3>
+                <input type="date" class="ticket-date" onclick = "event.stopPropagation();" data-ticket = ${encodeURIComponent(JSON.stringify(ticket))}>
                 <span class="ticket-id">#${ticket.id}</span>
+                
             </div>
             <p class="ticket-data">${ticket.data}</p>
             <p class="ticket-creator">Created by: ${ticket.creator}</p>
@@ -285,7 +289,7 @@ async function addTicket () {
     const ticket = `title=${encodeURIComponent(title)}
                     &data=${encodeURIComponent(data)}
                     &creator=${encodeURIComponent(creator)}
-                    &toEmail=${encodeURIComponent(sessionStorage.getItem ("email"))}
+                    &to =${encodeURIComponent(sessionStorage.getItem ("email"))}
                     &madeBy=${encodeURIComponent (madeBy)}`;    
 
     try {
@@ -340,4 +344,76 @@ function addToToDoList (ticketID) {
     sessionStorage.setItem("tickets", JSON.stringify(tickets));
 
     displayTickets(tickets, "ALL");
+}
+
+const dateInput = document.querySelector(".ticket-date");
+
+document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("ticket-date")) {
+        const ticket = JSON.parse (decodeURIComponent (e.target.dataset.ticket));
+        setExpectedFinishingTime (e.target.value, ticket);
+    }
+});
+
+async function setExpectedFinishingTime (date, ticket) {
+    const expectedFinishingTime = new Date (date);
+    expectedFinishingYear = expectedFinishingTime.getFullYear ();
+    expectedFinishingMonth = expectedFinishingTime.getMonth ()+1;
+    expectedFinishingDate = expectedFinishingTime.getDate ();
+
+    console.log ("expectedFinishingYear: "+expectedFinishingYear);
+    console.log ("expectedFinishingMonth: "+expectedFinishingMonth);
+    console.log ("expectedFinishingDate: "+expectedFinishingDate);
+    console.log ("ticket: ", ticket);
+
+    const toEmail = await getEmail (ticket.creator, "GET");
+    console.log ("Email: ", toEmail);
+
+
+    try {
+        const serverResponse = await fetch(BASE_URL+"/addExpectedFinishingTime", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `expectedFinishingTimeYear=${encodeURIComponent(expectedFinishingYear)}
+            &expectedFinishingTimeMonth=${encodeURIComponent (expectedFinishingMonth)}
+            &expectedFinishingTimeDate=${encodeURIComponent (expectedFinishingDate)}
+            &ticketID=${encodeURIComponent (ticket.id)}&toEmail=${encodeURIComponent (toEmail)}`
+        });
+        console.log ("serverResponse: ",serverResponse);
+        console.log (await serverResponse.text);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function getEmail (username, action) {  
+    const ticket = `username=${encodeURIComponent(username)}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getEmail", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: ticket
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getEmail ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        if (action === "SET") {
+            sessionStorage.setItem ("email", responseText);
+        }
+        if (action === "GET") {
+            return responseText;
+        }
+        
+    }
+    catch (error) {
+        console.error ("----------------------error to get email--------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
+    }
 }

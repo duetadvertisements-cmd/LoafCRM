@@ -1,9 +1,4 @@
-setWelcomeTitle ();
-getEmployees ();
-getUsers ();
-applyTheme ("desert_slate");
-getEmail ();
-getUnassignedTickets ();
+
 
 if (sessionStorage.getItem ("tickets")) {
     displayTickets (JSON.parse (sessionStorage.getItem ("tickets")) , "ticketContainer", "ALL");
@@ -615,3 +610,10 @@ function logout() {
     sessionStorage.clear();
     window.location.href = '../index.HTML';
 }
+
+setWelcomeTitle ();
+getEmployees ();
+getUsers ();
+applyTheme ("desert_slate");
+getEmail ();
+getUnassignedTickets ();

@@ -1,0 +1,30 @@
+{
+    "editor.minimap.enabled": false,
+    "breadcrumbs.enabled": false,
+    "editor.stickyScroll.enabled": false,
+    "editor.lineHeight": 1.6,
+    "editor.fontSize": 15,
+    "editor.guides.bracketPairs": true,
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/target/**": true,
+        "**/.git/**": true
+    },
+    "git.decorations.enabled": false,
+    "workbench.editor.centeredLayout.enabled": true,
+    "editor.fontLigatures": true,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.fontSize": 16,
+    "editor.lineHeight": 26,
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontLigatures": true,
+    "workbench.statusBar.visible": false,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.cursorBlinking": "smooth",
+    "editor.minimap.enabled": false,
+    "workbench.colorCustomizations": {
+        "editor.background": "#0f1117",
+        "editor.lineHighlightBackground": "#1a1f2b"
+    },
+    "workbench.activityBar.location": "hidden"
+}

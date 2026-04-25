@@ -288,7 +288,7 @@ function applyTheme(name) {
     document.documentElement.style.setProperty(`--${key}`, theme[key]);
   }
 }
-applyTheme ("royalLuxe"); 
+applyTheme ("cobalt_horizon"); 
 
 
 function changeFilter(filter) {
