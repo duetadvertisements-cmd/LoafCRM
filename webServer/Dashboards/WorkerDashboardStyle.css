@@ -212,7 +212,8 @@ body {
     transition: background 0.3s;
 }
 
-.addToToDoListButton {
+.addToToDoListButton,
+#filterByDatePicker {
     width: 100%;
     padding: 12px;
     background: var(--dshbackground1);

@@ -94,8 +94,6 @@ function displayTickets(tickets, filter) {
                 ticket.toDoList = "false";
             }
             renderTicket (ticket, container);
-            
-            
         });
     }
 
@@ -159,7 +157,6 @@ function renderTicket (ticket, container) {
             const formattedTime = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
             ticketDiv.querySelector (".ticket-date").value = formattedTime;
         }
-        
         
         container.appendChild(ticketDiv);
         
@@ -357,12 +354,18 @@ function addToToDoList (ticketID) {
     displayTickets(tickets, "ALL");
 }
 
-const dateInput = document.querySelector(".ticket-date");
+const expectedTimeDateInput = document.querySelector(".ticket-date");
 
 document.addEventListener("change", function (e) {
     if (e.target.classList.contains("ticket-date")) {
         const ticket = JSON.parse (decodeURIComponent (e.target.dataset.ticket));
         setExpectedFinishingTime (e.target.value, ticket);
+    }
+});
+
+document.addEventListener("change", function (e) {
+    if (e.target.classList.contains("filter-expected-time-date")) {
+        filterByDateFromUI (e.target.value);
     }
 });
 
@@ -427,4 +430,32 @@ async function getEmail (username, action) {
         console.error("Request failed:", error);
         console.error ("------------------------------------------------------");
     }
+}
+
+async function filterByDateFromUI(selectedDate) {
+    const tickets = await document.querySelectorAll(".ticket");
+
+    tickets.forEach(ticketDiv => {
+        const expectedTimeDateInput = ticketDiv.querySelector(".ticket-date");
+
+        if (!expectedTimeDateInput) return;
+
+        if (expectedTimeDateInput.value === selectedDate) {
+            ticketDiv.style.display = "block"; // show
+        } else {
+            ticketDiv.style.display = "none"; // hide
+        }
+    });
+}
+
+function clearDateFilter() {
+    const tickets = document.querySelectorAll(".ticket");
+
+    tickets.forEach(ticketDiv => {
+        ticketDiv.style.display = ""; // reset to default
+    });
+
+    // also clear the input
+    const input = document.getElementById("filterDate");
+    if (input) input.value = "";
 }
