@@ -248,13 +248,7 @@ function displayUnassignedTickets(tickets, containerID) {
 }
 
 function ticketClicked(ticket) {
-    sessionStorage.setItem ("currentTicket", JSON.stringify ({
-        title: ticket.title,
-        data: ticket.data,
-        creator: ticket.creator,
-        id: ticket.id,
-        status: ticket.status
-    }));
+    sessionStorage.setItem ("currentTicket", JSON.stringify ({ticket}));
     sessionStorage.setItem ("dashboardHref", "dashboards/AdminDashboard.html")
     window.location.href = "../ticketPage.html";
 }

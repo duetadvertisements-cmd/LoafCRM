@@ -2,45 +2,44 @@ function setMainTicket(ticket) {
     if (ticket != "null") {
         ticket = JSON.parse(sessionStorage.getItem("currentTicket"));
     }
-    
-    if (ticket.status == "1") {
-        ticket.status = "Open";
+
+    console.log ("rec", ticket);
+    let ticketStatus;
+    if (ticket.ticket.status == "1") {
+        ticketStatus = "Open"
     }
     else {
-        ticket.status = "Closed"
+        ticketStatus = "Closed"
     }
-
-    if (ticket.madeBy != ticket.creator) {ticket.madeBy = "Employee"}
+    console.log (ticket.ticket.madeBy);
+    console.log (ticket.ticket.creator);
+    if (String(ticket.ticket.madeBy).trim().toLowerCase() !== String(ticket.ticket.creator).trim().toLowerCase()) {ticket.ticket.madeBy = "Employee"}
+    
+    
     document.getElementById("mainTicket").innerHTML = `
         <div class="ticket-header">
-            <h1 class="ticket-title">${ticket.title}</h1>
-            <span class="ticket-id">#${ticket.id}</span>
+            <h1 class="ticket-title">${ticket.ticket.title}</h1>
+            <span class="ticket-id">#${ticket.ticket.id}</span>
         </div>
 
         <div class="ticket-content">
             <h3>Ticket Details</h3>
-            <p>${ticket.data}</p>
+            <p>${ticket.ticket.data}</p>
         </div>
 
         <hr>
 
         <div class="ticket-meta">
             <div class="meta-item">
-                <strong>Created by:</strong> ${ticket.creator} <br>
-                <strong>Made by:</strong> ${ticket.madeBy}
+                <strong>Created by:</strong> ${ticket.ticket.creator} <br>
+                <strong>Made by:</strong> ${ticket.ticket.madeBy}
             </div>
             <div class="meta-item">
-                <strong>Ticket ID:</strong> #${ticket.id} <br>
-                <strong id = "statusDisplay">Ticket Status:</strong> ${ticket.status}
+                <strong>Ticket ID:</strong> #${ticket.ticket.id} <br>
+                <strong id = "statusDisplay">Ticket Status:</strong> ${ticketStatus}
             </div>
         </div>
     `;
-    if (ticket.status == "Open") {
-        ticket.status = 1;
-    }
-    else {
-        ticket.status = 2;
-    }
 }
 
 function goBack() {
