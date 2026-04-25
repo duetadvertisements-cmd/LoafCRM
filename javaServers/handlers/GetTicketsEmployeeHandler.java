@@ -60,9 +60,14 @@ public class GetTicketsEmployeeHandler implements HttpHandler {
                     responseBuilder.append("\"title\":\"").append (JSONUtility.escapeJson (selectStatementResult.getString("TITLE"))).append("\",");
                     responseBuilder.append("\"data\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString("DATA"))).append("\",");
                     responseBuilder.append("\"status\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString("STATUS"))).append("\",");
-                    responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("CREATOR"))).append("\"");
+                    responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("CREATOR"))).append("\",");
+                    responseBuilder.append("\"madeBy\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("MADE_BY"))).append("\",");
+                    responseBuilder.append("\"expectedFinishingTime\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("EXPECTED_FINISHING_TIME"))).append("\"");
                     responseBuilder.append("},");
+                    System.out.println (selectStatementResult.getString ("EXPECTED_FINISHING_TIME"));
                 }
+
+                
 
                 if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
                     responseBuilder.deleteCharAt(responseBuilder.length() - 1);

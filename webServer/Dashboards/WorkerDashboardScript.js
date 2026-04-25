@@ -94,6 +94,8 @@ function displayTickets(tickets, filter) {
                 ticket.toDoList = "false";
             }
             renderTicket (ticket, container);
+            
+            
         });
     }
 
@@ -131,6 +133,8 @@ function renderTicket (ticket, container) {
     if (ticket.status === 1) {statusText = "Open"}
     else {statusText = "Closed"}
 
+    const [year, month, day, time] = ticket.expectedFinishingTime.split("            ").map(Number);
+
     const ticketDiv = document.createElement("div");
         ticketDiv.className = "ticket";
         ticketDiv.onclick = () => {
@@ -151,7 +155,14 @@ function renderTicket (ticket, container) {
             <p>Status: ${statusText}</p><br><br>
         <button onclick = "event.stopPropagation(); addToToDoList (${ticket.id})" class = "addToToDoListButton">Add To ToDo List</button>
         `;
+        if (year && month && day) {
+            const formattedTime = `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+            ticketDiv.querySelector (".ticket-date").value = formattedTime;
+        }
+        
+        
         container.appendChild(ticketDiv);
+        
 }
 
 /* ================= SETTINGS ================= */
