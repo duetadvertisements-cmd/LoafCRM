@@ -451,6 +451,30 @@ function applyTheme(name) {
     }
 }
 
+async function getUserID(username, action) {
+    if (!username) return;
+
+    try {
+        const response = await fetch("http://192.168.1.34:8080/getUserID", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${encodeURIComponent(username)}`
+        });
+
+        if (action === "SET") {
+            sessionStorage.setItem("userID", await response.text());
+        }
+        if (action === "GET") {
+            return await response.text ();
+        }
+        
+        console.log("Got User ID");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+getUserID (sessionStorage.getItem ("username"), "SET");
 
 async function promoteUserToWorker (id) {
     const response = await fetch("http://192.168.1.34:8080/promoteUserToWorker", {
@@ -464,14 +488,16 @@ async function promoteUserToWorker (id) {
 }
 
 async function assignTicket (ticketID) {
-    const assignTo = prompt ("Assign To:")
+    const assignTo = prompt ("Assign To:");
+    const hoursAssigned = prompt ("Hours Assigned:");
 
     if (!assignTo) {
         alert("Assignment cancelled");
         return;
     }
 
-    const ticket = `ticketID=${encodeURIComponent(ticketID)}&assignTo=${encodeURIComponent(assignTo)}&toEmail=${sessionStorage.getItem ("email")}`;
+    const assignToID = await getUserID(assignTo, "GET");
+    const ticket = `ticketID=${encodeURIComponent(ticketID)}&assignTo=${assignToID}&toEmail=${sessionStorage.getItem ("email")}&assignedBy=${sessionStorage.getItem ("userID")}&hoursAssigned=${parseInt (hoursAssigned)}&assignToString=${assignTo}&assignToEmail=${await getEmail (assignTo, "GET")}`;
     
     try {
         const serverResponse = await fetch("http://192.168.1.34:8080/assignTicket", {
@@ -490,9 +516,7 @@ async function assignTicket (ticketID) {
     }
 }
 
-async function getEmail () {  
-
-    const username = sessionStorage.getItem ("username");
+async function getEmail (username, action) {  
     const ticket = `username=${encodeURIComponent(username)}`;
     try {
         const serverResponse = await fetch("http://192.168.1.34:8080/getEmail", {
@@ -506,8 +530,13 @@ async function getEmail () {
         console.log("Server response to getEmail ():");
         console.log(responseText);
         console.log ("------------------------------------------------------");
-
-        sessionStorage.setItem ("email", responseText);
+        if (action === "SET") {
+            sessionStorage.setItem ("email", responseText);
+        }
+        if (action === "GET") {
+            return responseText;
+        }
+        
     }
     catch (error) {
         console.error ("----------------------error to get email--------------------------------");
@@ -609,5 +638,5 @@ setWelcomeTitle ();
 getEmployees ();
 getUsers ();
 applyTheme ("desert_slate");
-getEmail ();
+getEmail (sessionStorage.getItem ("username"), "SET");
 getUnassignedTickets ();

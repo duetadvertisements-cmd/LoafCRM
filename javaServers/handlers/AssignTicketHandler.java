@@ -35,9 +35,13 @@ public class AssignTicketHandler implements HttpHandler {
                 FormDataUtility formDataParser = new FormDataUtility ();
                 Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
-                String assignTo = formData.get("assignTo");
+                int assignTo = Integer.parseInt (formData.get("assignTo"));
+                String assignToString = formData.get ("assignToString");
+                int assignedBy = Integer.parseInt (formData.get ("assignedBy"));
+                int hoursAssigned = Integer.parseInt (formData.get ("hoursAssigned"));
                 int ticketID = Integer.parseInt(formData.get ("ticketID"));
                 String toEmail = formData.get ("toEmail");
+                String assignToEmail = formData.get ("assignToEmail");
 
 
                 Connection connection = DriverManager.getConnection (DATABASE_URL);
@@ -46,7 +50,7 @@ public class AssignTicketHandler implements HttpHandler {
                     "UPDATE LOAF_TICKETS SET ASSIGNED_TO = ? WHERE ID = ?"
                 );
 
-                updateStatement.setString(1, assignTo);
+                updateStatement.setString(1, assignToString);
                 updateStatement.setInt(2, ticketID);
 
                 updateStatement.executeUpdate();
@@ -54,8 +58,7 @@ public class AssignTicketHandler implements HttpHandler {
 
                 String serverResponse = "SUCCESS";
 
-                ResponseUtilty serverResponseUtils = new ResponseUtilty ();
-                serverResponseUtils.sendResponse(exchange, 200, serverResponse);
+                
 
                 //SEND MAIL
 
@@ -63,7 +66,7 @@ public class AssignTicketHandler implements HttpHandler {
                 String emailBody = "Dear User,\n\n"
                     + "This is to inform you that your ticket (Ticket ID: " + ticketID + ") has been successfully assigned for further processing.\n\n"
                     + "Assignment Details:\n"
-                    + "Assigned To: " + assignTo + "\n"
+                    + "Assigned To: " + assignToString + "\n"
                     + "The assigned representative will review your request and take the necessary actions to resolve it at the earliest.\n\n"
                     + "If you have any additional information to provide, please visit our official website to manage your ticket.\n\n"
                     + "Thank you for contacting us.\n\n"
@@ -74,8 +77,39 @@ public class AssignTicketHandler implements HttpHandler {
                 MailUtilty mailUtils = new MailUtilty ();
                 mailUtils.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Assignment With ID "+ticketID, emailBody);
 
+                emailBody = "Dear Employee,\n\n"
+                    +"This is to inform you that you have been assigned a ticket. \n"
+                    +"Ticket Details: \n"
+                    +"Ticket ID: "+ticketID+"\n"
+                    +"The admin in charge of assigning you this ticket expects this ticket to be completed in "+hoursAssigned+" working hours. \n"
+                    +"Please talk to the admin for any information regarding this,  \n"
+                    +"Best regards, \n"
+                    +"LoafCRM";
+                
+                mailUtils.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", assignToEmail, "Ticket Assignment With ID "+ticketID, emailBody);
+
                 updateStatement.close();
+                
+
+                System.out.println (assignedBy);
+                System.out.println (assignTo);
+                System.out.println (hoursAssigned);
+                PreparedStatement insertStatement = connection.prepareStatement(
+                    "INSERT INTO LOAF_REASSIGNMENT_LOGS (ASSIGNED_BY_ID, ASSIGNED_TO_ID, EXPECTED_HOURS_TO_COMPLETION, ASSIGNED_TICKET) VALUES (?, ?, ?, ?)"
+                );
+
+                insertStatement.setInt(1, assignedBy);
+                insertStatement.setInt (2, assignTo);
+                insertStatement.setInt (3, hoursAssigned);
+                insertStatement.setInt (4, ticketID);
+
+                insertStatement.executeUpdate();
+
                 connection.close();
+                insertStatement.close();
+
+                ResponseUtilty serverResponseUtils = new ResponseUtilty ();
+                serverResponseUtils.sendResponse(exchange, 200, serverResponse);
 
             } catch (Exception e) {
                 System.err.println(e);
