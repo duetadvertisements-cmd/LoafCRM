@@ -12,48 +12,13 @@ function loadEmployee() {
     document.getElementById("empId").textContent = emp.id;
     document.getElementById("empUsername").textContent = emp.username;
     document.getElementById("empEmail").textContent = emp.email;
-    document.getElementById("empClosed").textContent = emp.sucessfullyClosed;
+    document.getElementById("empExpectedHours").textContent = emp.hoursAssigned;
 }
 loadEmployee ();
 
 function goBack() {
     const goBackLocation = sessionStorage.getItem ("dashboardHref");
     window.location.href = goBackLocation;
-}
-
-function displayEmployees(employees) {
-    const container = document.getElementById("employeeContainer");
-    container.innerHTML = "";
-
-    if (!employees || employees.length === 0) {
-        container.innerHTML = "<p>No employees found.</p>";
-        return;
-    }
-
-    employees.forEach(emp => {
-        const card = document.createElement("div");
-        card.className = "employee-card";
-
-        card.innerHTML = `
-            <div class="employee-top-strip"></div>
-
-            <h3 class="employee-name">Employee #${emp.id}</h3>
-
-            <p class="employee-username">
-                <strong>Username:</strong> ${emp.username}
-            </p>
-
-            <p class="employee-email">
-                <strong>Email:</strong> ${emp.email}
-            </p>
-
-            <p class="employee-closed">
-                <strong>Successfully Closed:</strong> ${emp.sucessfullyClosed}
-            </p>
-        `;
-
-        container.appendChild(card);
-    });
 }
 
 const themes = {

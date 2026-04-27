@@ -17,6 +17,7 @@ import javaServers.handlers.FileServerHandler;
 import javaServers.handlers.GetAmountOfTimeEmployeeHasWorked;
 import javaServers.handlers.GetAmountOfTimeEmployeeHasWorkedOnTicket;
 import javaServers.handlers.GetEmployeesHandler;
+import javaServers.handlers.GetExpectedEmployeeHoursRemaining;
 import javaServers.handlers.GetUsersHandler;
 import javaServers.handlers.LogClockInTicket;
 import javaServers.handlers.LogClockOutTicket;
@@ -58,6 +59,7 @@ public class server {
         server.createContext ("/getTimeWorked", new GetAmountOfTimeEmployeeHasWorked ());
         server.createContext ("/getTimeWorkedOnATicket", new GetAmountOfTimeEmployeeHasWorkedOnTicket ());
         server.createContext ("/addExpectedFinishingTime", new AddExpectedFinishingTime ());
+        server.createContext ("/getExpectedEmployeeHoursRemaining", new GetExpectedEmployeeHoursRemaining ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED

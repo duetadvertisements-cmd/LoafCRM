@@ -309,12 +309,13 @@ function displayEmployees (employees) {
     });
 }
 
-function employeeClicked (employee) {
+async function employeeClicked (employee) {
+    const hoursAssigned = await getHoursAssigned (employee.id);
     sessionStorage.setItem ("currentEmployee", JSON.stringify ({
         username: employee.username,
-        sucessfullyClosed: employee.sucessfullyClosed,
         email: employee.email,
-        id: employee.id
+        id: employee.id,
+        hoursAssigned: hoursAssigned
     }));
     sessionStorage.setItem ("dashboardHref", "dashboards/AdminDashboard.html")
     window.location.href = "../employeePage.html";
@@ -640,3 +641,20 @@ getUsers ();
 applyTheme ("desert_slate");
 getEmail (sessionStorage.getItem ("username"), "SET");
 getUnassignedTickets ();
+
+async function getHoursAssigned (id) {
+    const formData = `userID=${encodeURIComponent(id)}`;
+
+    try {
+        const response = await fetch("http://192.168.1.34:8080/getExpectedEmployeeHoursRemaining", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: formData
+        });
+        return await response.text ();
+
+    } catch (error) {
+        console.error("Error getting hours:", error);
+        return null;
+    }
+}
