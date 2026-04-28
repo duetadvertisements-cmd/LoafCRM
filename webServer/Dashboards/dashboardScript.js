@@ -1,240 +1,388 @@
-function setWelcomeTitle () {
-    document.getElementById ("welcomeTitle").innerText = "Welcome, " + sessionStorage.getItem ("username");
+/* ==========================================
+   DASHBOARD SCRIPT - FULL FIXED VERSION
+   Keeps all functionality working
+   ========================================== */
+
+const BASE_URL = "http://192.168.1.34:8080";
+
+/* ==========================================
+   HELPERS
+   ========================================== */
+
+function escapeHTML(str) {
+    if (str == null) return "";
+    return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
-setWelcomeTitle ();
 
-// Navigation functions
-function showSection(sectionName, event) {
-    // Hide all sections
-    const sections = document.querySelectorAll('.content-section');
-    sections.forEach(section => section.classList.remove('active'));
+function getStoredTickets() {
+    const raw = sessionStorage.getItem("tickets");
 
-    // Remove active class from all nav items
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => item.classList.remove('active'));
+    if (!raw) return [];
 
-    // Show selected section
-    const targetSection = document.getElementById(sectionName + '-section');
-    if (targetSection) {
-        targetSection.classList.add('active');
+    try {
+        return JSON.parse(raw);
+    } catch {
+        return [];
+    }
+}
+
+function setStoredTickets(tickets) {
+    sessionStorage.setItem("tickets", JSON.stringify(tickets));
+}
+
+/* ==========================================
+   WELCOME TITLE
+   ========================================== */
+
+function setWelcomeTitle() {
+    const username = sessionStorage.getItem("username") || "User";
+    const el = document.getElementById("welcomeTitle");
+
+    if (el) {
+        el.innerText = "Welcome, " + username;
+    }
+}
+
+setWelcomeTitle();
+
+/* ==========================================
+   SECTION NAVIGATION
+   ========================================== */
+
+function showSection(sectionName, event = null) {
+
+    const sections = document.querySelectorAll(".content-section");
+    sections.forEach(section => section.classList.remove("active"));
+
+    const navItems = document.querySelectorAll(".nav-item");
+    navItems.forEach(item => item.classList.remove("active"));
+
+    const target = document.getElementById(sectionName + "-section");
+
+    if (target) {
+        target.classList.add("active");
     }
 
-    // Add active class to clicked nav item, if event exists
     if (event && event.target) {
-        const clickedNav = event.target.closest('.nav-item');
-        if (clickedNav) clickedNav.classList.add('active');
+        const clicked = event.target.closest(".nav-item");
+
+        if (clicked) {
+            clicked.classList.add("active");
+        }
     }
 
-    // Load data for specific sections
-    if (sectionName === 'dashboard') {
-        loadDashboardStats();
+    if (sectionName === "dashboard") {
+        if (typeof loadDashboardStats === "function") {
+            loadDashboardStats();
+        }
     }
 }
+
+/* ==========================================
+   LOGOUT
+   ========================================== */
 
 function logout() {
     sessionStorage.clear();
-    window.location.href = '../index.HTML';
+    localStorage.removeItem("clockedIntoATicket");
+    window.location.href = "../index.HTML";
 }
 
-// Mobile menu functions
+/* ==========================================
+   MOBILE MENU
+   ========================================== */
+
 function toggleMobileMenu() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.querySelector('.sidebar-overlay');
 
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.querySelector(".sidebar-overlay");
+
+    if (sidebar) sidebar.classList.toggle("open");
+    if (overlay) overlay.classList.toggle("active");
 }
+
+/* ==========================================
+   TICKET CLICKED
+   ========================================== */
 
 function ticketClicked(ticket) {
-    sessionStorage.setItem ("currentTicket", JSON.stringify ({
-        title: ticket.title,
-        data: ticket.data,
-        creator: ticket.creator,
-        id: ticket.id,
-        status: ticket.status
-    }));
-    sessionStorage.setItem ("dashboardHref", "dashboards/dashboard.html")
+
+    sessionStorage.setItem("currentTicket", JSON.stringify(ticket));
+
+    sessionStorage.setItem(
+        "dashboardHref",
+        "dashboards/dashboard.html"
+    );
+
     window.location.href = "../ticketPage.html";
 }
 
-async function addTicket () {
-    const title = document.getElementById ("titleInput").value;
-    const data = document.getElementById ("dataInput").value;
-    const creator = sessionStorage.getItem ("username");
+/* ==========================================
+   ADD TICKET
+   ========================================== */
 
-    const ticket = `title=${encodeURIComponent(title)}
-                    &data=${encodeURIComponent(data)}
-                    &creator=${encodeURIComponent(creator)}
-                    &toEmail=${encodeURIComponent(sessionStorage.getItem ("email"))}
-                    &madeBy=${encodeURIComponent (creator)}`;    
+async function addTicket() {
 
-    try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: ticket
-        });
+    const title =
+        document.getElementById("titleInput")?.value.trim() || "";
 
-        const responseText = await serverResponse.text();
+    const data =
+        document.getElementById("dataInput")?.value.trim() || "";
 
-        console.log ("------------------------------------------------------");
-        console.log("Server response to addTicket:");
-        console.log(responseText);
-        console.log ("------------------------------------------------------");
+    const creator =
+        sessionStorage.getItem("username") || "";
 
-        if (responseText == "SUCCESS") {
-            alert ("Success");
-        }
+    const email =
+        sessionStorage.getItem("email") || "";
 
-        else {
-            alert ("Failed");
-        }
-
-        history.go ();
-
-    } catch (error) {
-        console.log ("---------------------error to addtickets ()---------------------------------");
-        console.error ("YOU FORGOT TO TURN THE SERVER ON");
-        console.log ("\n");
-        console.error("Request failed:", error);
-        console.log ("------------------------------------------------------");
-    }
-}
-
-async function getTickets () {  
-
-    const username = sessionStorage.getItem ("username");
-    const ticket = `username=${encodeURIComponent(username)}`;
-    try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: ticket
-        });
-        const responseText = await serverResponse.text();
-
-        console.log ("------------------------------------------------------");
-        console.log("Server response to getTickets ():");
-        console.log(responseText);
-        console.log ("------------------------------------------------------");
-
-        const tickets = JSON.parse (responseText);
-        console.log ("-----------------------GETTICKETS ()-------------------------------");
-        console.log (tickets);
-        console.log ("------------------------------------------------------");
-
-        displayTickets(tickets, "ALL");
-        sessionStorage.setItem ("tickets", JSON.stringify (tickets));
-    }
-    catch (error) {
-        console.error ("----------------------error to get tickets--------------------------------");
-        console.error ("YOU FORGOT TO TURN THE SERVER ON");
-        console.log ("\n");
-        console.error("Request failed:", error);
-        console.error ("------------------------------------------------------");
-    }
-}
-
-async function getEmail () {  
-
-    const ticket = `username=${encodeURIComponent (sessionStorage.getItem ("username"))}`
-    try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/getEmail", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: ticket
-        });
-        const responseText = await serverResponse.text();
-
-        console.log ("------------------------------------------------------");
-        console.log("Server response to getEmail ():");
-        console.log(responseText);
-        console.log ("------------------------------------------------------");
-
-        sessionStorage.setItem ("email", responseText);
-    }
-    catch (error) {
-        console.error ("----------------------error to get email--------------------------------");
-        console.error ("YOU FORGOT TO TURN THE SERVER ON");
-        console.log ("\n");
-        console.error("Request failed:", error);
-        console.error ("------------------------------------------------------");
-    }
-}
-getEmail ();
-
-function displayTickets(tickets, filter) {
-    const container = document.getElementById("ticketContainer");
-    
-    container.innerHTML = "";  // Clear previous tickets
-
-    if (tickets.length === 0) {
-        container.innerHTML = "<p class='no-tickets'>No tickets found</p>";
+    if (!title || !data) {
+        alert("Please fill all fields.");
         return;
     }
-    if (filter === "ALL") {
-        tickets.forEach(ticket => {
-            renderTicket (ticket, container);
+
+    const body =
+        `title=${encodeURIComponent(title)}` +
+        `&data=${encodeURIComponent(data)}` +
+        `&creator=${encodeURIComponent(creator)}` +
+        `&toEmail=${encodeURIComponent(email)}` +
+        `&madeBy=${encodeURIComponent(creator)}`;
+
+    try {
+
+        const response = await fetch(`${BASE_URL}/addTicket`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body
         });
+
+        const text = await response.text();
+
+        console.log("Add Ticket Response:", text);
+
+        if (text === "SUCCESS") {
+
+            alert("Success");
+
+            await getTickets(); // refresh tickets
+
+            // optional clear form
+            document.getElementById("titleInput").value = "";
+            document.getElementById("dataInput").value = "";
+
+            // optional: only if you WANT full reload
+            // location.reload();
+
+        } else {
+            alert("Failed");
+        }
+
+    } catch (error) {
+        console.error("Failed to add ticket:", error);
+        alert("Server Error");
+    }
+}
+
+/* ==========================================
+   GET TICKETS
+   ========================================== */
+
+async function getTickets() {
+
+    const username =
+        sessionStorage.getItem("username") || "";
+
+    const body =
+        `username=${encodeURIComponent(username)}`;
+
+    try {
+
+        const response = await fetch(`${BASE_URL}/getTickets`, {
+            method: "POST",
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded"
+            },
+            body
+        });
+
+        const text = await response.text();
+
+        console.log("Get Tickets Response:", text);
+
+        const tickets = JSON.parse(text);
+
+        setStoredTickets(tickets);
+
+        displayTickets(tickets, "ALL");
+
+    } catch (error) {
+        console.error("Failed to get tickets:", error);
+    }
+}
+
+/* ==========================================
+   GET EMAIL
+   ========================================== */
+
+async function getEmail() {
+
+    const username =
+        sessionStorage.getItem("username") || "";
+
+    const body =
+        `username=${encodeURIComponent(username)}`;
+
+    try {
+
+        const response = await fetch(`${BASE_URL}/getEmail`, {
+            method: "POST",
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded"
+            },
+            body
+        });
+
+        const text = await response.text();
+
+        console.log("Email:", text);
+
+        sessionStorage.setItem("email", text);
+
+    } catch (error) {
+        console.error("Failed to get email:", error);
+    }
+}
+
+getEmail();
+
+/* ==========================================
+   DISPLAY TICKETS
+   ========================================== */
+
+function displayTickets(tickets, filter = "ALL") {
+
+    const container =
+        document.getElementById("ticketContainer");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!Array.isArray(tickets) || tickets.length === 0) {
+        container.innerHTML =
+            "<p class='no-tickets'>No tickets found</p>";
+        return;
     }
 
+    let filtered = tickets;
+
     if (filter === "OPEN") {
-        tickets.forEach(ticket => {
-            if (ticket.status === 1) {
-                renderTicket (ticket, container);
-            }
-        });
+        filtered = tickets.filter(
+            t => Number(t.status) === 1
+        );
     }
 
     if (filter === "CLOSED") {
-        tickets.forEach(ticket => {
-            if (ticket.status === 2) {
-                renderTicket (ticket, container);
-            }
-        });
+        filtered = tickets.filter(
+            t => Number(t.status) === 2
+        );
     }
+
+    if (filtered.length === 0) {
+        container.innerHTML =
+            "<p class='no-tickets'>No tickets found</p>";
+        return;
+    }
+
+    filtered.forEach(ticket => {
+        renderTicket(ticket, container);
+    });
 }
 
-function renderTicket (ticket, container) {
-    let ticketStatus;
-    if (ticket.status === 1) {ticketStatus = "Open"}
-    else {ticketStatus = "Closed"}
+/* ==========================================
+   RENDER SINGLE TICKET
+   ========================================== */
 
-    const ticketDiv = document.createElement("div");
-    ticketDiv.className = "ticket";
-    ticketDiv.onclick = () => ticketClicked(ticket);
-    ticketDiv.innerHTML = `
+function renderTicket(ticket, container) {
+
+    const status =
+        Number(ticket.status) === 1
+            ? "Open"
+            : "Closed";
+
+    const div = document.createElement("div");
+
+    div.className = "ticket";
+
+    div.onclick = () => ticketClicked(ticket);
+
+    div.innerHTML = `
         <div class="ticket-header">
-            <h3 class="ticket-title">${ticket.title}</h3>
-            <span class="ticket-id">#${ticket.id}</span>
+            <h3 class="ticket-title">
+                ${escapeHTML(ticket.title)}
+            </h3>
+
+            <span class="ticket-id">
+                #${ticket.id}
+            </span>
         </div>
-        <p class="ticket-data">${ticket.data}</p>
-        <p class="ticket-creator">Created by: ${ticket.creator}</p>
-        <p>Status: ${ticketStatus}</p>
+
+        <p class="ticket-data">
+            ${escapeHTML(ticket.data)}
+        </p>
+
+        <p class="ticket-creator">
+            Created by:
+            ${escapeHTML(ticket.creator)}
+        </p>
+
+        <p>Status: ${status}</p>
     `;
-    container.appendChild(ticketDiv);
+
+    container.appendChild(div);
 }
 
-if (sessionStorage.getItem ("tickets")) {
-    displayTickets (JSON.parse (sessionStorage.getItem ("tickets")));
-}
-else {
-    getTickets ();
-}
+/* ==========================================
+   LOAD TICKETS ON START
+   ========================================== */
+
+(function initTickets() {
+
+    const stored = getStoredTickets();
+
+    if (stored.length > 0) {
+        displayTickets(stored, "ALL");
+    } else {
+        getTickets();
+    }
+})();
+
+/* ==========================================
+   THEMES
+   ========================================== */
 
 const themes = {
-    basic: { //GOOD
+    basic: {
         dshbackground1: "#667eea",
         dshbackground2: "#49BC9B",
-        dshbackground3: "white",
+        dshbackground3: "#ffffff",
         dshnav1: "#666",
         dshhead1: "#333",
         dshhead2: "#5a67d8",
         dshhead3: "#ddd",
-        dshticket1: "#eee" ,
+        dshticket1: "#eee",
         dshticket2: "#999"
     },
-    royalLuxe: { //GOOD
+
+    royalLuxe: {
         dshbackground1: "#4e54c8",
         dshbackground2: "#8f94fb",
         dshbackground3: "#fafaff",
@@ -243,58 +391,73 @@ const themes = {
         dshhead2: "#6a6efb",
         dshhead3: "#d7d9ff",
         dshticket1: "#ecebff",
-        dshticket2: "#9d9ccc",
-        tickettitle: "black",
-        tickettext: "black",
+        dshticket2: "#9d9ccc"
     },
-    desert_slate: { //GOOD
-        dshbackground1: "#2d2926", // Charcoal Umber
-        dshbackground2: "#403a34", // Warm Slate
-        dshbackground3: "#fffcf9", // Paper White
-        dshnav1: "#5d544b",        // Deep Taupe
-        dshhead1: "#1a1a1a",        // Ink Black
-        dshhead2: "#d97757",        // Terracotta
-        dshhead3: "#e8e2db",        // Sand Border
-        dshticket1: "#f2ede7",      // Light Grain
-        dshticket2: "#a69d95"       // Stone Gray
+
+    desert_slate: {
+        dshbackground1: "#2d2926",
+        dshbackground2: "#403a34",
+        dshbackground3: "#fffcf9",
+        dshnav1: "#5d544b",
+        dshhead1: "#1a1a1a",
+        dshhead2: "#d97757",
+        dshhead3: "#e8e2db",
+        dshticket1: "#f2ede7",
+        dshticket2: "#a69d95"
     },
-    cobalt_horizon: { //GOOD
-        dshbackground1: "#1e293b", // Deep Navy
-        dshbackground2: "#334155", // Slate Blue
-        dshbackground3: "#ffffff", // Clean White Card (contrast)
-        dshnav1: "#64748b",        // Cool Slate
-        dshhead1: "#0f172a",        // Midnight Text
-        dshhead2: "#3b82f6",        // Bright Azure Accent
-        dshhead3: "#e2e8f0",        // Soft Border
-        dshticket1: "#f1f5f9",      // Ice Gray
-        dshticket2: "#94a3b8"       // Muted Steel
+
+    cobalt_horizon: {
+        dshbackground1: "#1e293b",
+        dshbackground2: "#334155",
+        dshbackground3: "#ffffff",
+        dshnav1: "#64748b",
+        dshhead1: "#0f172a",
+        dshhead2: "#3b82f6",
+        dshhead3: "#e2e8f0",
+        dshticket1: "#f1f5f9",
+        dshticket2: "#94a3b8"
     },
-    phantom_forest: { //GOOD
-        dshbackground1: "#0f1d1a", // Dark Forest
-        dshbackground2: "#1c3a34", // Deep Teal
-        dshbackground3: "#fcfdfd", // Off-White Card
-        dshnav1: "#4a6b65",        // Muted Sage
-        dshhead1: "#122621",        // Deep Spruce Text
-        dshhead2: "#10b981",        // Emerald Pop
-        dshhead3: "#e6efed",        // Pale Mint Border
-        dshticket1: "#f0f7f5",      // Soft Mint Wash
-        dshticket2: "#7ca29a"       // Dusty Teal
-    },
-}
+
+    phantom_forest: {
+        dshbackground1: "#0f1d1a",
+        dshbackground2: "#1c3a34",
+        dshbackground3: "#fcfdfd",
+        dshnav1: "#4a6b65",
+        dshhead1: "#122621",
+        dshhead2: "#10b981",
+        dshhead3: "#e6efed",
+        dshticket1: "#f0f7f5",
+        dshticket2: "#7ca29a"
+    }
+};
 
 function applyTheme(name) {
-  const theme = themes[name];
-  for (let key in theme) {
-    document.documentElement.style.setProperty(`--${key}`, theme[key]);
-  }
-}
-applyTheme ("cobalt_horizon"); 
 
+    const theme = themes[name];
+
+    if (!theme) return;
+
+    for (const key in theme) {
+        document.documentElement.style.setProperty(
+            `--${key}`,
+            theme[key]
+        );
+    }
+}
+
+/* Uses saved theme or fallback */
+applyTheme(
+    localStorage.getItem("preferredTheme")
+        || "cobalt_horizon"
+);
+
+/* ==========================================
+   FILTER BUTTONS
+   ========================================== */
 
 function changeFilter(filter) {
-    const stored = sessionStorage.getItem("tickets");
-    if (!stored) return;
 
-    const tickets = JSON.parse(stored);
+    const tickets = getStoredTickets();
+
     displayTickets(tickets, filter);
 }

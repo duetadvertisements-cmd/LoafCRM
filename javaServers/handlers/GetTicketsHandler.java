@@ -50,7 +50,7 @@ public class GetTicketsHandler implements HttpHandler {
                 }
                 else {
                     selectStatement = databaseConnection.prepareStatement(
-                        "SELECT * FROM LOAF_TICKETS WHERE CREATOR = ?"
+                        "SELECT * FROM LOAF_TICKETS WHERE TRIM (CREATOR) = ?"
                     );
 
                     selectStatement.setString(1, username);

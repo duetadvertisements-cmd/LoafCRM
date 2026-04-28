@@ -17,7 +17,13 @@
             <div class="actions">
                 <button onclick = "addComment()" id = "addCommentButton">Add Comment</button>
                 <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
-                <button onclick = "changeStatus ()" id = "changeStatusButton">Close Ticket</button> <br> <br>
+                <select id="status-selector" onchange="changeStatus (this.value)">
+                    <option value="OPEN">Open</option>
+                    <option value="CLOSED">Close</option>
+                    <option value="PARKING">Parking</option>   
+                    <option value="IN_PROGRESS">In Progress</option>   
+                </select>
+                <br><br>
                 <button class = "clockButton" onclick = "clockInTicket ()">Clock In</button>
                 <button class = "clockButton" onclick = "clockOutTicket ()">Clock Out</button>
             </div>
@@ -34,8 +40,6 @@
 
                 <label>Attachment (optional):</label>
                 <input type="file" id="commentFile">
-                <div class = "subticket-container">
-                </div>
 
                 <div class="modal-actions">
                     <button onclick="submitComment()">Submit</button>
