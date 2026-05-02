@@ -170,8 +170,13 @@ function displayTickets(tickets, containerID, filter) {
 
 function renderTicket (ticket, container) {
     let ticketStatus;
-    if (ticket.status === 1) {ticketStatus = "Open"}
-    else {ticketStatus = "Closed"}
+    switch (Number (ticket.status)) {
+        case 1: ticketStatus = "Open"; break;
+        case 2: ticketStatus = "Closed"; break;
+        case 3: ticketStatus = "Parking"; break;
+        case 4: ticketStatus = "In Progress"; break;
+    }
+    
 
     const ticketDiv = document.createElement("div");
     ticketDiv.className = "ticket";

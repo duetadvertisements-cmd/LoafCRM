@@ -128,8 +128,12 @@ function displayTickets(tickets, filter) {
 
 function renderTicket (ticket, container) {
     let statusText;
-    if (ticket.status === 1) {statusText = "Open"}
-    else {statusText = "Closed"}
+    switch (Number (ticket.status)) {
+        case 1: statusText = "Open"; break;
+        case 2: statusText = "Closed"; break;
+        case 3: statusText = "Parking"; break;
+        case 4: statusText = "In Progress"; break;
+    }
 
     const [year, month, day, time] = ticket.expectedFinishingTime.split("            ").map(Number);
 

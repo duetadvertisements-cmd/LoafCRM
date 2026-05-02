@@ -21,6 +21,7 @@ import javaServers.utility.ResponseUtilty;
 public class GetAmountOfTimeEmployeeHasWorked implements HttpHandler {
 
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -48,7 +49,8 @@ public class GetAmountOfTimeEmployeeHasWorked implements HttpHandler {
 
                 String fromDate = workingYear+"-"+workingMonth+"-"+fromWhichDay+" 00:00:00";
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement selectStatement;
 
@@ -88,6 +90,8 @@ public class GetAmountOfTimeEmployeeHasWorked implements HttpHandler {
                     Double hoursWorked = secondsWorked / 3600.0;
 
                     totalHoursWorked = totalHoursWorked + hoursWorked;
+
+                    databaseConnection.commit ();
                 }
 
 
@@ -102,6 +106,10 @@ public class GetAmountOfTimeEmployeeHasWorked implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 500, "ERROR");
             }

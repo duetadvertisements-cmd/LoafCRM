@@ -22,6 +22,7 @@ import javaServers.utility.ResponseUtilty;
 public class GetExpectedEmployeeHoursRemaining implements HttpHandler {
 
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -42,7 +43,8 @@ public class GetExpectedEmployeeHoursRemaining implements HttpHandler {
 
                 int userID = Integer.parseInt (formData.get ("userID"));
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement selectStatement;
 
@@ -101,6 +103,7 @@ public class GetExpectedEmployeeHoursRemaining implements HttpHandler {
 
                 String response = String.valueOf (expectedHoursToCompletion);
 
+                databaseConnection.commit ();
 
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 200, response);
@@ -110,6 +113,10 @@ public class GetExpectedEmployeeHoursRemaining implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 500, "ERROR");
             }

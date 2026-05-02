@@ -16,72 +16,82 @@ import javaServers.utility.ResponseUtilty;
 import javaServers.utility.JSONUtility;
 
 public class GetCommentHandler implements HttpHandler {
-        public void handle (HttpExchange exchange) throws IOException {
+    Connection connection = null;
 
-            CORSUtility addCorsUtils = new CORSUtility ();
-            addCorsUtils.addCORS(exchange);
+    public void handle (HttpExchange exchange) throws IOException {
 
-            if ("OPTIONS".equals(exchange.getRequestMethod())) {
-                exchange.sendResponseHeaders(204, -1);
-                return;
-            }
+        CORSUtility addCorsUtils = new CORSUtility ();
+        addCorsUtils.addCORS(exchange);
 
-            if ("POST".equals(exchange.getRequestMethod())) {
+        if ("OPTIONS".equals(exchange.getRequestMethod())) {
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
 
-                try {
+        if ("POST".equals(exchange.getRequestMethod())) {
 
-                    FormDataUtility formDataParser = new FormDataUtility ();
-                    Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
+            try {
 
-                    String TICKET_ID = formData.get("ticketID");
+                FormDataUtility formDataParser = new FormDataUtility ();
+                Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
 
-                    Connection connection = DriverManager.getConnection(
-                        "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
-                    );
+                String TICKET_ID = formData.get("ticketID");
 
-                    PreparedStatement statement = connection.prepareStatement(
-                        "SELECT * FROM LOAF_COMMENTS WHERE TICKET_ID = ?"
-                    );
+                connection = DriverManager.getConnection(
+                    "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
+                );
 
-                    statement.setString(1, TICKET_ID);
+                connection.setAutoCommit (false);
 
-                    ResultSet result = statement.executeQuery();
+                PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM LOAF_COMMENTS WHERE TICKET_ID = ?"
+                );
 
-                    StringBuilder responseBuilder = new StringBuilder();
-                    responseBuilder.append("[");
+                statement.setString(1, TICKET_ID);
 
-                    JSONUtility JSONUtils = new JSONUtility ();
+                ResultSet result = statement.executeQuery();
 
-                    while (result.next()) {
-                        responseBuilder.append("{");
-                        responseBuilder.append("\"username\":\"").append(JSONUtils.escapeJson(result.getString("USERNAME"))).append("\",");
-                        responseBuilder.append("\"comment\":\"").append(JSONUtils.escapeJson(result.getString("COMMENT"))).append("\",");
-                        responseBuilder.append("\"commentTitle\":\"").append(JSONUtils.escapeJson(result.getString("COMMENT_TITLE"))).append("\",");
-                        responseBuilder.append("\"madeOn\":\"").append(JSONUtils.escapeJson(result.getString("CREATED_AT"))).append("\",");
-                        responseBuilder.append("\"filepath\":\"").append(JSONUtils.escapeJson(result.getString("FILE_PATH"))).append("\"");
-                        responseBuilder.append("},");
-                    }
+                connection.commit ();
 
-                    if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
-                        responseBuilder.deleteCharAt(responseBuilder.length() - 1);
-                    }
+                StringBuilder responseBuilder = new StringBuilder();
+                responseBuilder.append("[");
 
-                    responseBuilder.append("]");
+                JSONUtility JSONUtils = new JSONUtility ();
 
-                    ResponseUtilty responseUtils = new ResponseUtilty ();
-                    responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
-
-                    statement.close();
-                    connection.close();
-
-                } catch (Exception e) {
-                    System.err.println(e);
-                    ResponseUtilty responseUtils = new ResponseUtilty ();
-                    responseUtils.sendResponse(exchange, 200, "ERROR");
+                while (result.next()) {
+                    responseBuilder.append("{");
+                    responseBuilder.append("\"username\":\"").append(JSONUtils.escapeJson(result.getString("USERNAME"))).append("\",");
+                    responseBuilder.append("\"comment\":\"").append(JSONUtils.escapeJson(result.getString("COMMENT"))).append("\",");
+                    responseBuilder.append("\"commentTitle\":\"").append(JSONUtils.escapeJson(result.getString("COMMENT_TITLE"))).append("\",");
+                    responseBuilder.append("\"madeOn\":\"").append(JSONUtils.escapeJson(result.getString("CREATED_AT"))).append("\",");
+                    responseBuilder.append("\"filepath\":\"").append(JSONUtils.escapeJson(result.getString("FILE_PATH"))).append("\"");
+                    responseBuilder.append("},");
                 }
 
-            } else {
-                exchange.sendResponseHeaders(405, -1);  
+                if (responseBuilder.charAt(responseBuilder.length() - 1) == ',') {
+                    responseBuilder.deleteCharAt(responseBuilder.length() - 1);
+                }
+
+                responseBuilder.append("]");
+
+                ResponseUtilty responseUtils = new ResponseUtilty ();
+                responseUtils.sendResponse(exchange, 200, responseBuilder.toString ());
+
+                statement.close();
+                connection.close();
+
+            } catch (Exception e) {
+                System.err.println(e);
+                try {
+                    connection.rollback ();
+                }
+                catch (Exception exception) {}
+                ResponseUtilty responseUtils = new ResponseUtilty ();
+                responseUtils.sendResponse(exchange, 200, "ERROR");
             }
+
+        } else {
+            exchange.sendResponseHeaders(405, -1);  
         }
     }
+}

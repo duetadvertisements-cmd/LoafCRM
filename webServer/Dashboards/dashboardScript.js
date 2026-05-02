@@ -313,10 +313,13 @@ function displayTickets(tickets, filter = "ALL") {
 
 function renderTicket(ticket, container) {
 
-    const status =
-        Number(ticket.status) === 1
-            ? "Open"
-            : "Closed";
+    let status;
+    switch (Number (ticket.status)) {
+        case 1: status = "Open"; break;
+        case 2: status = "Closed";  break;
+        case 3: status = "Parking";  break;
+        case 4: status = "In Progress";  break;
+    }
 
     const div = document.createElement("div");
 

@@ -17,6 +17,7 @@ import javaServers.utility.ResponseUtilty;
 
 public class GetTicketsHandler implements HttpHandler {
     String DATABASE_URL = "jdbc:sqlite:C:\\\\Users\\\\tanis\\\\OneDrive\\\\Documents\\\\LoafCRM\\\\resources\\\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -37,7 +38,8 @@ public class GetTicketsHandler implements HttpHandler {
 
                 String username = formData.get("username");
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement selectStatement;
 
@@ -81,6 +83,8 @@ public class GetTicketsHandler implements HttpHandler {
 
                 responseBuilder.append("]");
 
+                databaseConnection.commit ();
+
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 200, responseBuilder.toString ());
 
@@ -89,6 +93,10 @@ public class GetTicketsHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 500, "ERROR");
             }

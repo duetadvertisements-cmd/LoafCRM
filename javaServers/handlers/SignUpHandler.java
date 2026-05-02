@@ -19,7 +19,7 @@ public class SignUpHandler implements HttpHandler {
 
     //DEFENATION
     String DATABASE_URL = "jdbc:sqlite:C:\\\\Users\\\\tanis\\\\OneDrive\\\\Documents\\\\LoafCRM\\\\resources\\\\LOAFCRM.db";
-
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -44,7 +44,8 @@ public class SignUpHandler implements HttpHandler {
 
                 System.out.println ("SIGNUP: " + username);
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 // IGNORE CASE FOR TESTING PURPOSES
                 if (!email.equalsIgnoreCase ("tanishkumardewangan@outlook.com")) {
@@ -75,6 +76,8 @@ public class SignUpHandler implements HttpHandler {
 
                 insertStatement.executeUpdate ();
 
+                databaseConnection.commit ();
+
                 ResponseUtilty ServerResponseUtility = new ResponseUtilty ();
                 ServerResponseUtility.sendResponse (exchange, 200, "SUCCESS");
 
@@ -95,6 +98,11 @@ public class SignUpHandler implements HttpHandler {
                 else {
                     ServerResponse = "ERROR: Something went wrong";
                 }
+
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
 
                 ResponseUtilty ServerResponseUtility = new ResponseUtilty ();
                 ServerResponseUtility.sendResponse (exchange, 400, ServerResponse);

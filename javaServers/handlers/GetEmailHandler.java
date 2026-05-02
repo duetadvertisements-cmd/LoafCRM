@@ -17,6 +17,7 @@ import javaServers.utility.ResponseUtilty;
 public class GetEmailHandler implements HttpHandler {
 
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -38,22 +39,25 @@ public class GetEmailHandler implements HttpHandler {
                 String username = formData.get("username");
 
                 Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement selectStatement;
 
-                    selectStatement = databaseConnection.prepareStatement(
-                        "SELECT * FROM LOAF_USERS WHERE USERNAME = ?"
-                    );
+                selectStatement = databaseConnection.prepareStatement(
+                    "SELECT * FROM LOAF_USERS WHERE USERNAME = ?"
+                );
 
-                    selectStatement.setString(1, username);
-                    System.out.println ("Performed getEmail with username: "+username);
+                selectStatement.setString(1, username);
+                System.out.println ("Performed getEmail with username: "+username);
 
                 ResultSet result = selectStatement.executeQuery();
+
+                databaseConnection.commit ();
 
                 StringBuilder responseBuilder = new StringBuilder();
                 responseBuilder.append("[");
 
-                    String response = result.getString("EMAIL");
+                String response = result.getString("EMAIL");
 
 
                 ResponseUtilty responseUtility = new ResponseUtilty ();
@@ -64,6 +68,10 @@ public class GetEmailHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 500, "ERROR");
             }

@@ -16,7 +16,8 @@ import javaServers.utility.JSONUtility;
 import javaServers.utility.ResponseUtilty;
 
 public class GetUnassignedTicketsHandler implements HttpHandler {
-    
+    Connection connection = null;
+
     public void handle(HttpExchange exchange) throws IOException {
 
         CORSUtility addCORSUtility = new CORSUtility ();
@@ -43,9 +44,10 @@ public class GetUnassignedTicketsHandler implements HttpHandler {
                     return;
                 }
 
-                Connection connection = DriverManager.getConnection(
+                connection = DriverManager.getConnection(
                     "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db"
                 );
+                connection.setAutoCommit (false);
 
                 PreparedStatement selectStatement = connection.prepareStatement(
                     "SELECT * FROM LOAF_TICKETS WHERE ASSIGNED_TO = ? "
@@ -76,6 +78,8 @@ public class GetUnassignedTicketsHandler implements HttpHandler {
 
                 responseBuilder.append("]");
 
+                connection.commit ();
+
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 200, responseBuilder.toString ());
 
@@ -84,6 +88,10 @@ public class GetUnassignedTicketsHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    connection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 500, "ERROR");
             }

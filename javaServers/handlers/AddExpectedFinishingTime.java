@@ -17,6 +17,7 @@ import javaServers.utility.ResponseUtilty;
 public class AddExpectedFinishingTime implements HttpHandler {
         
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection connection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -50,7 +51,9 @@ public class AddExpectedFinishingTime implements HttpHandler {
                 //YYYY-MM-DD -> YYYY-MM-DD HH:MM:SS
                 String expectedFinishingTime = expectedFinishingTimeYear+""+expectedFinishingTimeMonth+""+expectedFinishingTimeDate+""+"22:00:00";
                 System.out.println (expectedFinishingTime);
-                Connection connection = DriverManager.getConnection (DATABASE_URL);
+                connection = DriverManager.getConnection (DATABASE_URL);
+
+                connection.setAutoCommit (false);
 
                 PreparedStatement updateStatement = connection.prepareStatement(
                     "UPDATE LOAF_TICKETS SET EXPECTED_FINISHING_TIME = ? WHERE ID = ?"
@@ -61,6 +64,7 @@ public class AddExpectedFinishingTime implements HttpHandler {
 
                 updateStatement.executeUpdate();
 
+                connection.commit ();
 
                 String serverResponse = "SUCCESS";
 
@@ -86,11 +90,18 @@ public class AddExpectedFinishingTime implements HttpHandler {
                 MailUtilty mailUtils = new MailUtilty ();
                 mailUtils.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Expected Finishing With ID "+ticketID, emailBody);
 
+                
+
                 updateStatement.close();
                 connection.close();
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    connection.rollback ();
+                }
+                catch (Exception exception) {}
+                
                 ResponseUtilty serverResponseUtils = new ResponseUtilty ();
                 serverResponseUtils.sendResponse(exchange, 500, "ERROR");
             }

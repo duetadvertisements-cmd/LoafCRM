@@ -16,6 +16,7 @@ import javaServers.utility.ResponseUtilty;
 public class ChangeStatusHandler implements HttpHandler {
         
         String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+        Connection connection = null;
 
         public void handle(HttpExchange exchange) throws IOException {
 
@@ -37,7 +38,8 @@ public class ChangeStatusHandler implements HttpHandler {
                     String ticketID = formData.get("ticketID");
                     String toStatus = formData.get ("toStatus");
 
-                    Connection connection = DriverManager.getConnection (DATABASE_URL);
+                    connection = DriverManager.getConnection (DATABASE_URL);
+                    connection.setAutoCommit (false);
 
                     PreparedStatement updateStatement;
 
@@ -61,6 +63,8 @@ public class ChangeStatusHandler implements HttpHandler {
                     updateStatement.executeUpdate();
                         
                     String response = "SUCCESS";
+                    
+                    connection.commit ();
 
                     ResponseUtilty responseUtility = new ResponseUtilty ();
                     responseUtility.sendResponse(exchange, 200, response);
@@ -70,6 +74,10 @@ public class ChangeStatusHandler implements HttpHandler {
 
                 } catch (Exception e) {
                     System.err.println(e);
+                    try {
+                        connection.rollback ();
+                    }
+                    catch (Exception exception) {}
                     ResponseUtilty responseUtility = new ResponseUtilty ();
                     responseUtility.sendResponse(exchange, 500, "ERROR");
                 }

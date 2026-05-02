@@ -53,8 +53,10 @@ function setMainTicket(ticket = null) {
 
     let ticketStatus = "Unknown";
 
-    if (statusNum === 1) ticketStatus = "Open";
-    if (statusNum === 2) ticketStatus = "Closed";
+    if (statusNum === 1) ticketStatus = "Open"; document.getElementById("status-selector").selectedIndex = 0;
+    if (statusNum === 2) ticketStatus = "Closed"; document.getElementById("status-selector").selectedIndex = 1;
+    if (statusNum === 3) ticketStatus = "Parking"; document.getElementById("status-selector").selectedIndex = 2;
+    if (statusNum === 4) ticketStatus = "In Progress"; document.getElementById("status-selector").selectedIndex = 3;
 
     let madeByDisplay = ticket.madeBy || "";
 
@@ -344,41 +346,23 @@ applyTheme(localStorage.getItem("preferredTheme"));
    STATUS BUTTON
    =============================== */
 
-function setCorrectStatusButton() {
-
-    const ticket = getCurrentTicket();
-
-    if (!ticket) return;
-
-    const btn = document.getElementById("changeStatusButton");
-
-    if (!btn) return;
-
-    if (Number(ticket.status) === 1) {
-        btn.innerText = "Close Ticket";
-    } else {
-        btn.innerText = "Open Ticket";
-    }
-}
-
-setCorrectStatusButton();
 
 /* ===============================
    CHANGE STATUS
    =============================== */
 
-async function changeStatus() {
+async function changeStatus(status) {
 
     const ticket = getCurrentTicket();
 
     if (!ticket) return;
-
-    const btn = document.getElementById("changeStatusButton");
-
-    let toStatus = 1;
-
-    if (btn.innerText === "Close Ticket") {
-        toStatus = 2;
+    
+    let toStatus;
+    switch (status) {
+        case 'OPEN': toStatus = 1;  break;
+        case 'CLOSE': toStatus = 2;  break;
+        case 'PARKING': toStatus = 3;  break;
+        case 'IN_PROGRESS': toStatus = 4;  break;
     }
 
     const body =

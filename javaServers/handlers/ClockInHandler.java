@@ -18,6 +18,7 @@ import javaServers.utility.ResponseUtilty;
 public class ClockInHandler implements HttpHandler {
     
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -38,7 +39,8 @@ public class ClockInHandler implements HttpHandler {
 
                 System.out.println ("User ID: "+userID+" has clocked In for work");
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
                 PreparedStatement insertStatement = databaseConnection.prepareStatement(
                     "INSERT INTO LOAF_ATTENDANCE (USER_ID) VALUES (?)",
                     Statement.RETURN_GENERATED_KEYS
@@ -55,6 +57,9 @@ public class ClockInHandler implements HttpHandler {
                 if (insertStatementGeneratedKeys.next ()) {
                     response = String.valueOf (insertStatementGeneratedKeys.getInt (1));
                 }
+
+                databaseConnection.commit ();
+
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 200, response);
 
@@ -63,6 +68,10 @@ public class ClockInHandler implements HttpHandler {
             }
             catch (Exception error) {
                 System.err.println (error);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 500, "ERROR");
             }

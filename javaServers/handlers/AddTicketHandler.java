@@ -18,7 +18,7 @@ import javaServers.utility.ResponseUtilty;
 
 public class AddTicketHandler implements HttpHandler {
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
-
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -50,7 +50,8 @@ public class AddTicketHandler implements HttpHandler {
                 System.out.println ("Creator: "+creator);
                 System.out.println ("Made By: "+madeBy);
             
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement insertStatement = databaseConnection.prepareStatement(
                     "INSERT INTO LOAF_TICKETS (TITLE, DATA, CREATOR, MADE_BY) VALUES (?, ?, ?, ?)",
@@ -64,6 +65,7 @@ public class AddTicketHandler implements HttpHandler {
 
                 insertStatement.executeUpdate ();
                 
+                databaseConnection.commit ();
 
                 // SEND MAIL
 
@@ -89,6 +91,8 @@ public class AddTicketHandler implements HttpHandler {
                 + "Support Team\n"
                 + "LoafCRM";
 
+                
+
                 MailUtilty mailUtility = new MailUtilty ();
                 mailUtility.sendMail ("LOAFCRM@GMAIL.COM", "ljevikvnedqqsnql", toEmail, "Ticket Creation With ID "+ticketID, emailBody);
 
@@ -98,11 +102,18 @@ public class AddTicketHandler implements HttpHandler {
                 String response;
                 response = "SUCCESS";
 
+                
+
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 200, response);
 
             } catch (Exception e) {
                 System.err.println (e);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
+
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 500, "ERROR");
             }

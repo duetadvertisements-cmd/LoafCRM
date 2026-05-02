@@ -16,6 +16,7 @@ import javaServers.utility.ResponseUtilty;
 public class LogClockOutTicket implements HttpHandler {
     
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -37,6 +38,8 @@ public class LogClockOutTicket implements HttpHandler {
                 System.out.println ("User ID: "+userID+" has clocked Out for ticket");
 
                 Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
+
                 PreparedStatement updateStatement = databaseConnection.prepareStatement(
                     "UPDATE LOAF_LOG_TIME_TICKET SET LOG_OUT = CURRENT_TIMESTAMP WHERE USER_ID = ? AND LOG_OUT IS NULL"
                 );
@@ -48,6 +51,9 @@ public class LogClockOutTicket implements HttpHandler {
                 updateStatement.executeUpdate ();
 
                 String response = "SUCCESS";
+
+                databaseConnection.commit ();
+
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 200, response);
 
@@ -56,6 +62,11 @@ public class LogClockOutTicket implements HttpHandler {
             }
             catch (Exception error) {
                 System.err.println (error);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
+                
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 500, "ERROR");
             }

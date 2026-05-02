@@ -16,6 +16,7 @@ import javaServers.utility.ResponseUtilty;
 public class GetUsersHandler implements HttpHandler {
     
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -31,7 +32,8 @@ public class GetUsersHandler implements HttpHandler {
 
             try {
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement selectStatement = databaseConnection.prepareStatement(
                     "SELECT * FROM LOAF_USERS WHERE ROLES = ?"
@@ -60,6 +62,8 @@ public class GetUsersHandler implements HttpHandler {
 
                 responseBuilder.append("]");
 
+                databaseConnection.commit ();
+
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 200, responseBuilder.toString ());
 
@@ -68,6 +72,10 @@ public class GetUsersHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtility = new ResponseUtilty ();
                 responseUtility.sendResponse(exchange, 500, "ERROR");
             }

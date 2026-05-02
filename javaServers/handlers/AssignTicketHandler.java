@@ -17,6 +17,7 @@ import javaServers.utility.ResponseUtilty;
 public class AssignTicketHandler implements HttpHandler {
         
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection connection = null;
 
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -44,7 +45,8 @@ public class AssignTicketHandler implements HttpHandler {
                 String assignToEmail = formData.get ("assignToEmail");
 
 
-                Connection connection = DriverManager.getConnection (DATABASE_URL);
+                connection = DriverManager.getConnection (DATABASE_URL);
+                connection.setAutoCommit (false);
 
                 PreparedStatement updateStatement = connection.prepareStatement(
                     "UPDATE LOAF_TICKETS SET ASSIGNED_TO = ? WHERE ID = ?"
@@ -55,6 +57,7 @@ public class AssignTicketHandler implements HttpHandler {
 
                 updateStatement.executeUpdate();
 
+                connection.commit ();
 
                 String serverResponse = "SUCCESS";
 
@@ -113,6 +116,10 @@ public class AssignTicketHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println(e);
+                try {
+                    connection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty serverResponseUtils = new ResponseUtilty ();
                 serverResponseUtils.sendResponse(exchange, 500, "ERROR");
             }

@@ -18,6 +18,7 @@ import javaServers.utility.ResponseUtilty;
 public class LogClockInTicket implements HttpHandler {
     
     String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -39,7 +40,9 @@ public class LogClockInTicket implements HttpHandler {
 
                 System.out.println ("User ID: "+userID+" has clocked In for ticket: "+ticketID);
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
+
                 PreparedStatement insertStatement = databaseConnection.prepareStatement(
                     "INSERT INTO LOAF_LOG_TIME_TICKET (USER_ID, TICKET_ID) VALUES (?, ?)",
                     Statement.RETURN_GENERATED_KEYS
@@ -57,6 +60,9 @@ public class LogClockInTicket implements HttpHandler {
                 if (insertStatementGeneratedKeys.next ()) {
                     response = String.valueOf (insertStatementGeneratedKeys.getInt (1));
                 }
+
+                databaseConnection.commit ();
+
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 200, response);
 
@@ -65,6 +71,10 @@ public class LogClockInTicket implements HttpHandler {
             }
             catch (Exception error) {
                 System.err.println (error);
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 500, "ERROR");
             }

@@ -14,7 +14,7 @@ import javaServers.utility.CORSUtility;
 import javaServers.utility.ResponseUtilty;
 
 public class FileServerHandler implements HttpHandler {
-        
+    
     public void handle(HttpExchange exchange) throws IOException {
 
         CORSUtility addCORSUtility = new CORSUtility ();

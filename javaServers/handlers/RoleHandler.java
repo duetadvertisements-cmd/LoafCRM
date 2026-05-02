@@ -18,6 +18,7 @@ public class RoleHandler implements HttpHandler {
 
     //DEFENATION
     String DATABASE_URL = "jdbc:sqlite:C:\\\\Users\\\\tanis\\\\OneDrive\\\\Documents\\\\LoafCRM\\\\resources\\\\LOAFCRM.db";
+    Connection databaseConnection = null;
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -37,7 +38,8 @@ public class RoleHandler implements HttpHandler {
 
                 String username = formData.get("username");
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit(false);
 
                 PreparedStatement selectStatement = databaseConnection.prepareStatement(
                     "SELECT ROLES FROM LOAF_USERS WHERE USERNAME = ?"
@@ -55,6 +57,8 @@ public class RoleHandler implements HttpHandler {
                     serverResponse = "USER_NOT_FOUND";
                 }
 
+                databaseConnection.commit ();
+
                 ResponseUtilty serverResponseUtils = new ResponseUtilty ();
                 serverResponseUtils.sendResponse(httpExchange, 200, serverResponse);
 
@@ -63,6 +67,10 @@ public class RoleHandler implements HttpHandler {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty serverResponseUtils = new ResponseUtilty ();
                 serverResponseUtils.sendResponse(httpExchange, 500, "ERROR");
             }

@@ -19,7 +19,7 @@ public class LoginHandler implements HttpHandler {
 
     //DEFENITION
     String DATABASE_URL = "jdbc:sqlite:C:\\\\Users\\\\tanis\\\\OneDrive\\\\Documents\\\\LoafCRM\\\\resources\\\\LOAFCRM.db";
-
+    Connection databaseConnection = null;
 
     public void handle (HttpExchange exchange) throws IOException {
 
@@ -45,7 +45,8 @@ public class LoginHandler implements HttpHandler {
 
                 System.out.println ("LOGIN ATTEMPT: " + username);
 
-                Connection databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection = DriverManager.getConnection (DATABASE_URL);
+                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement selectQuery = databaseConnection.prepareStatement(
                     "SELECT PASSWORD FROM LOAF_USERS WHERE USERNAME = ?"
@@ -72,6 +73,8 @@ public class LoginHandler implements HttpHandler {
                     serverResponse = "USER_NOT_FOUND";
                 }
 
+                databaseConnection.commit ();
+
                 ResponseUtilty serverResponseUtility = new ResponseUtilty ();
                 serverResponseUtility.sendResponse (exchange, 200, serverResponse);
 
@@ -80,6 +83,10 @@ public class LoginHandler implements HttpHandler {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                try {
+                    databaseConnection.rollback ();
+                }
+                catch (Exception exception) {}
                 ResponseUtilty serverResponseUtility = new ResponseUtilty ();
                 serverResponseUtility.sendResponse (exchange, 500, "ERROR");
             }
