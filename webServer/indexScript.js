@@ -12,7 +12,7 @@ async function signUp () {
     const formData = `username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
     try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/signup", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/signup", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: formData
@@ -53,7 +53,7 @@ async function login() {
     const formData = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
 
     try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/login", {
+        const serverResponse = await fetch("http://192.168.1.35:8080/login", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: formData
@@ -116,7 +116,7 @@ async function getRole(username) {
     const formData = `username=${encodeURIComponent(username)}`;
 
     try {
-        const res = await fetch("http://192.168.1.34:8080/getRole", {
+        const res = await fetch("http://192.168.1.35:8080/getRole", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: formData

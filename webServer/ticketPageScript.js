@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.1.34:8080";
+const BASE_URL = "http://192.168.1.35:8080";
 
 /* ===============================
    HELPERS
@@ -315,17 +315,17 @@ const themes = {
 
     desert_slate: {
         "bg1": "#2d2926",
-        "bg2": "#403a34"
+        "bg2": "#403a35"
     },
 
     cobalt_horizon: {
         "bg1": "#1e293b",
-        "bg2": "#334155"
+        "bg2": "#335155"
     },
 
     phantom_forest: {
         "bg1": "#0f1d1a",
-        "bg2": "#1c3a34"
+        "bg2": "#1c3a35"
     }
 };
 

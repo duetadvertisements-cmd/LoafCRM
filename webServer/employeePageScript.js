@@ -54,7 +54,7 @@ const themes = {
     },
     desert_slate: {
         "bg1": "#2d2926",
-        "bg2": "#403a34",
+        "bg2": "#403a35",
         "card-bg": "#ffffff",
         "card-border": "#d97757",
         "card-top-strip": "#2d2926",
@@ -62,14 +62,14 @@ const themes = {
         "ticket-text": "#5d544b",
         "meta-strong": "#a69d95",
         "button-bg": "#d97757",
-        "button-hover": "#bf6346",
+        "button-hover": "#bf6356",
         "button-text": "#ffffff",
         "input-bg": "#fdfaf7",
         "input-border": "#e8e2db"
     },
     cobalt_horizon: {
         "bg1": "#1e293b",
-        "bg2": "#334155",
+        "bg2": "#335155",
         "card-bg": "#ffffff",
         "card-border": "#3b82f6",
         "card-top-strip": "#1e293b",
@@ -84,7 +84,7 @@ const themes = {
     },
     phantom_forest: {
         "bg1": "#0f1d1a",
-        "bg2": "#1c3a34",
+        "bg2": "#1c3a35",
         "card-bg": "#ffffff",
         "card-border": "#10b981",
         "card-top-strip": "#0f1d1a",

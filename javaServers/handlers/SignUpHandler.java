@@ -71,7 +71,7 @@ public class SignUpHandler implements HttpHandler {
                 passwordHasher hasher = new passwordHasher ();
 
                 insertStatement.setString (1, username);
-                insertStatement.setString (2, email);
+                insertStatement.setString (2, email.toUpperCase ());
                 insertStatement.setString (3, hasher.hashPassword(password));
 
                 insertStatement.executeUpdate ();

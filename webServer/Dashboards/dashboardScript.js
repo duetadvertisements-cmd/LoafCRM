@@ -3,7 +3,7 @@
    Keeps all functionality working
    ========================================== */
 
-const BASE_URL = "http://192.168.1.34:8080";
+const BASE_URL = "http://192.168.1.35:8080";
 
 /* ==========================================
    HELPERS
@@ -399,7 +399,7 @@ const themes = {
 
     desert_slate: {
         dshbackground1: "#2d2926",
-        dshbackground2: "#403a34",
+        dshbackground2: "#403a35",
         dshbackground3: "#fffcf9",
         dshnav1: "#5d544b",
         dshhead1: "#1a1a1a",
@@ -411,7 +411,7 @@ const themes = {
 
     cobalt_horizon: {
         dshbackground1: "#1e293b",
-        dshbackground2: "#334155",
+        dshbackground2: "#335155",
         dshbackground3: "#ffffff",
         dshnav1: "#64748b",
         dshhead1: "#0f172a",
@@ -423,7 +423,7 @@ const themes = {
 
     phantom_forest: {
         dshbackground1: "#0f1d1a",
-        dshbackground2: "#1c3a34",
+        dshbackground2: "#1c3a35",
         dshbackground3: "#fcfdfd",
         dshnav1: "#4a6b65",
         dshhead1: "#122621",
