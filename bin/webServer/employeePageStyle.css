@@ -1,0 +1,100 @@
+/* --- 1. Global Reset & Base --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    transition: background 0.4s ease;
+}
+
+/* --- 2. Action/Back Button --- */
+.actions {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.back-btn:hover {
+    background: var(--button-hover);
+    transform: translateX(-5px);
+}
+
+/* --- 3. Employee Profile Card --- */
+.employee-card {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    border-left: 8px solid var(--card-border);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Top accent strip */
+.employee-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--card-top-strip), var(--card-border));
+}
+
+.employee-card h2 {
+    color: var(--ticket-title);
+    font-size: 24px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--input-border);
+    padding-bottom: 10px;
+}
+
+.employee-card p {
+    margin: 15px 0;
+    font-size: 16px;
+    color: var(--ticket-text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.employee-card p strong {
+    color: var(--meta-strong);
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.employee-card span {
+    font-weight: 600;
+    color: var(--ticket-title);
+}
+
+/* Specific styling for the ID badge */
+#empId {
+    background: var(--input-bg);
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--input-border);
+}

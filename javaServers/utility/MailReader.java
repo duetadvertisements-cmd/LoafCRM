@@ -1,3 +1,4 @@
+package javaServers.utility;
 import jakarta.mail.*;
 import jakarta.mail.search.FlagTerm;
 import javaServers.handlers.MakeTicketUsingEmailReader;
@@ -5,8 +6,8 @@ import org.jsoup.Jsoup;
 
 import java.util.Properties;
 
-public class MailReader {
-    public static void main(String[] args) {
+public class MailReader implements Runnable{
+    public void run () {
         try {
             Properties props = new Properties();
             props.put("mail.store.protocol", "imaps");
@@ -39,7 +40,7 @@ public class MailReader {
                 ticketCreator.makeTicket (msg.getSubject (), Message, senderAddress);
 
                 // Mark as read
-                // msg.setFlag(Flags.Flag.SEEN, true);
+                msg.setFlag(Flags.Flag.SEEN, true);
             }
 
             inbox.close(true);

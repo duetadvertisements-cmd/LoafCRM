@@ -1,0 +1,51 @@
+<HTML>
+    <HEAD>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="ticketPageScript.js" defer></script>
+        <link rel="stylesheet" href="ticketPageStyle.css">
+        <title>Ticket Details - Loaf CRM</title>
+    </HEAD>
+
+    <BODY>
+        <div class="container">
+            <div class="ticket-wrapper">
+                <div id="mainTicket" class="ticket-card"></div>
+            </div>
+            <div id = "commentsContainer">
+                
+            </div>
+            <div class="actions">
+                <button onclick = "addComment()" id = "addCommentButton">Add Comment</button>
+                <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+                <select id="status-selector" onchange="changeStatus (this.value)">
+                    <option value="OPEN">Open</option>
+                    <option value="CLOSED">Close</option>
+                    <option value="PARKING">Parking</option>   
+                    <option value="IN_PROGRESS">In Progress</option>   
+                </select>
+                <br><br>
+                <button class = "clockButton" onclick = "clockInTicket ()">Clock In</button>
+                <button class = "clockButton" onclick = "clockOutTicket ()">Clock Out</button>
+            </div>
+        </div>
+        <div id="commentModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Add Comment</h2>
+
+                <label>Title:</label>
+                <input type="text" id="commentTitle">
+
+                <label>Comment:</label>
+                <textarea id="commentText"></textarea>
+
+                <label>Attachment (optional):</label>
+                <input type="file" id="commentFile">
+
+                <div class="modal-actions">
+                    <button onclick="submitComment()">Submit</button>
+                    <button onclick="closeModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </BODY>
+</HTML>

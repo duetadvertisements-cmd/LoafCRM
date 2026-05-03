@@ -2,7 +2,6 @@ package javaServers;
 
 import com.sun.net.httpserver.*;
 import java.net.InetSocketAddress;
-import java.util.Map;
 
 import javaServers.handlers.LoginHandler;
 import javaServers.handlers.SignUpHandler;
@@ -29,6 +28,7 @@ import javaServers.handlers.GetEmailHandler;
 import javaServers.handlers.ClockInHandler;
 import javaServers.handlers.ClockOutHandler;
 import javaServers.handlers.GetUserID;
+import javaServers.utility.MailReader;
 
 public class server {
 
@@ -65,8 +65,15 @@ public class server {
         // ✅ MULTITHREADING ENABLED
         server.setExecutor(java.util.concurrent.Executors.newFixedThreadPool(10));
 
+        server.start();
         System.out.println("Server started on port 8080...");
 
-        server.start();
+        System.out.println ("Starting Mail reader");
+        while (true) {
+                Thread mailReader = new Thread(new MailReader());
+                mailReader.start ();
+                System.out.println ("Read Mail");
+                mailReader.sleep (30000);   
+        }
     }
 }

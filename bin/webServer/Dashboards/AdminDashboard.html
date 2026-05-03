@@ -1,0 +1,143 @@
+<HTML>
+    <HEAD>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src = "AdminDashboardScript.js" defer></script>
+        <link rel = "Stylesheet" href = "AdmindashboardStyle.css">
+    </HEAD>
+
+    <BODY>
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        <div class="sidebar-overlay" onclick=""></div>
+
+
+        <!--Side Bar-->>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Loaf CRM</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="showSection('tickets');">
+                    <span class="nav-icon">📋</span>
+                    Tickets
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('unassignedTickets');">
+                    <span class="nav-icon">📋</span>
+                    Un-Assigned Tickets
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('Users');">
+                    <span class="nav-icon">👤</span>
+                    Users
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('Employees');">
+                    <span class="nav-icon">👤</span>
+                    Employees
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('settings');">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('getTimeWorked');">
+                    <span class="nav-icon">📋</span>
+                    Get Working Time
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('getTimeWorkedOnTicket');">
+                    <span class="nav-icon">📋</span>
+                    Get Working Time On Ticket
+                </a>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    Logout
+                </a>       
+            </nav>
+        </div>
+
+        
+        <div class="main-content">
+            <div id="tickets-section" class="content-section active">
+                <div class="header">
+                    <h1 id = "welcomeTitle"></h1>
+                    <button onclick = "addTicket ()">Add Ticket</button> <br><br>
+                    <input type = "text" id = "titleInput" placeholder="Ticket Title"> <br>
+                    <input type = "text" id = "dataInput" placeholder="Ticket Description">   <br>
+                </div>
+                <div id = "filterSelection">
+                    <div class="settings-card">
+                            <div class="settings-group">
+                                <select id="theme-selector" onchange="changeFilter(this.value)">
+                                    <option value="ALL">All</option>
+                                    <option value="OPEN">Status: Open</option>
+                                    <option value="CLOSED">Status: Closed</option>   
+                            </select>
+                        </div>  
+                    </div>
+                </div>
+                <div id="ticketContainer" class="ticket-container"></div>
+            </div>
+        <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+            <div id="unassignedTickets-section" class="content-section">
+                <div id="unassignedTicketContainer" class="ticket-container"></div>
+            </div>
+        <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+            <div id="Users-section" class="content-section">
+
+                <div id="usersContainer" class="users-container"></div>
+            </div>
+        <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+            <div id="Employees-section" class="content-section">
+
+                <div id="employeesContainer" class="employee-container"></div>
+            </div>
+        <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+            <div id="Employees-section" class="content-section">
+
+                <div id="employeesContainer" class="employee-container"></div>
+            </div>
+        <!-- ------------------------------------------------------------------------------------------------------------------------------------------------->
+            <div id="settings-section" class="content-section">
+                <div class="header">
+                    <h1>Settings</h1>
+                    <p>Configure your account and application settings.</p>
+                </div>
+                    <div class="settings-card">
+                        <h3>🎨 Appearance</h3>
+                        <div class="settings-group">
+                            <label>Choose Theme</label>
+                            <select id="theme-selector" onchange="applyTheme(this.value)">
+                                <option value="cobalt_horizon">Cobalt Horizon</option>
+                                <option value="royalLuxe">Royal Luxe</option>
+                                <option value="phantom_forest">Phantom Forest</option>
+                                <option value="desert_slate">Desert Slate</option>
+                                <option value="basic">Basic Light</option>
+                        </select>
+                    </div>  
+                </div>
+            </div>
+        <!---------------------------------------------------------------------------------------------------------------------------------------------------->
+            <div id = "getTimeWorked-section" class = "content-section">
+                <div class="header">
+                    <h1>Get Working Time</h1>
+                    <p>Get How Much Time An Employee Has Worked</p>
+                </div>
+                <div class="header">
+                    <p id = "workingHoursDisplay">The Amount Of Time An Employee Has Worked Will be Shown Here</p>
+                </div><br><br>
+                <input type = "number" min = 1 id = "getTimeWorkedUserIDInput" placeholder="User ID"> <br>
+                <button onclick = "getAmountOfTimeEmployeeHasWorked ()" id = "getAmountOfTimeEmployeeHasWorkedButton">Get Working Time</button> <br><br>
+            </div>
+        <!---------------------------------------------------------------------------------------------------------------------------------------------------->
+            <div id = "getTimeWorkedOnTicket-section" class = "content-section">
+                <div class="header">
+                    <h1>Get Working Time On Ticket</h1>
+                    <p>Get How Much Time An Employee Has Worked On A Ticket</p>
+                </div>
+                <div class="header">
+                    <p id = "workingHoursOfATicketDisplay">The Amount Of Time An Employee Has Worked On The Ticket Will be Shown Here</p>
+                </div><br><br>
+                <input type = "number" min = 1 id = "getTimeWorkedOnATicketUserIDInput" placeholder="User ID"> <br>
+                <input type = "number" min = 1 id = "getTimeWorkedOnATicketTicketIDInput" placeholder="Ticket ID"> <br>
+                <button onclick = "getAmountOfTimeEmployeeHasWorkedOnATicket ()" id = "getAmountOfTimeEmployeeHasWorkedOnATicketButton">Get Working Time</button> <br><br>
+            </div>
+        </div>
+    </BODY>
+</HTML>
