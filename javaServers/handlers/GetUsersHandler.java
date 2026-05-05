@@ -34,7 +34,7 @@ public class GetUsersHandler implements HttpHandler {
 
                 databaseConnection = DriverManager.getConnection (DATABASE_URL);
                 databaseConnection.setAutoCommit (false);
-
+                
                 PreparedStatement selectStatement = databaseConnection.prepareStatement(
                     "SELECT * FROM LOAF_USERS WHERE ROLES = ?"
                 );

@@ -402,8 +402,8 @@ button {
 }
 
 .subticket-container input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 5px;
+    height: 5px;
     accent-color: #4b7bec; /* your CRM blue */
     cursor: pointer;
 }.subticket-container {
@@ -419,8 +419,8 @@ button {
 }
 
 .subticket-container input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 5px;
+    height: 5px;
     accent-color: #4b7bec; /* your CRM blue */
     cursor: pointer;
 }
@@ -475,4 +475,10 @@ select:focus {
 
 select option {
     padding: 10px;
+}
+
+
+.employee-only-comment {
+    background-color: #fff0e6;     
+    border-left-color: #f97316;
 }

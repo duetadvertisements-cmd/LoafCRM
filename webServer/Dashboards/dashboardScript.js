@@ -3,7 +3,7 @@
    Keeps all functionality working
    ========================================== */
 
-const BASE_URL = "http://192.168.1.35:8080";
+const BASE_URL = "http://192.168.1.34:8080";
 
 /* ==========================================
    HELPERS
@@ -399,7 +399,7 @@ const themes = {
 
     desert_slate: {
         dshbackground1: "#2d2926",
-        dshbackground2: "#403a35",
+        dshbackground2: "#403a34",
         dshbackground3: "#fffcf9",
         dshnav1: "#5d544b",
         dshhead1: "#1a1a1a",
@@ -411,7 +411,7 @@ const themes = {
 
     cobalt_horizon: {
         dshbackground1: "#1e293b",
-        dshbackground2: "#335155",
+        dshbackground2: "#334155",
         dshbackground3: "#ffffff",
         dshnav1: "#64748b",
         dshhead1: "#0f172a",
@@ -423,7 +423,7 @@ const themes = {
 
     phantom_forest: {
         dshbackground1: "#0f1d1a",
-        dshbackground2: "#1c3a35",
+        dshbackground2: "#1c3a34",
         dshbackground3: "#fcfdfd",
         dshnav1: "#4a6b65",
         dshhead1: "#122621",
@@ -464,3 +464,135 @@ function changeFilter(filter) {
 
     displayTickets(tickets, filter);
 }
+
+async function generateAndSendOTP (event) {
+     
+    if (event) event.preventDefault();
+
+    const username = document.getElementById ("usernameInput").value;
+     if (!username) return;
+    try {
+        const getEmailBody =
+        `username=${encodeURIComponent(username)}`;
+        console.log("CLICKED");
+        sessionStorage.setItem ("showOTPModal", "true");
+        
+        console.log("OTP FLAG SET:", sessionStorage.getItem("showOTPModal"));
+
+
+        const responsetoGetEmail = await fetch(`${BASE_URL}/getEmail`, {
+            method: "POST",
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded"
+            },
+            body: getEmailBody  
+        });
+
+        const toEmail = await responsetoGetEmail.text ();
+        sessionStorage.setItem ("currentOTPEmail", toEmail);
+        sessionStorage.setItem ("currentOTPUsername", username);
+        const generateOTPBody =
+        `toEmail=${encodeURIComponent(toEmail)}`;
+
+
+        const responsetoGenerateOTP = await fetch(`${BASE_URL}/generateOTP`, {
+            method: "POST",
+            headers: {
+                "Content-Type":
+                    "application/x-www-form-urlencoded"
+            },
+            body: generateOTPBody
+        });
+
+        
+    } catch (error) {
+        console.error ("Error Occured In Add User "+error);
+    }
+    
+}
+
+//COMMENT MODAL
+const inputs = document.querySelectorAll(".otp-inputs input");
+
+inputs.forEach((input, index) => {
+
+    // Only numbers + auto move forward
+    input.addEventListener("input", (e) => {
+        let value = e.target.value;
+
+        // Remove non-digits
+        value = value.replace(/[^0-9]/g, "");
+        input.value = value;
+
+        if (value && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+        }
+    });
+
+    // Backspace goes to previous
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Backspace" && !input.value && index > 0) {
+            inputs[index - 1].focus();
+        }
+    });
+
+    // Handle paste full OTP
+    input.addEventListener("paste", (e) => {
+        e.preventDefault();
+
+        const paste = (e.clipboardData || window.clipboardData)
+            .getData("text")
+            .replace(/[^0-9]/g, "");
+
+        if (!paste) return;
+
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].value = paste[i] || "";
+        }
+
+        // Focus last filled box
+        const lastIndex = Math.min(paste.length, inputs.length) - 1;
+        if (lastIndex >= 0) {
+            inputs[lastIndex].focus();
+        }
+    });
+    input.addEventListener("focus", () => input.select());
+});
+
+
+
+function openOTPModal () {
+    document.getElementById ("OTPModal").classList.remove ('hidden');
+}
+function closeOTPModal () {
+    document.getElementById ("OTPModal").classList.add ('hidden');
+    
+}
+
+function getOTP() {
+    return Array.from(inputs).map(i => i.value).join("");
+}
+
+async function verifyOTP () {
+    const enteredOTP = getOTP ();
+    console.log (sessionStorage.getItem ("currentOTPEmail"));
+    const verifyOTPBody = `toEmail=${encodeURIComponent(sessionStorage.getItem ("currentOTPEmail"))}&OTP=${encodeURIComponent (enteredOTP)}&username=${encodeURIComponent (sessionStorage.getItem ("username"))}&working=${encodeURIComponent (sessionStorage.getItem ("currentOTPUsername"))}`;
+
+
+    const responsetoGenerateOTP = await fetch(`${BASE_URL}/verifyOTP`, {
+        method: "POST",
+        headers: {
+            "Content-Type":
+                "application/x-www-form-urlencoded"
+        },
+        body: verifyOTPBody
+    });
+    console.log (responsetoGenerateOTP.text ());
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem("showOTPModal") === "true") {
+        openOTPModal();
+    }
+});

@@ -43,7 +43,11 @@ public class GetTicketsEmployeeHandler implements HttpHandler {
                 databaseConnection.setAutoCommit (false);
 
                 PreparedStatement selectStatement = databaseConnection.prepareStatement(
-                    "SELECT * FROM LOAF_TICKETS WHERE ASSIGNED_TO = ? "
+                    "SELECT lt.*, lwf.WORKING_FOR " +
+                    "FROM LOAF_TICKETS lt " +
+                    "LEFT JOIN LOAF_WORKING_FOR lwf " +
+                    "ON lt.CREATOR = lwf.USER " +
+                    "WHERE lt.ASSIGNED_TO = ?"
                 );
 
                 selectStatement.setString(1, username);
@@ -63,6 +67,7 @@ public class GetTicketsEmployeeHandler implements HttpHandler {
                     responseBuilder.append("\"status\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString("STATUS"))).append("\",");
                     responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("CREATOR"))).append("\",");
                     responseBuilder.append("\"madeBy\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("MADE_BY"))).append("\",");
+                    responseBuilder.append("\"workingForCustomer\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("WORKING_FOR"))).append("\",");
                     responseBuilder.append("\"expectedFinishingTime\":\"").append(JSONUtility.escapeJson (selectStatementResult.getString ("EXPECTED_FINISHING_TIME"))).append("\"");
                     responseBuilder.append("},");
                     System.out.println (selectStatementResult.getString ("EXPECTED_FINISHING_TIME"));

@@ -56,15 +56,15 @@ public class GetCommentHandler implements HttpHandler {
                 StringBuilder responseBuilder = new StringBuilder();
                 responseBuilder.append("[");
 
-                JSONUtility JSONUtils = new JSONUtility ();
 
                 while (result.next()) {
                     responseBuilder.append("{");
-                    responseBuilder.append("\"username\":\"").append(JSONUtils.escapeJson(result.getString("USERNAME"))).append("\",");
-                    responseBuilder.append("\"comment\":\"").append(JSONUtils.escapeJson(result.getString("COMMENT"))).append("\",");
-                    responseBuilder.append("\"commentTitle\":\"").append(JSONUtils.escapeJson(result.getString("COMMENT_TITLE"))).append("\",");
-                    responseBuilder.append("\"madeOn\":\"").append(JSONUtils.escapeJson(result.getString("CREATED_AT"))).append("\",");
-                    responseBuilder.append("\"filepath\":\"").append(JSONUtils.escapeJson(result.getString("FILE_PATH"))).append("\"");
+                    responseBuilder.append("\"username\":\"").append(JSONUtility.escapeJson(result.getString("USERNAME"))).append("\",");
+                    responseBuilder.append("\"comment\":\"").append(JSONUtility.escapeJson(result.getString("COMMENT"))).append("\",");
+                    responseBuilder.append("\"commentTitle\":\"").append(JSONUtility.escapeJson(result.getString("COMMENT_TITLE"))).append("\",");
+                    responseBuilder.append("\"madeOn\":\"").append(JSONUtility.escapeJson(result.getString("CREATED_AT"))).append("\",");
+                    responseBuilder.append("\"filepath\":\"").append(JSONUtility.escapeJson(result.getString("FILE_PATH"))).append("\",");
+                    responseBuilder.append("\"isEmployeeOnly\":\"").append(result.getInt("IS_EMPLOYEE_ONLY")).append("\"");
                     responseBuilder.append("},");
                 }
 

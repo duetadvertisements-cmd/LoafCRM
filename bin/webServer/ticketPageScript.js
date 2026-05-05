@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.1.35:8080";
+const BASE_URL = "http://192.168.1.34:8080";
 
 /* ===============================
    HELPERS
@@ -52,11 +52,23 @@ function setMainTicket(ticket = null) {
     const statusNum = Number(ticket.status);
 
     let ticketStatus = "Unknown";
-
-    if (statusNum === 1) ticketStatus = "Open"; document.getElementById("status-selector").selectedIndex = 0;
-    if (statusNum === 2) ticketStatus = "Closed"; document.getElementById("status-selector").selectedIndex = 1;
-    if (statusNum === 3) ticketStatus = "Parking"; document.getElementById("status-selector").selectedIndex = 2;
-    if (statusNum === 4) ticketStatus = "In Progress"; document.getElementById("status-selector").selectedIndex = 3;
+    console.log (statusNum);
+    if (statusNum === 1) {
+        ticketStatus = "Open"; 
+        document.getElementById("status-selector").selectedIndex = 0;
+    }   
+    if (statusNum === 2) {
+        ticketStatus = "Closed"; 
+        document.getElementById("status-selector").selectedIndex = 1;
+    } 
+    if (statusNum === 3) {
+        ticketStatus = "Parking"; 
+        document.getElementById("status-selector").selectedIndex = 2;   
+    }   
+    if (statusNum === 4) {
+        ticketStatus = "In Progress";
+        document.getElementById("status-selector").selectedIndex = 3;
+    }
 
     let madeByDisplay = ticket.madeBy || "";
 
@@ -83,7 +95,8 @@ function setMainTicket(ticket = null) {
         <div class="ticket-meta">
             <div class="meta-item">
                 <strong>Created by:</strong> ${escapeHTML(ticket.creator)} <br>
-                <strong>Made by:</strong> ${escapeHTML(madeByDisplay)}
+                <strong>Made by:</strong> ${escapeHTML(madeByDisplay)} <br>
+                <strong>Customer:</strong> ${escapeHTML(ticket.workingForCustomer)}
             </div>
 
             <div class="meta-item">
@@ -131,12 +144,16 @@ async function submitComment() {
     const title = document.getElementById("commentTitle").value.trim();
     const text = document.getElementById("commentText").value.trim();
     const file = document.getElementById("commentFile").files[0];
+    let employeeOnlyToggle = getEmployeeOnlyCommentToggleValue (); 
+
+    console.log (employeeOnlyToggle);
 
     if (!title || !text) {
         alert("Please fill all fields.");
         return;
     }
-
+    if (employeeOnlyToggle === "on") {employeeOnlyToggle = 1}
+    else {employeeOnlyToggle = 2}
     const ticket = getCurrentTicket();
 
     if (!ticket) return;
@@ -148,6 +165,7 @@ async function submitComment() {
     formData.append("creator", sessionStorage.getItem("username"));
     formData.append("ticket", ticket.id);
     formData.append("toEmail", sessionStorage.getItem("email"));
+    formData.append("isEmployeeOnly", employeeOnlyToggle);
 
     if (file) {
         formData.append("file", file);
@@ -289,7 +307,14 @@ function displayComments(commentsArray) {
             </small>
         `;
 
-        container.appendChild(div);
+        if (c.isEmployeeOnly == 1 && sessionStorage.getItem ("role") != "CLIENT") {
+            div.classList.add("employee-only-comment");
+            container.appendChild(div);
+        }
+        if (c.isEmployeeOnly == 2) {
+            container.append (div);
+        }
+        
     });
 }
 
@@ -315,17 +340,17 @@ const themes = {
 
     desert_slate: {
         "bg1": "#2d2926",
-        "bg2": "#403a35"
+        "bg2": "#403a34"
     },
 
     cobalt_horizon: {
         "bg1": "#1e293b",
-        "bg2": "#335155"
+        "bg2": "#334155"
     },
 
     phantom_forest: {
         "bg1": "#0f1d1a",
-        "bg2": "#1c3a35"
+        "bg2": "#1c3a34"
     }
 };
 
@@ -360,10 +385,12 @@ async function changeStatus(status) {
     let toStatus;
     switch (status) {
         case 'OPEN': toStatus = 1;  break;
-        case 'CLOSE': toStatus = 2;  break;
+        case 'CLOSED': toStatus = 2;  break;
         case 'PARKING': toStatus = 3;  break;
         case 'IN_PROGRESS': toStatus = 4;  break;
     }
+
+    console.log (toStatus);
 
     const body =
         `ticketID=${encodeURIComponent(ticket.id)}&toStatus=${encodeURIComponent(toStatus)}`;
@@ -467,5 +494,23 @@ if (sessionStorage.getItem("role") === "CLIENT") {
         .forEach(button => {
             button.style.display = "none";
         });
+    document.querySelectorAll("#employeeOnlyCommentToggle")
+        .forEach(checkbox => {
+            checkbox.style.display = "none";
+        });
+    document.querySelectorAll("#employeeOnlyLabel")
+    .forEach(label => {
+        label.style.display = "none";
+    });
 
+}
+
+function getEmployeeOnlyCommentToggleValue () {
+    const employeeOnlyCommentToggle = document.getElementById('employeeOnlyCommentToggle');
+
+    const value = employeeOnlyCommentToggle.checked ? "on" : "off";
+
+    console.log("employeeOnlyCommentToggle Value on Button Click:", value);
+
+    return value;
 }

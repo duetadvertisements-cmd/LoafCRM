@@ -69,7 +69,7 @@ async function addTicket () {
                     &madeBy=${encodeURIComponent (creator)}`;    
 
     try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/addTicket", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/addTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -107,7 +107,7 @@ async function getTickets () {
 
     const ticket = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/getTickets", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -197,7 +197,7 @@ async function getUnassignedTickets () {
 
     const ticket = `key=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/getUnassignedTickets", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getUnassignedTickets", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -262,7 +262,7 @@ async function getEmployees () {
 
     const employee = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/getEmployees", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getEmployees", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: employee
@@ -330,7 +330,7 @@ async function getUsers () {
 
     const users = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/getUsers", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getUsers", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: users
@@ -348,6 +348,38 @@ async function getUsers () {
         console.log ("------------------------------------------------------");
 
         displayUsers (usersObtained);
+    }
+    catch (error) {
+        console.error ("----------------------error to get users--------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
+    }
+}
+
+async function getUsersToCustomers () {  
+
+    const users = `username=${encodeURIComponent("AGNh6kic5ZQwnrPbdp5y")}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getOnlyNonCustomers", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: users
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getUsedwqqqqqqqqqrs ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        const usersObtained = JSON.parse (responseText);
+        console.log ("-----------------------GETUSwdqqqqqqqqqqq RS ()-------------------------------");
+        console.log (users);
+        console.log ("------------------------------------------------------");
+
+        displayUsersToCustomer (usersObtained);
     }
     catch (error) {
         console.error ("----------------------error to get users--------------------------------");
@@ -383,6 +415,31 @@ function displayUsers (users) {
     });
 }
 
+function displayUsersToCustomer (users) {
+    const container = document.getElementById("usersContainerCustomer");
+    container.innerHTML = "";
+
+    if (users.length === 0) {
+        container.innerHTML = "<p class='no-employees'>No Employees found</p>";
+        return;
+    }
+
+    users.forEach(user => {
+        const userDiv = document.createElement("div");
+        userDiv.className = "user";
+        userDiv.innerHTML = `
+            <div class="user-header">
+            <h3 class="user-title">${user.username}</h3>
+            <span class="user-id">#${user.id}</span>
+        </div>
+        <p class="user-email">Email: ${user.email}</p>
+        <br>
+        <p><button onclick = "makeCustomer (${user.id})" class = 'userPromotionButton'>Make Customer</button></p>
+        `;  
+        container.appendChild(userDiv);
+    });
+}
+
 const themes = {
     basic: {
         dshbackground1: "#667eea",
@@ -410,7 +467,7 @@ const themes = {
     },
     desert_slate: {
         dshbackground1: "#2d2926", 
-        dshbackground2: "#403a35", 
+        dshbackground2: "#403a34", 
         dshbackground3: "#fffcf9", 
         dshnav1: "#5d544b",        
         dshhead1: "#1a1a1a",        
@@ -422,7 +479,7 @@ const themes = {
     },
     cobalt_horizon: {
         dshbackground1: "#1e293b", 
-        dshbackground2: "#335155", 
+        dshbackground2: "#334155", 
         dshbackground3: "#ffffff", 
         dshnav1: "#64748b",        
         dshhead1: "#0f172a",        
@@ -434,7 +491,7 @@ const themes = {
     },
     phantom_forest: {
         dshbackground1: "#0f1d1a", 
-        dshbackground2: "#1c3a35", 
+        dshbackground2: "#1c3a34", 
         dshbackground3: "#fcfdfd", 
         dshnav1: "#4a6b65",        
         dshhead1: "#122621",        
@@ -461,7 +518,7 @@ async function getUserID(username, action) {
     if (!username) return;
 
     try {
-        const response = await fetch("http://192.168.1.35:8080/getUserID", {
+        const response = await fetch("http://192.168.1.34:8080/getUserID", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `username=${encodeURIComponent(username)}`
@@ -483,7 +540,7 @@ async function getUserID(username, action) {
 getUserID (sessionStorage.getItem ("username"), "SET");
 
 async function promoteUserToWorker (id) {
-    const response = await fetch("http://192.168.1.35:8080/promoteUserToWorker", {
+    const response = await fetch("http://192.168.1.34:8080/promoteUserToWorker", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `id=${encodeURIComponent(id)}`
@@ -506,7 +563,7 @@ async function assignTicket (ticketID) {
     const ticket = `ticketID=${encodeURIComponent(ticketID)}&assignTo=${assignToID}&toEmail=${sessionStorage.getItem ("email")}&assignedBy=${sessionStorage.getItem ("userID")}&hoursAssigned=${parseInt (hoursAssigned)}&assignToString=${assignTo}&assignToEmail=${await getEmail (assignTo, "GET")}`;
     
     try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/assignTicket", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/assignTicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -525,7 +582,7 @@ async function assignTicket (ticketID) {
 async function getEmail (username, action) {  
     const ticket = `username=${encodeURIComponent(username)}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.35:8080/getEmail", {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getEmail", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -564,7 +621,7 @@ async function getAmountOfTimeEmployeeHasWorked () {
     const ticket = `userID=${encodeURIComponent (userID)}&workingYear=${encodeURIComponent (currentYear)}&workingMonth=${encodeURIComponent (currentMonth)}`
 
     try {
-        const serverResponse = await fetch ("http://192.168.1.35:8080/getTimeWorked", {
+        const serverResponse = await fetch ("http://192.168.1.34:8080/getTimeWorked", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded"},
             body: ticket
@@ -611,7 +668,7 @@ async function getAmountOfTimeEmployeeHasWorkedOnATicket () {
     const ticket = `userID=${encodeURIComponent (userID)}&workingYear=${encodeURIComponent (currentYear)}&workingMonth=${encodeURIComponent (currentMonth)}&ticketID=${encodeURIComponent (ticketID)}`
 
     try {
-        const serverResponse = await fetch ("http://192.168.1.35:8080/getTimeWorkedOnATicket", {
+        const serverResponse = await fetch ("http://192.168.1.34:8080/getTimeWorkedOnATicket", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded"},
             body: ticket
@@ -643,6 +700,7 @@ function logout() {
 setWelcomeTitle ();
 getEmployees ();
 getUsers ();
+getUsersToCustomers ();
 applyTheme ("desert_slate");
 getEmail (sessionStorage.getItem ("username"), "SET");
 getUnassignedTickets ();
@@ -651,7 +709,7 @@ async function getHoursAssigned (id) {
     const formData = `userID=${encodeURIComponent(id)}`;
 
     try {
-        const response = await fetch("http://192.168.1.35:8080/getExpectedEmployeeHoursRemaining", {
+        const response = await fetch("http://192.168.1.34:8080/getExpectedEmployeeHoursRemaining", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: formData
@@ -663,3 +721,72 @@ async function getHoursAssigned (id) {
         return null;
     }
 }
+
+async function makeCustomer (id) {
+    const response = await fetch("http://192.168.1.34:8080/addCustomer", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `id=${encodeURIComponent(id)}`
+    });
+    console.log ("Made User To Customer")
+    console.log (response.text);
+    await getUsersToCustomers ();
+}
+
+async function getCustomers () {
+    
+    const customer = `username=${encodeURIComponent("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.34:8080/getCustomers", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: customer
+        });
+        const responseText = await serverResponse.text();
+
+        console.log ("------------------------------------------------------");
+        console.log("Server response to getCustomers ():");
+        console.log(responseText);
+        console.log ("------------------------------------------------------");
+
+        const customers = JSON.parse (responseText);
+        console.log ("-----------------------GetCustomers ()-------------------------------");
+        console.log (customers);
+        console.log ("------------------------------------------------------");
+
+        displayCustomers (customers);
+    }
+    catch (error) {
+        console.error ("----------------------error to get customers--------------------------------");
+        console.error ("YOU FORGOT TO TURN THE SERVER ON");
+        console.log ("\n");
+        console.error("Request failed:", error);
+        console.error ("------------------------------------------------------");
+    }
+}
+
+function displayCustomers (customers) {
+    const container = document.getElementById("customerContainer");
+    container.innerHTML = "";
+
+    if (customers.length === 0) {
+        container.innerHTML = "<p class='no-customers'>No Customers found</p>";
+        return;
+    }
+
+    customers.forEach(customer => {
+        const customerDiv = document.createElement("div");
+        customerDiv.className = "customer";
+        customerDiv.onclick = () => customerClicked(customer);
+        customerDiv.innerHTML = `
+            <div class="customer-header">
+            <h3 class="customer-title">${customer.username}</h3>
+            <span class="customer-id">#${customer.id}</span>
+        </div>
+        <p class="customer-email">Email: ${customer.email}</p>
+        `;  
+        container.appendChild(customerDiv);
+    });
+}
+
+getCustomers ();

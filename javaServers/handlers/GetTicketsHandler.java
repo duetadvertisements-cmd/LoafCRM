@@ -47,19 +47,26 @@ public class GetTicketsHandler implements HttpHandler {
                 //THIS IS TO CHECK IF THE USER IS ADMIN, THE ADMIN SENDS THIS KEY AND IF IT MATCHES THEN IT RETURNS ALL TICKETS
                 if (username.equals("4k60cHb2E4Li6nf3w4K4ly3UvM4BKeUe")) {
                     selectStatement = databaseConnection.prepareStatement(
-                        "SELECT * FROM LOAF_TICKETS"
+                        "SELECT lt.*, lwf.WORKING_FOR " +
+                        "FROM LOAF_TICKETS lt " +
+                        "LEFT JOIN LOAF_WORKING_FOR lwf " +
+                        "ON lt.CREATOR = lwf.USER"
                     );
                 }
                 else {
                     selectStatement = databaseConnection.prepareStatement(
-                        "SELECT * FROM LOAF_TICKETS WHERE TRIM (CREATOR) = ?"
+                        "SELECT lt.*, lwf.WORKING_FOR " +
+                        "FROM LOAF_TICKETS lt " +
+                        "LEFT JOIN LOAF_WORKING_FOR lwf " +
+                        "ON TRIM(lt.CREATOR) = TRIM(lwf.USER) " +
+                        "WHERE TRIM(lt.CREATOR) = ?"
                     );
 
                     selectStatement.setString(1, username);
                 }
-                
 
                 ResultSet selectStatementResult = selectStatement.executeQuery();
+                
 
                 StringBuilder responseBuilder = new StringBuilder();
                 responseBuilder.append("[");
@@ -73,6 +80,7 @@ public class GetTicketsHandler implements HttpHandler {
                     responseBuilder.append("\"data\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("DATA"))).append("\",");
                     responseBuilder.append("\"status\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("STATUS"))).append("\",");
                     responseBuilder.append("\"creator\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("CREATOR"))).append("\",");
+                    responseBuilder.append("\"workingForCustomer\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("WORKING_FOR"))).append("\",");
                     responseBuilder.append("\"madeBy\":\"").append(JSONUtility.escapeJson(selectStatementResult.getString("MADE_BY"))).append("\"");
                     responseBuilder.append("},");
                 }

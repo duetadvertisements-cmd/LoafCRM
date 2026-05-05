@@ -29,9 +29,17 @@
                     <span class="nav-icon">👤</span>
                     Users
                 </a>
+                <a href="#" class="nav-item" onclick="showSection('AddCustomer');">
+                    <span class="nav-icon">👤</span>
+                    Add Customer
+                </a>
                 <a href="#" class="nav-item" onclick="showSection('Employees');">
                     <span class="nav-icon">👤</span>
                     Employees
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('Customers');">
+                    <span class="nav-icon">👤</span>
+                    Customers
                 </a>
                 <a href="#" class="nav-item" onclick="showSection('settings');">
                     <span class="nav-icon">⚙️</span>
@@ -84,14 +92,20 @@
                 <div id="usersContainer" class="users-container"></div>
             </div>
         <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
-            <div id="Employees-section" class="content-section">
+            <div id="AddCustomer-section" class="content-section">
 
-                <div id="employeesContainer" class="employee-container"></div>
+                <div id="usersContainerCustomer" class="users-container"></div>
             </div>
         <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
             <div id="Employees-section" class="content-section">
 
                 <div id="employeesContainer" class="employee-container"></div>
+            </div>
+        <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------------------------------->>
+            <div id="Customers-section" class="content-section">
+                
+                <div id="customerContainer" class="customer-container"></div>
             </div>
         <!-- ------------------------------------------------------------------------------------------------------------------------------------------------->
             <div id="settings-section" class="content-section">

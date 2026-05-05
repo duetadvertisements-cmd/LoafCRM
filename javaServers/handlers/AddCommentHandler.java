@@ -19,6 +19,7 @@ import javaServers.utility.ResponseUtilty;
 
 
 public class AddCommentHandler implements HttpHandler {
+    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
     
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -44,7 +45,7 @@ public class AddCommentHandler implements HttpHandler {
                 String creator = parser.getField("creator");
                 String ticket = parser.getField("ticket");
                 String toEmail = parser.getField ("toEmail");
-
+                int isEmployeeOnly = Integer.parseInt (parser.getField ("isEmployeeOnly"));
                 String filePath = null;
 
                 if (parser.hasFile()) {
@@ -63,22 +64,22 @@ public class AddCommentHandler implements HttpHandler {
 
                 
 
-            System.out.println ("Recieved:");
-            System.out.println ("Title: "+title);
-            System.out.println ("Data: "+data);
-            System.out.println ("Creator: "+creator);
-            System.out.println ("ticket: "+ticket);
-            System.out.println ("filepath: "+filePath);
+                System.out.println ("Recieved:");
+                System.out.println ("Title: "+title);
+                System.out.println ("Data: "+data);
+                System.out.println ("Creator: "+creator);
+                System.out.println ("ticket: "+ticket);
+                System.out.println ("filepath: "+filePath);
 
 
-             
+                connection = DriverManager.getConnection (DATABASE_URL);
 
                 
 
                 connection.setAutoCommit (false);
 
                 PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH) VALUES (?, ?, ?, ?, ?)"
+                    "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH, IS_EMPLOYEE_ONLY) VALUES (?, ?, ?, ?, ?, ?)"
                 );  
 
                 
@@ -88,6 +89,7 @@ public class AddCommentHandler implements HttpHandler {
                 statement.setString(3, creator);
                 statement.setString(4, ticket);
                 statement.setString(5, filePath);
+                statement.setInt(6, isEmployeeOnly);
 
                 statement.executeUpdate ();
                 

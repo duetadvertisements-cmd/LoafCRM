@@ -5,29 +5,36 @@ import java.net.InetSocketAddress;
 
 import javaServers.handlers.LoginHandler;
 import javaServers.handlers.SignUpHandler;
+import javaServers.handlers.VerifyOTPHandler;
 import javaServers.handlers.RoleHandler;
 import javaServers.handlers.AddTicketHandler;
 import javaServers.handlers.GetTicketsHandler;
 import javaServers.handlers.AddCommentHandler;
+import javaServers.handlers.AddCustomerHandler;
 import javaServers.handlers.AddExpectedFinishingTime;
 import javaServers.handlers.GetCommentHandler;
+import javaServers.handlers.GetCustomerHandler;
 import javaServers.handlers.GetTicketsEmployeeHandler;
 import javaServers.handlers.FileServerHandler;
 import javaServers.handlers.GetAmountOfTimeEmployeeHasWorked;
 import javaServers.handlers.GetAmountOfTimeEmployeeHasWorkedOnTicket;
 import javaServers.handlers.GetEmployeesHandler;
 import javaServers.handlers.GetExpectedEmployeeHoursRemaining;
+import javaServers.handlers.GetOnlyNonCustomersHandler;
 import javaServers.handlers.GetUsersHandler;
 import javaServers.handlers.LogClockInTicket;
 import javaServers.handlers.LogClockOutTicket;
 import javaServers.handlers.PromoteUserToWorkerHandler;
 import javaServers.handlers.ChangeStatusHandler;
+import javaServers.handlers.CheckIfUserIsCustomerHandler;
 import javaServers.handlers.GetUnassignedTicketsHandler;
 import javaServers.handlers.AssignTicketHandler;
 import javaServers.handlers.GetEmailHandler;
 import javaServers.handlers.ClockInHandler;
 import javaServers.handlers.ClockOutHandler;
 import javaServers.handlers.GetUserID;
+import javaServers.handlers.GenerateOTPHandler;
+
 import javaServers.utility.MailReader;
 
 public class server {
@@ -60,6 +67,12 @@ public class server {
         server.createContext ("/getTimeWorkedOnATicket", new GetAmountOfTimeEmployeeHasWorkedOnTicket ());
         server.createContext ("/addExpectedFinishingTime", new AddExpectedFinishingTime ());
         server.createContext ("/getExpectedEmployeeHoursRemaining", new GetExpectedEmployeeHoursRemaining ());
+        server.createContext ("/addCustomer", new AddCustomerHandler ());
+        server.createContext ("/getCustomers", new GetCustomerHandler ());
+        server.createContext ("/getOnlyNonCustomers", new GetOnlyNonCustomersHandler ());
+        server.createContext ("/checkIfCustomer", new CheckIfUserIsCustomerHandler ());
+        server.createContext ("/generateOTP", new GenerateOTPHandler ());
+        server.createContext ("/verifyOTP", new VerifyOTPHandler ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED
@@ -67,13 +80,35 @@ public class server {
 
         server.start();
         System.out.println("Server started on port 8080...");
+        //----------------------------------------------------------------------------------------------------
+        System.out.println("Starting Mail Reader (background)...");
 
-        System.out.println ("Starting Mail reader");
-        while (true) {
-                Thread mailReader = new Thread(new MailReader());
-                mailReader.start ();
-                System.out.println ("Read Mail");
-                mailReader.sleep (30000);   
-        }
+        Thread mailThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    System.out.println("[" + java.time.LocalDateTime.now() + "] Checking for new emails...");
+                    
+                    new MailReader().run();   // Run the mail checking task
+                    
+                    System.out.println("[" + java.time.LocalDateTime.now() + "] Mail check completed.");
+                    
+                } catch (Exception e) {
+                    System.err.println("[" + java.time.LocalDateTime.now() + "] Error in Mail Reader: " + e.getMessage());
+                    e.printStackTrace();
+                }
+
+                try {
+                    Thread.sleep(300000); // Check every 5 mins
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore interrupt status
+                    break;
+                }
+            }
+        }, "Mail-Reader-Thread");
+
+        mailThread.setDaemon(true);        // Important: So it doesn't block shutdown
+        mailThread.start();
+
+        System.out.println("✅ Mail Reader started successfully (runs every 5 mins)");
     }
 }

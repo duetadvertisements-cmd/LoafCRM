@@ -14,18 +14,23 @@
                 <h2>Loaf CRM</h2>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" onclick="showSection('tickets');">
+                <a href="#" onclick="event.preventDefault(); showSection('tickets');" class = "nav-item">
                     <span class="nav-icon">📋</span>
                     Tickets
                 </a>
-                <a href="#" class="nav-item" onclick="showSection('settings');">
+                <a href="#" onclick="event.preventDefault(); showSection('settings');" class = "nav-item">
                     <span class="nav-icon">⚙️</span>
                     Settings
                 </a>
-                <a href="#" class="nav-item" onclick="logout()">
+                <a href="#" class="nav-item" onclick="event.preventDefault(); showSection('addUser')">
+                    <span class="nav-icon">👤</span>
+                    Add User
+                </a>
+                <a href="#" onclick="event.preventDefault(); logout ();" class = "nav-item">
                     <span class="nav-icon">🚪</span>
                     Logout
                 </a>
+                
             </nav>
         </div>
 
@@ -71,6 +76,35 @@
                         </select>
                     </div>  
                 </div>
+            </div>
+            <div id="addUser-section" class="content-section">
+                <div class="header-banner">
+                    <input type = "text" id = "usernameInput" placeholder="Username"> <br><br>
+                    <button type = "button"onclick = "generateAndSendOTP (event)" id = "addUserButton">Add User</button> <br><br>
+                </div>
+            </div>
+        </div>
+        <div class="otp-modal-overlay hidden" id = "OTPModal">
+            <div class="otp-modal">
+                <button class="modal-close" onclick="closeOTPModal(); sessionStorage.setItem ('showOTPModal', 'false');">×</button>
+                <h2>Verify OTP</h2>
+                <p>Enter the 6-digit code sent to the users email</p>
+
+                <div class="otp-inputs">
+                <input type="text" maxlength="1" />
+                <input type="text" maxlength="1" />
+                <input type="text" maxlength="1" />
+                <input type="text" maxlength="1" />
+                <input type="text" maxlength="1" />
+                <input type="text" maxlength="1" />
+                </div>
+
+                <button type = "button" class="verify-btn" onclick = "verifyOTP ()">Verify</button>
+
+                <p class="resend">
+                Didn't receive it? <span>Resend</span>
+                </p>
+
             </div>
         </div>
     </BODY>
