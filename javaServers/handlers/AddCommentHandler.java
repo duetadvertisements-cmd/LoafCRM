@@ -19,9 +19,11 @@ import javaServers.utility.ResponseUtilty;
 
 
 public class AddCommentHandler implements HttpHandler {
-    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
     
+    String DATABASE_URL = "jdbc:sqlite:C:\\Users\\tanis\\OneDrive\\Documents\\LoafCRM\\resources\\LOAFCRM.db";
+
     public void handle(HttpExchange exchange) throws IOException {
+        
 
         CORSUtility addCorsUtils = new CORSUtility ();
         addCorsUtils.addCORS(exchange);
@@ -39,6 +41,16 @@ public class AddCommentHandler implements HttpHandler {
             
             
             try {
+                //LOCK-TIME PREVENTION
+                Connection conn = DriverManager.getConnection(DATABASE_URL);
+                Statement stmt = conn.createStatement();
+
+                stmt.execute("PRAGMA journal_mode=WAL;");
+                stmt.execute("PRAGMA synchronous=NORMAL;");
+
+                stmt.close();
+                conn.close();
+                
                 multiFormParser parser = new multiFormParser (exchange);
                 String title = parser.getField("title");
                 String data = parser.getField("data");
@@ -76,7 +88,6 @@ public class AddCommentHandler implements HttpHandler {
 
                 
 
-                connection.setAutoCommit (false);
 
                 PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO LOAF_COMMENTS (COMMENT_TITLE, COMMENT, USERNAME, TICKET_ID, FILE_PATH, IS_EMPLOYEE_ONLY) VALUES (?, ?, ?, ?, ?, ?)"
@@ -93,7 +104,6 @@ public class AddCommentHandler implements HttpHandler {
 
                 statement.executeUpdate ();
                 
-                connection.commit ();
 
                 String response;
                 response = "SUCCESS";
@@ -134,18 +144,19 @@ public class AddCommentHandler implements HttpHandler {
                 connection.close();
 
             } catch (Exception e) {
-
-                try {connection.rollback ();}
-                catch (Exception ex) {System.out.println ("Problem occured with rollback");}
-
+                
                 System.err.println (e);
                 
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(exchange, 500, "ERROR");
             }
+            
 
         } else {
             exchange.sendResponseHeaders(405, -1);  
         }
+        
+        
     }
+    
 }

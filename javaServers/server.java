@@ -12,6 +12,8 @@ import javaServers.handlers.GetTicketsHandler;
 import javaServers.handlers.AddCommentHandler;
 import javaServers.handlers.AddCustomerHandler;
 import javaServers.handlers.AddExpectedFinishingTime;
+import javaServers.handlers.AddSubTicketCommentHandler;
+import javaServers.handlers.AddSubTicketHandler;
 import javaServers.handlers.GetCommentHandler;
 import javaServers.handlers.GetCustomerHandler;
 import javaServers.handlers.GetTicketsEmployeeHandler;
@@ -21,6 +23,7 @@ import javaServers.handlers.GetAmountOfTimeEmployeeHasWorkedOnTicket;
 import javaServers.handlers.GetEmployeesHandler;
 import javaServers.handlers.GetExpectedEmployeeHoursRemaining;
 import javaServers.handlers.GetOnlyNonCustomersHandler;
+import javaServers.handlers.GetSubTicketsHandler;
 import javaServers.handlers.GetUsersHandler;
 import javaServers.handlers.LogClockInTicket;
 import javaServers.handlers.LogClockOutTicket;
@@ -34,6 +37,7 @@ import javaServers.handlers.ClockInHandler;
 import javaServers.handlers.ClockOutHandler;
 import javaServers.handlers.GetUserID;
 import javaServers.handlers.GenerateOTPHandler;
+import javaServers.handlers.GetSubTicketCommentsHandler;
 
 import javaServers.utility.MailReader;
 
@@ -73,6 +77,10 @@ public class server {
         server.createContext ("/checkIfCustomer", new CheckIfUserIsCustomerHandler ());
         server.createContext ("/generateOTP", new GenerateOTPHandler ());
         server.createContext ("/verifyOTP", new VerifyOTPHandler ());
+        server.createContext ("/addSubTicket", new AddSubTicketHandler ());
+        server.createContext ("/getSubTickets", new GetSubTicketsHandler ());
+        server.createContext ("/getSubTicketComments", new GetSubTicketCommentsHandler ());
+        server.createContext ("/addSubTicketComment", new AddSubTicketCommentHandler ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED

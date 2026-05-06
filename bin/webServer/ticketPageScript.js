@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.1.34:8080";
+const BASE_URL = "http://192.168.1.33:8080";
 
 /* ===============================
    HELPERS
@@ -106,8 +106,80 @@ function setMainTicket(ticket = null) {
         </div>
     `;
 }
+function setMainTicketAsSubTicket (ticket = null) {
+    
+    if (!ticket) {
+        ticket = JSON.parse (sessionStorage.getItem ("currentSubTicket"));
+    }
 
-setMainTicket();
+    if (!ticket) return;
+
+    console.log("Loaded Ticket:", ticket);
+
+    const statusNum = Number(ticket.status);
+
+    let ticketStatus = "Unknown";
+    console.log (statusNum);
+    if (statusNum === 1) {
+        ticketStatus = "Open"; 
+        document.getElementById("status-selector").selectedIndex = 0;
+    }   
+    if (statusNum === 2) {
+        ticketStatus = "Closed"; 
+        document.getElementById("status-selector").selectedIndex = 1;
+    } 
+    if (statusNum === 3) {
+        ticketStatus = "Parking"; 
+        document.getElementById("status-selector").selectedIndex = 2;   
+    }   
+    if (statusNum === 4) {
+        ticketStatus = "In Progress";
+        document.getElementById("status-selector").selectedIndex = 3;
+    }
+
+    let madeByDisplay = ticket.madeBy || "";
+
+    if (
+        String(ticket.madeBy).trim().toLowerCase() !==
+        String(ticket.creator).trim().toLowerCase()
+    ) {
+        madeByDisplay = "Employee";
+    }
+
+    document.getElementById("mainTicket").innerHTML = `
+        <div class="ticket-header">
+            <h1 class="ticket-title">${escapeHTML(ticket.title)}</h1>
+            <span class="ticket-id">#${ticket.id}</span>
+        </div>
+
+        <div class="ticket-content">
+            <h3>Ticket Details</h3>
+            <p>${escapeHTML(ticket.data)}</p>
+        </div>
+
+        <hr>
+
+        <div class="ticket-meta">
+            <div class="meta-item">
+                <strong>Created by:</strong> ${escapeHTML(ticket.creator)} <br>
+                <strong>Made by:</strong> ${escapeHTML(madeByDisplay)} <br>
+                <strong>Customer:</strong> ${escapeHTML(ticket.workingForCustomer)}
+            </div>
+
+            <div class="meta-item">
+                <strong>Ticket ID:</strong> #${ticket.id} <br>
+                <strong id="statusDisplay">Ticket Status:</strong> ${ticketStatus}
+            </div>
+        </div>
+    `;
+}
+if (sessionStorage.getItem ("inSubTicket") === "false" || !sessionStorage.getItem ("inSubTicket")) {
+    setMainTicket();
+}
+else {
+    setMainTicketAsSubTicket ();
+}
+
 
 /* ===============================
    BACK BUTTON
@@ -140,56 +212,101 @@ function closeModal() {
    =============================== */
 
 async function submitComment() {
-
+    if (sessionStorage.getItem ("inSubTicket") === "true") {
+        submitSubTicketComment ();
+        return;
+    }
     const title = document.getElementById("commentTitle").value.trim();
     const text = document.getElementById("commentText").value.trim();
     const file = document.getElementById("commentFile").files[0];
     let employeeOnlyToggle = getEmployeeOnlyCommentToggleValue (); 
+    let subTicketToggle = getSubTicketToggleValue (); 
 
     console.log (employeeOnlyToggle);
+    console.log (subTicketToggle);
+    if (subTicketToggle === "on") {
+       if (!title || !text) {
+            alert("Please fill all fields.");
+            return;
+        } 
+        const ticket = getCurrentTicket();
+        if (!ticket) return;
 
-    if (!title || !text) {
-        alert("Please fill all fields.");
-        return;
-    }
-    if (employeeOnlyToggle === "on") {employeeOnlyToggle = 1}
-    else {employeeOnlyToggle = 2}
-    const ticket = getCurrentTicket();
+        const body = new URLSearchParams();
 
-    if (!ticket) return;
+        body.append("title", title);
+        body.append("data", text);
+        body.append("creator", sessionStorage.getItem("username"));
+        body.append("madeBy", sessionStorage.getItem("username"));
+        body.append("parentTicket", ticket.id);
+        body.append("toEmail", sessionStorage.getItem("email"));
 
-    const formData = new FormData();
+        try {
+            const response = await fetch(`${BASE_URL}/addSubTicket`, {
+                method: "POST",
+                body: body.toString ()
+            });
 
-    formData.append("title", title);
-    formData.append("data", text);
-    formData.append("creator", sessionStorage.getItem("username"));
-    formData.append("ticket", ticket.id);
-    formData.append("toEmail", sessionStorage.getItem("email"));
-    formData.append("isEmployeeOnly", employeeOnlyToggle);
+            const result = await response.text();
 
-    if (file) {
-        formData.append("file", file);
-    }
+            if (result === "SUCCESS") {
+                closeModal();
+                location.reload();
+            } else {
+                alert("Failed: " + result);
+            }
 
-    try {
-        const response = await fetch(`${BASE_URL}/addComment`, {
-            method: "POST",
-            body: formData
-        });
-
-        const result = await response.text();
-
-        if (result === "SUCCESS") {
-            closeModal();
-            location.reload();
-        } else {
-            alert("Failed: " + result);
+        } catch (error) {
+            console.error(error);
+            alert("Server Error");
         }
 
-    } catch (error) {
-        console.error(error);
-        alert("Server Error");
     }
+    else {
+        if (!title || !text) {
+            alert("Please fill all fields.");
+            return;
+        }
+        if (employeeOnlyToggle === "on") {employeeOnlyToggle = 1}
+        else {employeeOnlyToggle = 2}
+        const ticket = getCurrentTicket();
+
+        if (!ticket) return;
+
+        const formData = new FormData();
+
+        formData.append("title", title);
+        formData.append("data", text);
+        formData.append("creator", sessionStorage.getItem("username"));
+        formData.append("ticket", ticket.id);
+        formData.append("toEmail", sessionStorage.getItem("email"));
+        formData.append("isEmployeeOnly", employeeOnlyToggle);
+
+        if (file) {
+            formData.append("file", file);
+        }
+
+        try {
+            const response = await fetch(`${BASE_URL}/addComment`, {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+
+            if (result === "SUCCESS") {
+                closeModal();
+                location.reload();
+            } else {
+                alert("Failed: " + result);
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Server Error");
+        }
+    }
+    
 }
 
 /* ===============================
@@ -226,8 +343,13 @@ async function getComments() {
         console.error("Failed loading comments:", error);
     }
 }
+if (sessionStorage.getItem ("inSubTicket") === "false" || !sessionStorage.getItem ("inSubTicket")) {
+    getComments();
+}
+else {
+    getSubTicketComments ();
+}
 
-getComments();
 
 /* ===============================
    DISPLAY COMMENTS
@@ -340,17 +462,17 @@ const themes = {
 
     desert_slate: {
         "bg1": "#2d2926",
-        "bg2": "#403a34"
+        "bg2": "#403a33"
     },
 
     cobalt_horizon: {
         "bg1": "#1e293b",
-        "bg2": "#334155"
+        "bg2": "#333155"
     },
 
     phantom_forest: {
         "bg1": "#0f1d1a",
-        "bg2": "#1c3a34"
+        "bg2": "#1c3a33"
     }
 };
 
@@ -364,8 +486,11 @@ function applyTheme(name) {
         document.documentElement.style.setProperty(`--${key}`, theme[key]);
     });
 }
-
-applyTheme(localStorage.getItem("preferredTheme"));
+document.addEventListener("DOMContentLoaded", () => {
+    
+    const savedTheme = localStorage.getItem("preferredTheme") || "basic";
+    applyTheme(savedTheme);
+});
 
 /* ===============================
    STATUS BUTTON
@@ -513,4 +638,219 @@ function getEmployeeOnlyCommentToggleValue () {
     console.log("employeeOnlyCommentToggle Value on Button Click:", value);
 
     return value;
+}
+
+function getSubTicketToggleValue () {
+    const subTicketToggle = document.getElementById('subTicketToggle');
+
+    const value = subTicketToggle.checked ? "on" : "off";
+
+    console.log("subTicketToggle Value on Button Click:", value);
+
+    return value;
+}
+async function getSubTickets () {
+    const ticket = getCurrentTicket();
+
+    if (!ticket) return;
+
+    const body = `parentTicketID=${encodeURIComponent(ticket.id)}`;
+
+    try {
+
+        const response = await fetch(`${BASE_URL}/getSubTickets`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body
+        });
+
+        const text = await response.text();
+
+        console.log("Sub Tickets Raw:", text);
+
+        const subTickets = JSON.parse(text);
+
+        displaySubTickets (subTickets);
+
+    } catch (error) {
+        console.error("Failed loading sub Tickets:"+ error);
+    }
+}
+function displaySubTickets(subTickets) {
+    const container = document.getElementById("subTicketsContainer");
+
+    container.innerHTML = "";
+
+    subTickets.forEach(sub => {
+
+        let statusColor = "#6c757d";
+        if (sub.status == 1) statusColor = "#28a745";
+        if (sub.status == 2) statusColor = "#dc3545";
+        if (sub.status == 3) statusColor = "#ffc107";
+        if (sub.status == 4) statusColor = "#17a2b8";
+
+        const div = document.createElement("div");
+        div.classList.add("subticket-card");
+
+        div.innerHTML = `
+            <div style="display:flex;gap:12px;align-items:flex-start;
+                        padding:14px;background:#f8f9fa;
+                        border:1px solid #e0e0e0;border-radius:8px;
+                        margin-top:10px;cursor:pointer;">
+
+                <span style="font-size:22px;">🧩</span>
+
+                <div style="flex-grow:1;">
+                    <div style="font-weight:bold;font-size:15px;">
+                        ${escapeHTML(sub.title)}
+                    </div>
+
+                    <div style="font-size:13px;color:#555;margin-top:4px;">
+                        ${escapeHTML(sub.data)}
+                    </div>
+
+                    <small style="color:#777;display:block;margin-top:8px;">
+                        Created by ${escapeHTML(sub.creator)}
+                    </small>
+
+                    <small style="color:#999;">
+                        Customer: ${escapeHTML(sub.workingForCustomer)}
+                    </small>
+                </div>
+
+                <div style="
+                    padding:4px 10px;
+                    border-radius:6px;
+                    font-size:12px;
+                    background:${statusColor};
+                    color:white;
+                    height:fit-content;
+                ">
+                </div>
+            </div>
+        `;
+
+        div.onclick = () => openSubTicket(sub);
+
+        container.appendChild(div);
+    });
+}
+getSubTickets ();
+
+const checkbox = document.getElementById("subTicketToggle");
+const fileInput = document.getElementById("commentFile");
+
+checkbox.addEventListener("change", () => {
+    if (checkbox.checked) {
+        fileInput.value = "";        // clear selected file
+        fileInput.disabled = true;   // block file upload
+    } else {
+        fileInput.disabled = false;  // allow file upload
+    }
+});
+
+function openSubTicket(sub) {
+    sessionStorage.setItem ("currentSubTicket", JSON.stringify (sub));
+    sessionStorage.setItem ("inSubTicket", "true");
+    window.location.href = "ticketPage.html"; // or your page
+}
+
+async function getSubTicketComments () {
+    const ticket = JSON.parse (sessionStorage.getItem ("currentSubTicket"));
+
+    if (!ticket) return;
+
+    const body = `ticketID=${encodeURIComponent(ticket.id)}`;
+
+    try {
+
+        const response = await fetch(`${BASE_URL}/getSubTicketComments`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body
+        });
+
+        const text = await response.text();
+
+        console.log("Comments Raw:", text);
+
+        const comments = JSON.parse(text);
+
+        displayComments(comments);
+
+    } catch (error) {
+        console.error("Failed loading comments:", error);
+    }
+}
+
+async function submitSubTicketComment () {
+    const title = document.getElementById("commentTitle").value.trim();
+    const text = document.getElementById("commentText").value.trim();
+    const file = document.getElementById("commentFile").files[0];
+    let employeeOnlyToggle = getEmployeeOnlyCommentToggleValue (); 
+    let subTicketToggle = getSubTicketToggleValue (); 
+
+    console.log (employeeOnlyToggle);
+    console.log (subTicketToggle);
+        if (!title || !text) {
+            alert("Please fill all fields.");
+            return;
+        }
+        if (employeeOnlyToggle === "on") {employeeOnlyToggle = 1}
+        else {employeeOnlyToggle = 2}
+        const ticket = JSON.parse (sessionStorage.getItem ("currentSubTicket"));
+
+        if (!ticket) return;
+
+        const formData = new FormData();
+
+        formData.append("title", title);
+        formData.append("data", text);
+        formData.append("creator", sessionStorage.getItem("username"));
+        formData.append("ticket", ticket.id);
+        formData.append("toEmail", sessionStorage.getItem("email"));
+        formData.append("isEmployeeOnly", employeeOnlyToggle);
+
+        if (file) {
+            formData.append("file", file);
+        }
+
+        try {
+            const response = await fetch(`${BASE_URL}/addSubTicketComment`, {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+
+            if (result === "SUCCESS") {
+                closeModal();
+                location.reload();
+            } else {
+                alert("Failed: " + result);
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Server Error");
+        }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem("inSubTicket") === "true") {
+        getSubTicketComments();
+        setMainTicketAsSubTicket();
+    } else {
+        getComments();
+        setMainTicket();
+    }
+});
+
+if (sessionStorage.getItem ("role") === "CLIENT") {
+    Document.getElementById ("subTicketToggle").style.display = "none";
+    Document.getElementById ("subTicketLabel").style.display = "none";
 }

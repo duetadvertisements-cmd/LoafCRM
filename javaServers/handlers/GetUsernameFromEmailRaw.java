@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Map;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -24,7 +25,15 @@ public class GetUsernameFromEmailRaw {
 
 
         try {
+            //LOCK-TIME PREVENTION
+            Connection conn = DriverManager.getConnection(DATABASE_URL);
+            Statement stmt = conn.createStatement();
 
+            stmt.execute("PRAGMA journal_mode=WAL;");
+            stmt.execute("PRAGMA synchronous=NORMAL;");
+
+            stmt.close();
+            conn.close();
 
             databaseConnection = DriverManager.getConnection (DATABASE_URL);
             databaseConnection.setAutoCommit (false);

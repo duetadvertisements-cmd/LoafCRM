@@ -16,7 +16,16 @@ public class MakeTicketUsingEmailReader {
 
 
             try {
+                //LOCK-TIME PREVENTION
+                Connection conn = DriverManager.getConnection(DATABASE_URL);
+                Statement stmt = conn.createStatement();
 
+                stmt.execute("PRAGMA journal_mode=WAL;");
+                stmt.execute("PRAGMA synchronous=NORMAL;");
+
+                stmt.close();
+                conn.close();
+                
                 toEmail = toEmail.substring(toEmail.indexOf("<") + 1, toEmail.indexOf(">"));
 
                 // String title = formData.get ("title");

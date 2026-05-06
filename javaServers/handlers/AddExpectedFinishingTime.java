@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.Map;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -32,6 +33,16 @@ public class AddExpectedFinishingTime implements HttpHandler {
         if ("POST".equals(exchange.getRequestMethod())) {
 
             try {
+                //LOCK-TIME PREVENTION
+                Connection conn = DriverManager.getConnection(DATABASE_URL);
+                Statement stmt = conn.createStatement();
+
+                stmt.execute("PRAGMA journal_mode=WAL;");
+                stmt.execute("PRAGMA synchronous=NORMAL;");
+
+                stmt.close();
+                conn.close();
+
 
                 FormDataUtility formDataParser = new FormDataUtility ();
                 Map<String, String> formData = formDataParser.parseFormData(exchange.getRequestBody());
@@ -104,6 +115,13 @@ public class AddExpectedFinishingTime implements HttpHandler {
                 
                 ResponseUtilty serverResponseUtils = new ResponseUtilty ();
                 serverResponseUtils.sendResponse(exchange, 500, "ERROR");
+            }
+            finally {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (Exception ignored) {}
+                }
             }
 
         } else {

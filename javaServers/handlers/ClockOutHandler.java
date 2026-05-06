@@ -34,6 +34,16 @@ public class ClockOutHandler implements HttpHandler {
 
         if ("POST".equals(httpExchange.getRequestMethod())) {
             try {
+                //LOCK-TIME PREVENTION
+                Connection conn = DriverManager.getConnection(DATABASE_URL);
+                Statement stmt = conn.createStatement();
+
+                stmt.execute("PRAGMA journal_mode=WAL;");
+                stmt.execute("PRAGMA synchronous=NORMAL;");
+
+                stmt.close();
+                conn.close();
+                
                 FormDataUtility formDataParser = new FormDataUtility ();
                 Map<String, String> formData = formDataParser.parseFormData(httpExchange.getRequestBody ());
 

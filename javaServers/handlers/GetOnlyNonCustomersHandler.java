@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -31,7 +32,16 @@ public class GetOnlyNonCustomersHandler implements HttpHandler {
         if ("POST".equals(exchange.getRequestMethod())) {
 
             try {
+                //LOCK-TIME PREVENTION
+                Connection conn = DriverManager.getConnection(DATABASE_URL);
+                Statement stmt = conn.createStatement();
 
+                stmt.execute("PRAGMA journal_mode=WAL;");
+                stmt.execute("PRAGMA synchronous=NORMAL;");
+
+                stmt.close();
+                conn.close();
+                
                 databaseConnection = DriverManager.getConnection (DATABASE_URL);
                 databaseConnection.setAutoCommit (false);
                 

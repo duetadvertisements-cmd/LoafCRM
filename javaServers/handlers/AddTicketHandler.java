@@ -33,6 +33,15 @@ public class AddTicketHandler implements HttpHandler {
         if ("POST".equals(httpExchange.getRequestMethod ())) {
 
             try {
+                //LOCK-TIME PREVENTION
+                Connection conn = DriverManager.getConnection(DATABASE_URL);
+                Statement stmt = conn.createStatement();
+
+                stmt.execute("PRAGMA journal_mode=WAL;");
+                stmt.execute("PRAGMA synchronous=NORMAL;");
+
+                stmt.close();
+                conn.close();
 
                 FormDataUtility formDataParser = new FormDataUtility ();
                 Map<String, String> formData = formDataParser.parseFormData(httpExchange.getRequestBody ());
@@ -51,7 +60,6 @@ public class AddTicketHandler implements HttpHandler {
                 System.out.println ("Made By: "+madeBy);
             
                 databaseConnection = DriverManager.getConnection (DATABASE_URL);
-                databaseConnection.setAutoCommit (false);
 
                 PreparedStatement insertStatement = databaseConnection.prepareStatement(
                     "INSERT INTO LOAF_TICKETS (TITLE, DATA, CREATOR, MADE_BY) VALUES (?, ?, ?, ?)",
@@ -65,7 +73,6 @@ public class AddTicketHandler implements HttpHandler {
 
                 insertStatement.executeUpdate ();
                 
-                databaseConnection.commit ();
 
                 // SEND MAIL
 
@@ -109,10 +116,6 @@ public class AddTicketHandler implements HttpHandler {
 
             } catch (Exception e) {
                 System.err.println (e);
-                try {
-                    databaseConnection.rollback ();
-                }
-                catch (Exception exception) {}
 
                 ResponseUtilty responseUtils = new ResponseUtilty ();
                 responseUtils.sendResponse(httpExchange, 500, "ERROR");

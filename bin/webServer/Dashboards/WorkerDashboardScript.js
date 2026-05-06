@@ -1,13 +1,13 @@
 const themes = {
-    cobalt_horizon: { bg1: "#1e293b", bg2: "#334155", "main-bg": "#ffffff", "heading-accent": "#3b82f6", "ticket-bg": "#ffffff", "ticket-border": "#3b82f6",dshbackground1: "#1e293b", dshbackground3: "#ffffff" },
+    cobalt_horizon: { bg1: "#1e293b", bg2: "#333155", "main-bg": "#ffffff", "heading-accent": "#3b82f6", "ticket-bg": "#ffffff", "ticket-border": "#3b82f6",dshbackground1: "#1e293b", dshbackground3: "#ffffff" },
     royalLuxe: { bg1: "#4e54c8", bg2: "#8f94fb", "main-bg": "#fafaff", "heading-accent": "#6a6efb", "ticket-bg": "#ecebff", "ticket-border": "#6a6efb", dshbackground1: "#4e54c8", dshbackground3: "#fafaff"},
-    phantom_forest: { bg1: "#0f1d1a", bg2: "#1c3a34", "main-bg": "#fcfdfd", "heading-accent": "#10b981", "ticket-bg": "#ffffff", "ticket-border": "#10b981", dshbackground1: "#0f1d1a", dshbackground3: "#fcfdfd"},
-    desert_slate: { bg1: "#2d2926", bg2: "#403a34", "main-bg": "#fffcf9", "heading-accent": "#d97757", "ticket-bg": "#ffffff", "ticket-border": "#d97757", dshbackground1: "#2d2926", dshbackground3: "#fffcf9" },
+    phantom_forest: { bg1: "#0f1d1a", bg2: "#1c3a33", "main-bg": "#fcfdfd", "heading-accent": "#10b981", "ticket-bg": "#ffffff", "ticket-border": "#10b981", dshbackground1: "#0f1d1a", dshbackground3: "#fcfdfd"},
+    desert_slate: { bg1: "#2d2926", bg2: "#403a33", "main-bg": "#fffcf9", "heading-accent": "#d97757", "ticket-bg": "#ffffff", "ticket-border": "#d97757", dshbackground1: "#2d2926", dshbackground3: "#fffcf9" },
     basic: { bg1: "#667eea", bg2: "#49BC9B", "main-bg": "white", "heading-accent": "#5a67d8", "ticket-bg": "white", "ticket-border": "#49BC9B",dshbackground1: "#667eea", dshbackground3: "white" }
 };
 
 /* ================= INIT ================= */
-const BASE_URL = "http://192.168.1.34:8080";
+const BASE_URL = "http://192.168.1.33:8080";
 let initRan = false;
 let isClockingIn = false;
 let allowUnloadClockOut = false;
@@ -407,7 +407,7 @@ async function setExpectedFinishingTime (date, ticket) {
 async function getEmail (username, action) {  
     const ticket = `username=${encodeURIComponent(username)}`;
     try {
-        const serverResponse = await fetch("http://192.168.1.34:8080/getEmail", {
+        const serverResponse = await fetch("http://192.168.1.33:8080/getEmail", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: ticket
@@ -463,3 +463,5 @@ function clearDateFilter() {
     const input = document.getElementById("filterDate");
     if (input) input.value = "";
 }
+
+sessionStorage.setItem ("inSubTicket", false);
