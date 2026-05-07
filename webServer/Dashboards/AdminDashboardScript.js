@@ -153,7 +153,7 @@ function displayTickets(tickets, containerID, filter) {
 
     if (filter === "OPEN") {
         tickets.forEach(ticket => {
-            if (ticket.status === 1) {
+            if (ticket.status === "1") {
                 renderTicket (ticket,  container);
             }
         });
@@ -161,7 +161,7 @@ function displayTickets(tickets, containerID, filter) {
 
     if (filter === "CLOSED") {
         tickets.forEach(ticket => {
-            if (ticket.status === 2) {
+            if (ticket.status === "2") {
                 renderTicket (ticket, container);
             }
         });
@@ -701,7 +701,7 @@ setWelcomeTitle ();
 getEmployees ();
 getUsers ();
 getUsersToCustomers ();
-applyTheme ("desert_slate");
+applyTheme ("cobalt_horizon");
 getEmail (sessionStorage.getItem ("username"), "SET");
 getUnassignedTickets ();
 
@@ -792,3 +792,26 @@ function displayCustomers (customers) {
 getCustomers ();
 
 sessionStorage.setItem ("inSubTicket", false);
+
+flatpickr("#workingHoursOnDateDatePicker", {
+    dateFormat: "Y-m-d"
+});
+
+async function getAmountOfTimeEmployeeHasWorkedOnDate () {
+    const date = document.getElementById ("workingHoursOnDateDatePicker").value;
+    const id = document.getElementById ("getTimeWorkedOnDateUserIDInput").value;
+
+    const body = `userID=${encodeURIComponent (id)}&selectedDate=${encodeURIComponent (date)}`;
+    try {
+        const serverResponse = await fetch("http://192.168.1.33:8080/getAmountOfTimeEmployeeHasWorkedOnDate", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: body
+        });
+        const responseText = await serverResponse.text();
+        document.getElementById ("workingHoursOnADateDisplay").innerHTML = responseText;
+    }
+    catch (error) {
+        console.error (error);
+    }
+}

@@ -19,6 +19,7 @@ import javaServers.handlers.GetCustomerHandler;
 import javaServers.handlers.GetTicketsEmployeeHandler;
 import javaServers.handlers.FileServerHandler;
 import javaServers.handlers.GetAmountOfTimeEmployeeHasWorked;
+import javaServers.handlers.GetAmountOfTimeEmployeeHasWorkedOnDate;
 import javaServers.handlers.GetAmountOfTimeEmployeeHasWorkedOnTicket;
 import javaServers.handlers.GetEmployeesHandler;
 import javaServers.handlers.GetExpectedEmployeeHoursRemaining;
@@ -81,6 +82,7 @@ public class server {
         server.createContext ("/getSubTickets", new GetSubTicketsHandler ());
         server.createContext ("/getSubTicketComments", new GetSubTicketCommentsHandler ());
         server.createContext ("/addSubTicketComment", new AddSubTicketCommentHandler ());
+        server.createContext ("/getAmountOfTimeEmployeeHasWorkedOnDate", new GetAmountOfTimeEmployeeHasWorkedOnDate ());
         //SERVER CONTEXT
 
         // ✅ MULTITHREADING ENABLED

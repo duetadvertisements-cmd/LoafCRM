@@ -3,6 +3,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src = "AdminDashboardScript.js" defer></script>
         <link rel = "Stylesheet" href = "AdmindashboardStyle.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     </HEAD>
 
     <BODY>
@@ -52,6 +54,10 @@
                 <a href="#" class="nav-item" onclick="showSection('getTimeWorkedOnTicket');">
                     <span class="nav-icon">📋</span>
                     Get Working Time On Ticket
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('getTimeWorkedOnDate');">
+                    <span class="nav-icon">📋</span>
+                    Get Working Time On Date
                 </a>
                 <a href="#" class="nav-item" onclick="logout()">
                     <span class="nav-icon">🚪</span>
@@ -151,6 +157,18 @@
                 <input type = "number" min = 1 id = "getTimeWorkedOnATicketUserIDInput" placeholder="User ID"> <br>
                 <input type = "number" min = 1 id = "getTimeWorkedOnATicketTicketIDInput" placeholder="Ticket ID"> <br>
                 <button onclick = "getAmountOfTimeEmployeeHasWorkedOnATicket ()" id = "getAmountOfTimeEmployeeHasWorkedOnATicketButton">Get Working Time</button> <br><br>
+            </div>
+            <div id = "getTimeWorkedOnDate-section" class = "content-section">
+                <div class="header">
+                    <h1>Get Working Time On Date</h1>
+                    <p>Get How Much Time An Employee Has Worked On A Specific Date</p>
+                </div>
+                <div class="header">
+                    <p id = "workingHoursOnADateDisplay">The Amount Of Time An Employee Has Worked On The Date Will be Shown Here</p>
+                </div><br><br>
+                <input type = "number" min = 1 id = "getTimeWorkedOnDateUserIDInput" placeholder="User ID"> <br>
+                <input id = "workingHoursOnDateDatePicker" placeholder="Enter Date Here">
+                <button onclick = "getAmountOfTimeEmployeeHasWorkedOnDate ()" id = "getAmountOfTimeEmployeeHasWorkedOnDate">Get Working Time</button> <br><br>
             </div>
         </div>
     </BODY>
